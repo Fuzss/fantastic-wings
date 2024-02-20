@@ -7,12 +7,12 @@ import me.paulf.wings.server.effect.WingsEffects;
 import me.paulf.wings.util.CubicBezier;
 import me.paulf.wings.util.Mth;
 import me.paulf.wings.util.NBTSerializer;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 import java.util.Objects;
@@ -113,23 +113,23 @@ public final class FlightDefault implements Flight {
     }
 
     @Override
-    public boolean canFly(PlayerEntity player) {
+    public boolean canFly(Player player) {
         return this.hasEffect(player) && this.flightApparatus.isUsable(player);
     }
 
-    private boolean hasEffect(PlayerEntity player) {
+    private boolean hasEffect(Player player) {
         return WingsEffects.WINGS.filter(effect -> player.getEffect(effect) != null).isPresent();
     }
 
     @Override
-    public boolean canLand(PlayerEntity player) {
+    public boolean canLand(Player player) {
         return this.flightApparatus.isLandable(player);
     }
 
-    private void onWornUpdate(PlayerEntity player) {
+    private void onWornUpdate(Player player) {
         if (player.isEffectiveAi()) {
             if (this.isFlying()) {
-                float speed = (float) MathHelper.clampedLerp(MIN_SPEED, MAX_SPEED, player.zza);
+                float speed = (float) Mth.clampedLerp(MIN_SPEED, MAX_SPEED, player.zza);
                 float elevationBoost = Mth.transform(
                     Math.abs(player.xRot),
                     45.0F, 90.0F,
@@ -137,10 +137,10 @@ public final class FlightDefault implements Flight {
                 );
                 float pitch = -Mth.toRadians(player.xRot - PITCH_OFFSET * elevationBoost);
                 float yaw = -Mth.toRadians(player.yRot) - Mth.PI;
-                float vxz = -MathHelper.cos(pitch);
-                float vy = MathHelper.sin(pitch);
-                float vz = MathHelper.cos(yaw);
-                float vx = MathHelper.sin(yaw);
+                float vxz = -Mth.cos(pitch);
+                float vy = Mth.sin(pitch);
+                float vz = Mth.cos(yaw);
+                float vx = Mth.sin(yaw);
                 player.setDeltaMovement(player.getDeltaMovement().add(
                     vx * vxz * speed,
                     vy * speed + Y_BOOST * (player.xRot > 0.0F ? elevationBoost : 1.0D),
@@ -148,7 +148,7 @@ public final class FlightDefault implements Flight {
                 ));
             }
             if (this.canLand(player)) {
-                Vector3d mot = player.getDeltaMovement();
+                Vec3 mot = player.getDeltaMovement();
                 if (mot.y() < 0.0D) {
                     player.setDeltaMovement(mot.multiply(1.0D, FALL_REDUCTION, 1.0D));
                 }
@@ -166,7 +166,7 @@ public final class FlightDefault implements Flight {
     }
 
     @Override
-    public void tick(PlayerEntity player) {
+    public void tick(Player player) {
         if (this.hasEffect(player) || !player.isEffectiveAi()) {
             this.onWornUpdate(player);
         } else if (!player.level.isClientSide) {
@@ -190,7 +190,7 @@ public final class FlightDefault implements Flight {
     }
 
     @Override
-    public void onFlown(PlayerEntity player, Vector3d direction) {
+    public void onFlown(Player player, Vec3 direction) {
         if (this.isFlying()) {
             this.flightApparatus.onFlight(player, direction);
         } else if (player.getDeltaMovement().y() < -0.5D) {
@@ -211,20 +211,20 @@ public final class FlightDefault implements Flight {
     }
 
     @Override
-    public void serialize(PacketBuffer buf) {
+    public void serialize(FriendlyByteBuf buf) {
         buf.writeBoolean(this.isFlying());
         buf.writeVarInt(this.getTimeFlying());
         buf.writeUtf(WingsMod.WINGS.getKey(this.getWing()).toString());
     }
 
     @Override
-    public void deserialize(PacketBuffer buf) {
+    public void deserialize(FriendlyByteBuf buf) {
         this.setIsFlying(buf.readBoolean());
         this.setTimeFlying(buf.readVarInt());
         this.setWing(WingsMod.WINGS.get(ResourceLocation.tryParse(buf.readUtf(64))));
     }
 
-    public static final class Serializer implements NBTSerializer<FlightDefault, CompoundNBT> {
+    public static final class Serializer implements NBTSerializer<FlightDefault, CompoundTag> {
         private static final String IS_FLYING = "isFlying";
 
         private static final String TIME_FLYING = "timeFlying";
@@ -238,8 +238,8 @@ public final class FlightDefault implements Flight {
         }
 
         @Override
-        public CompoundNBT serialize(FlightDefault instance) {
-            CompoundNBT compound = new CompoundNBT();
+        public CompoundTag serialize(FlightDefault instance) {
+            CompoundTag compound = new CompoundTag();
             compound.putBoolean(IS_FLYING, instance.isFlying());
             compound.putInt(TIME_FLYING, instance.getTimeFlying());
             compound.putString(WING, WingsMod.WINGS.getKey(instance.getWing()).toString());
@@ -247,7 +247,7 @@ public final class FlightDefault implements Flight {
         }
 
         @Override
-        public FlightDefault deserialize(CompoundNBT compound) {
+        public FlightDefault deserialize(CompoundTag compound) {
             FlightDefault f = this.factory.get();
             f.setIsFlying(compound.getBoolean(IS_FLYING));
             f.setTimeFlying(compound.getInt(TIME_FLYING));
@@ -277,7 +277,7 @@ public final class FlightDefault implements Flight {
             return new WingState(wf, wf.createState(FlightDefault.this));
         }
 
-        private void onUpdate(PlayerEntity player) {
+        private void onUpdate(Player player) {
             this.activity.onUpdate(player);
         }
     }

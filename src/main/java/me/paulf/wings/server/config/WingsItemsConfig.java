@@ -3,7 +3,7 @@ package me.paulf.wings.server.config;
 import com.google.common.collect.ImmutableMap;
 import me.paulf.wings.WingsMod;
 import me.paulf.wings.server.item.WingSettings;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.stream.Stream;
 

@@ -1,14 +1,14 @@
 package me.paulf.wings.server.dreamcatcher;
 
 import me.paulf.wings.WingsMod;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.NoteBlock;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.NoteBlock;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -21,15 +21,15 @@ public final class InSomniableEventHandler {
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
-        PlayerEntity player = event.getPlayer();
-        if (player instanceof ServerPlayerEntity && !player.isCreative()) {
-            World world = event.getWorld();
+        Player player = event.getPlayer();
+        if (player instanceof ServerPlayer && !player.isCreative()) {
+            Level world = event.getWorld();
             BlockPos pos = event.getPos();
             BlockState state = world.getBlockState(pos);
             Block block = state.getBlock();
             if (block == Blocks.NOTE_BLOCK && world.isEmptyBlock(pos.above()) &&
                 world.mayInteract(player, pos) &&
-                !player.blockActionRestricted(world, pos, ((ServerPlayerEntity) player).gameMode.getGameModeForPlayer())
+                !player.blockActionRestricted(world, pos, ((ServerPlayer) player).gameMode.getGameModeForPlayer())
             ) {
                 InSomniableCapability.getInSomniable(player).ifPresent(inSomniable ->
                     inSomniable.onPlay(world, player, pos, state.getValue(NoteBlock.NOTE))

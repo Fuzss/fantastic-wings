@@ -4,8 +4,8 @@ import me.paulf.wings.server.flight.Flight;
 import me.paulf.wings.server.flight.Flights;
 import me.paulf.wings.server.net.Message;
 import me.paulf.wings.server.net.ServerMessageContext;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.network.FriendlyByteBuf;
 
 public final class MessageControlFlying implements Message {
     private boolean isFlying;
@@ -18,17 +18,17 @@ public final class MessageControlFlying implements Message {
     }
 
     @Override
-    public void encode(PacketBuffer buf) {
+    public void encode(FriendlyByteBuf buf) {
         buf.writeBoolean(this.isFlying);
     }
 
     @Override
-    public void decode(PacketBuffer buf) {
+    public void decode(FriendlyByteBuf buf) {
         this.isFlying = buf.readBoolean();
     }
 
     public static void handle(MessageControlFlying message, ServerMessageContext context) {
-        PlayerEntity player = context.getPlayer();
+        Player player = context.getPlayer();
         Flights.get(player).filter(f -> f.canFly(player))
             .ifPresent(flight -> flight.setIsFlying(message.isFlying, Flight.PlayerSet.ofOthers()));
     }

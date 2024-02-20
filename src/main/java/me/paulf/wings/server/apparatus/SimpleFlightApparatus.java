@@ -2,8 +2,8 @@ package me.paulf.wings.server.apparatus;
 
 import me.paulf.wings.server.flight.Flight;
 import me.paulf.wings.server.item.WingSettings;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.Objects;
 
@@ -15,7 +15,7 @@ public final class SimpleFlightApparatus implements FlightApparatus {
     }
 
     @Override
-    public void onFlight(PlayerEntity player, Vector3d direction) {
+    public void onFlight(Player player, Vec3 direction) {
         int distance = Math.round((float) direction.length() * 100.0F);
         if (distance > 0) {
             player.causeFoodExhaustion(distance * this.settings.getFlyingExertion());
@@ -23,17 +23,17 @@ public final class SimpleFlightApparatus implements FlightApparatus {
     }
 
     @Override
-    public void onLanding(PlayerEntity player, Vector3d direction) {
+    public void onLanding(Player player, Vec3 direction) {
         player.causeFoodExhaustion(this.settings.getLandingExertion());
     }
 
     @Override
-    public boolean isUsable(PlayerEntity player) {
+    public boolean isUsable(Player player) {
         return player.getFoodData().getFoodLevel() >= this.settings.getRequiredFlightSatiation();
     }
 
     @Override
-    public boolean isLandable(PlayerEntity player) {
+    public boolean isLandable(Player player) {
         return player.getFoodData().getFoodLevel() >= this.settings.getRequiredLandSatiation();
     }
 

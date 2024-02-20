@@ -1,7 +1,7 @@
 package me.paulf.wings.server.asm;
 
-import net.minecraft.client.renderer.entity.model.PlayerModel;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.client.model.PlayerModel;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 
 public class AnimatePlayerModelEvent extends PlayerEvent {
@@ -11,7 +11,7 @@ public class AnimatePlayerModelEvent extends PlayerEvent {
 
     private final float pitch;
 
-    public AnimatePlayerModelEvent(PlayerEntity player, PlayerModel<?> model, float ticksExisted, float pitch) {
+    public AnimatePlayerModelEvent(Player player, PlayerModel<?> model, float ticksExisted, float pitch) {
         super(player);
         this.model = model;
         this.ticksExisted = ticksExisted;

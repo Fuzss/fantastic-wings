@@ -3,11 +3,11 @@ package me.paulf.wings.client.flight;
 import me.paulf.wings.WingsMod;
 import me.paulf.wings.server.flight.AttachFlightCapabilityEvent;
 import me.paulf.wings.util.CapabilityHolder;
-import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
@@ -38,10 +38,10 @@ public final class FlightViews {
     @SubscribeEvent
     public static void onAttachCapabilities(AttachFlightCapabilityEvent event) {
         Entity entity = event.getObject();
-        if (entity instanceof AbstractClientPlayerEntity) {
+        if (entity instanceof AbstractClientPlayer) {
             event.addCapability(
                 new ResourceLocation(WingsMod.ID, "flight_view"),
-                HOLDER.state().providerBuilder(new FlightViewDefault((PlayerEntity) entity, event.getInstance())).build()
+                HOLDER.state().providerBuilder(new FlightViewDefault((Player) entity, event.getInstance())).build()
             );
         }
     }

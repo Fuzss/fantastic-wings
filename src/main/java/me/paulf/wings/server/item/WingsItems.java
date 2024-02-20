@@ -2,9 +2,9 @@ package me.paulf.wings.server.item;
 
 import me.paulf.wings.WingsMod;
 import me.paulf.wings.server.apparatus.FlightApparatus;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.Items;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.DeferredRegister;
@@ -22,7 +22,7 @@ public final class WingsItems {
     public static final RegistryObject<Item> BAT_BLOOD_BOTTLE = REG.register("bat_blood_bottle",
         () -> new BatBloodBottleItem(new Item.Properties()
             .craftRemainder(Items.GLASS_BOTTLE)
-            .tab(ItemGroup.TAB_FOOD)
+            .tab(CreativeModeTab.TAB_FOOD)
             .stacksTo(16)));
 
     public static final RegistryObject<Item> ANGEL_WINGS_BOTTLE = REG.register("angel_wings_bottle", bottle(() -> WingsMod.ANGEL_WINGS));
@@ -39,7 +39,7 @@ public final class WingsItems {
     private static Supplier<Item> bottle(Supplier<FlightApparatus> wings) {
         return () -> new WingsBottleItem(new Item.Properties()
             .craftRemainder(Items.GLASS_BOTTLE)
-            .tab(ItemGroup.TAB_TRANSPORTATION)
+            .tab(CreativeModeTab.TAB_TRANSPORTATION)
             .stacksTo(16), wings.get());
     }
 

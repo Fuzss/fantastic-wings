@@ -1,15 +1,15 @@
 package me.paulf.wings.client.flight;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import me.paulf.wings.client.apparatus.WingForm;
 import me.paulf.wings.client.flight.state.State;
 import me.paulf.wings.client.flight.state.StateIdle;
 import me.paulf.wings.server.flight.Flight;
 import me.paulf.wings.util.function.FloatConsumer;
-import net.minecraft.entity.Pose;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.function.Consumer;
 
@@ -26,7 +26,7 @@ public final class FlightViewDefault implements FlightView {
         }
 
         @Override
-        public void update(Flight flight, PlayerEntity player) {
+        public void update(Flight flight, Player player) {
         }
 
         @Override
@@ -36,11 +36,11 @@ public final class FlightViewDefault implements FlightView {
 
     private final Flight flight;
 
-    private final PlayerEntity player;
+    private final Player player;
 
     private WingState animator = ABSENT_ANIMATOR;
 
-    public FlightViewDefault(PlayerEntity player, Flight flight) {
+    public FlightViewDefault(Player player, Flight flight) {
         this.player = player;
         this.flight = flight;
     }
@@ -66,7 +66,7 @@ public final class FlightViewDefault implements FlightView {
     }
 
     private interface Strategy {
-        void update(Flight flight, PlayerEntity player);
+        void update(Flight flight, Player player);
 
         void ifFormPresent(Consumer<FormRenderer> consumer);
     }
@@ -76,7 +76,7 @@ public final class FlightViewDefault implements FlightView {
 
         WingState next(WingForm<?> form);
 
-        void update(Flight flight, PlayerEntity player);
+        void update(Flight flight, Player player);
 
         void ifFormPresent(Consumer<FormRenderer> consumer);
     }
@@ -105,7 +105,7 @@ public final class FlightViewDefault implements FlightView {
         }
 
         @Override
-        public void update(Flight flight, PlayerEntity player) {
+        public void update(Flight flight, Player player) {
             this.behavior.update(flight, player);
         }
 
@@ -132,7 +132,7 @@ public final class FlightViewDefault implements FlightView {
             }
 
             @Override
-            public void update(Flight flight, PlayerEntity player) {
+            public void update(Flight flight, Player player) {
                 this.animator.update();
                 State state = this.state.update(
                     flight,
@@ -156,7 +156,7 @@ public final class FlightViewDefault implements FlightView {
                     }
 
                     @Override
-                    public void render(MatrixStack matrixStack, IVertexBuilder buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha, float delta) {
+                    public void render(PoseStack matrixStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha, float delta) {
                         WingStrategy.this.shape.getModel().render(WingStrategy.this.animator, delta, matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
                     }
                 });

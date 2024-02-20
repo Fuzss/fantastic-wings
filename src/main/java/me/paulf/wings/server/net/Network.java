@@ -3,9 +3,9 @@ package me.paulf.wings.server.net;
 import me.paulf.wings.WingsMod;
 import me.paulf.wings.server.net.clientbound.MessageSyncFlight;
 import me.paulf.wings.server.net.serverbound.MessageControlFlying;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 
@@ -20,7 +20,7 @@ public final class Network {
         network.sendToServer(message);
     }
 
-    public void sendToPlayer(Message message, ServerPlayerEntity player) {
+    public void sendToPlayer(Message message, ServerPlayer player) {
         network.send(PacketDistributor.PLAYER.with(() -> player), message);
     }
 

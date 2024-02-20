@@ -2,7 +2,7 @@ package me.paulf.wings.server.config;
 
 import me.paulf.wings.server.item.ImmutableWingSettings;
 import me.paulf.wings.server.item.WingSettings;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 @SuppressWarnings("DeprecatedIsStillUsed")
 public final class ConfigWingSettings implements WingSettings {

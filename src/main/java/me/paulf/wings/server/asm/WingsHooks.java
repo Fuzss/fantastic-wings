@@ -1,13 +1,13 @@
 package me.paulf.wings.server.asm;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ElytraItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ElytraItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
 
 public final class WingsHooks {
@@ -15,10 +15,10 @@ public final class WingsHooks {
     }
 
     public static boolean onFlightCheck(LivingEntity living, boolean defaultValue) {
-        return living instanceof PlayerEntity && WingsHooks.onFlightCheck((PlayerEntity) living, defaultValue);
+        return living instanceof Player && WingsHooks.onFlightCheck((Player) living, defaultValue);
     }
 
-    public static boolean onFlightCheck(PlayerEntity player, boolean defaultValue) {
+    public static boolean onFlightCheck(Player player, boolean defaultValue) {
         if (defaultValue) return true;
         PlayerFlightCheckEvent ev = new PlayerFlightCheckEvent(player);
         MinecraftForge.EVENT_BUS.post(ev);
@@ -35,11 +35,11 @@ public final class WingsHooks {
         GetLivingHeadLimitEvent ev = GetLivingHeadLimitEvent.create(living);
         MinecraftForge.EVENT_BUS.post(ev);
         if (ev.isVanilla()) return false;
-        living.yBodyRot += MathHelper.wrapDegrees(movementYaw - living.yBodyRot) * 0.3F;
+        living.yBodyRot += Mth.wrapDegrees(movementYaw - living.yBodyRot) * 0.3F;
         float hLimit = ev.getHardLimit();
         float sLimit = ev.getSoftLimit();
-        float theta = MathHelper.clamp(
-            MathHelper.wrapDegrees(living.yRot - living.yBodyRot),
+        float theta = Mth.clamp(
+            Mth.wrapDegrees(living.yRot - living.yBodyRot),
             -hLimit,
             hLimit
         );
@@ -50,8 +50,8 @@ public final class WingsHooks {
         return true;
     }
 
-    public static void onAddFlown(PlayerEntity player, double x, double y, double z) {
-        MinecraftForge.EVENT_BUS.post(new PlayerFlownEvent(player, new Vector3d(x, y, z)));
+    public static void onAddFlown(Player player, double x, double y, double z) {
+        MinecraftForge.EVENT_BUS.post(new PlayerFlownEvent(player, new Vec3(x, y, z)));
     }
 
     public static boolean onReplaceItemSlotCheck(Item item, ItemStack stack) {

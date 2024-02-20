@@ -1,10 +1,10 @@
 package me.paulf.wings.server.flight;
 
 import me.paulf.wings.server.apparatus.FlightApparatus;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.function.Consumer;
 
@@ -39,21 +39,21 @@ public interface Flight {
 
     void registerSyncListener(SyncListener listener);
 
-    boolean canFly(PlayerEntity player);
+    boolean canFly(Player player);
 
-    boolean canLand(PlayerEntity player);
+    boolean canLand(Player player);
 
-    void tick(PlayerEntity player);
+    void tick(Player player);
 
-    void onFlown(PlayerEntity player, Vector3d direction);
+    void onFlown(Player player, Vec3 direction);
 
     void clone(Flight other);
 
     void sync(PlayerSet players);
 
-    void serialize(PacketBuffer buf);
+    void serialize(FriendlyByteBuf buf);
 
-    void deserialize(PacketBuffer buf);
+    void deserialize(FriendlyByteBuf buf);
 
     interface FlyingListener {
         void onChange(boolean isFlying);
@@ -83,7 +83,7 @@ public interface Flight {
             return Notifier::notifySelf;
         }
 
-        static PlayerSet ofPlayer(ServerPlayerEntity player) {
+        static PlayerSet ofPlayer(ServerPlayer player) {
             return n -> n.notifyPlayer(player);
         }
 
@@ -102,11 +102,11 @@ public interface Flight {
     interface Notifier {
         void notifySelf();
 
-        void notifyPlayer(ServerPlayerEntity player);
+        void notifyPlayer(ServerPlayer player);
 
         void notifyOthers();
 
-        static Notifier of(Runnable notifySelf, Consumer<ServerPlayerEntity> notifyPlayer, Runnable notifyOthers) {
+        static Notifier of(Runnable notifySelf, Consumer<ServerPlayer> notifyPlayer, Runnable notifyOthers) {
             return new Notifier() {
                 @Override
                 public void notifySelf() {
@@ -114,7 +114,7 @@ public interface Flight {
                 }
 
                 @Override
-                public void notifyPlayer(ServerPlayerEntity player) {
+                public void notifyPlayer(ServerPlayer player) {
                     notifyPlayer.accept(player);
                 }
 

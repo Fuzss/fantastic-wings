@@ -1,10 +1,10 @@
 buildscript {
 	repositories {
 		jcenter()
-		maven { url 'https://files.minecraftforge.net/maven' }
+		maven { url 'https://maven.minecraftforge.net' }
 	}
 	dependencies {
-		classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+		classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '6.+', changing: true
 	}
 }
 
@@ -13,10 +13,12 @@ version = '2.1.0'
 group = 'me.paulf.wings'
 archivesBaseName = 'wings'
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(8)
+apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 minecraft {
-	mappings channel: 'official', version: '1.16.5'
+	mappings channel: 'official', version: '1.18.2'
 	runs {
 		client {
 			workingDirectory project.file('run')
@@ -50,7 +52,6 @@ minecraft {
 }
 
 jar {
-	classifier '1.16.5'
 	manifest {
 		attributes([
 			"Specification-Title": "wings",
@@ -65,5 +66,5 @@ jar {
 }
 
 dependencies {
-	minecraft 'net.minecraftforge:forge:1.16.5-36.2.0'
+	minecraft 'net.minecraftforge:forge:1.18.2-40.2.17'
 }

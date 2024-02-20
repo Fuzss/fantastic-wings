@@ -1,8 +1,8 @@
 package me.paulf.wings.server.net;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 
@@ -22,11 +22,11 @@ public class ClientMessageContext extends MessageContext {
         return Minecraft.getInstance();
     }
 
-    public ClientWorld getWorld() {
+    public ClientLevel getWorld() {
         return Objects.requireNonNull(this.getMinecraft().level);
     }
 
-    public PlayerEntity getPlayer() {
+    public Player getPlayer() {
         return Objects.requireNonNull(this.context.getSender());
     }
 }

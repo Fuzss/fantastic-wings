@@ -5,8 +5,8 @@ import me.paulf.wings.server.flight.FlightDefault;
 import me.paulf.wings.server.flight.Flights;
 import me.paulf.wings.server.net.ClientMessageContext;
 import me.paulf.wings.server.net.Message;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.network.FriendlyByteBuf;
 
 public final class MessageSyncFlight implements Message {
     private int playerId;
@@ -17,7 +17,7 @@ public final class MessageSyncFlight implements Message {
         this(0, new FlightDefault());
     }
 
-    public MessageSyncFlight(PlayerEntity player, Flight flight) {
+    public MessageSyncFlight(Player player, Flight flight) {
         this(player.getId(), flight);
     }
 
@@ -27,13 +27,13 @@ public final class MessageSyncFlight implements Message {
     }
 
     @Override
-    public void encode(PacketBuffer buf) {
+    public void encode(FriendlyByteBuf buf) {
         buf.writeVarInt(this.playerId);
         this.flight.serialize(buf);
     }
 
     @Override
-    public void decode(PacketBuffer buf) {
+    public void decode(FriendlyByteBuf buf) {
         this.playerId = buf.readVarInt();
         this.flight.deserialize(buf);
     }

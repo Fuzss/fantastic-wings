@@ -1,12 +1,12 @@
 package me.paulf.wings.server.asm;
 
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 
 public class PlayerFlightCheckEvent extends PlayerEvent {
     private boolean flying;
 
-    public PlayerFlightCheckEvent(PlayerEntity player) {
+    public PlayerFlightCheckEvent(Player player) {
         super(player);
     }
 

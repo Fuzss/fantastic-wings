@@ -18,13 +18,13 @@ import me.paulf.wings.server.net.serverbound.MessageControlFlying;
 import me.paulf.wings.util.KeyInputListener;
 import me.paulf.wings.util.SimpleStorage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.entity.LivingRenderer;
-import net.minecraft.client.renderer.entity.model.BipedModel;
-import net.minecraft.client.renderer.model.ModelRenderer;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.client.settings.KeyModifier;
@@ -50,7 +50,7 @@ public final class ClientProxy extends Proxy {
             .category("key.categories.wings")
             .key("key.wings.fly", KeyConflictContext.IN_GAME, KeyModifier.NONE, GLFW.GLFW_KEY_R)
             .onPress(() -> {
-                PlayerEntity player = Minecraft.getInstance().player;
+                Player player = Minecraft.getInstance().player;
                 Flights.get(player).filter(flight -> flight.canFly(player)).ifPresent(flight ->
                     flight.toggleIsFlying(Flight.PlayerSet.ofOthers())
                 );
@@ -60,16 +60,16 @@ public final class ClientProxy extends Proxy {
         modBus.<FMLClientSetupEvent>addListener(e -> {
             e.enqueueWork(() -> {
                 Minecraft mc = Minecraft.getInstance();
-                EntityRendererManager manager = mc.getEntityRenderDispatcher();
+                EntityRenderDispatcher manager = mc.getEntityRenderDispatcher();
                 Stream.concat(manager.getSkinMap().values().stream(), manager.renderers.values().stream())
-                    .filter(LivingRenderer.class::isInstance)
-                    .map(r -> (LivingRenderer<?, ?>) r)
-                    .filter(render -> render.getModel() instanceof BipedModel<?>)
+                    .filter(LivingEntityRenderer.class::isInstance)
+                    .map(r -> (LivingEntityRenderer<?, ?>) r)
+                    .filter(render -> render.getModel() instanceof HumanoidModel<?>)
                     .unordered()
                     .distinct()
                     .forEach(render -> {
-                        ModelRenderer body = ((BipedModel<?>) render.getModel()).body;
-                        @SuppressWarnings("unchecked") LivingRenderer<LivingEntity, BipedModel<LivingEntity>> livingRender = (LivingRenderer<LivingEntity, BipedModel<LivingEntity>>) render;
+                        ModelPart body = ((HumanoidModel<?>) render.getModel()).body;
+                        @SuppressWarnings("unchecked") LivingEntityRenderer<LivingEntity, HumanoidModel<LivingEntity>> livingRender = (LivingEntityRenderer<LivingEntity, HumanoidModel<LivingEntity>>) render;
                         livingRender.addLayer(new LayerWings(livingRender, (player, stack) -> {
                             if (player.isCrouching()) {
                                 stack.translate(0.0D, 0.2D, 0.0D);
@@ -103,7 +103,7 @@ public final class ClientProxy extends Proxy {
     }
 
     @Override
-    public void addFlightListeners(PlayerEntity player, Flight flight) {
+    public void addFlightListeners(Player player, Flight flight) {
         super.addFlightListeners(player, flight);
         if (player.isLocalPlayer()) {
             Flight.Notifier notifier = Flight.Notifier.of(

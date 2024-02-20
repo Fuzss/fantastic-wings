@@ -1,9 +1,9 @@
 package me.paulf.wings.server.net;
 
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 
 public interface Message {
-    void encode(PacketBuffer buf);
+    void encode(FriendlyByteBuf buf);
 
-    void decode(PacketBuffer buf);
+    void decode(FriendlyByteBuf buf);
 }

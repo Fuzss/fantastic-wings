@@ -2,7 +2,7 @@ package me.paulf.wings.util;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Converter;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 

@@ -2,10 +2,10 @@ package me.paulf.wings.server.flight;
 
 import me.paulf.wings.WingsMod;
 import me.paulf.wings.util.CapabilityHolder;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
@@ -24,13 +24,13 @@ public final class Flights {
     private Flights() {
     }
 
-    private static final CapabilityHolder<PlayerEntity, Flight, CapabilityHolder.State<PlayerEntity, Flight>> HOLDER = CapabilityHolder.create();
+    private static final CapabilityHolder<Player, Flight, CapabilityHolder.State<Player, Flight>> HOLDER = CapabilityHolder.create();
 
-    public static boolean has(PlayerEntity player) {
+    public static boolean has(Player player) {
         return HOLDER.state().has(player, null);
     }
 
-    public static LazyOptional<Flight> get(PlayerEntity player) {
+    public static LazyOptional<Flight> get(Player player) {
         return HOLDER.state().get(player, null);
     }
 
@@ -39,13 +39,13 @@ public final class Flights {
         HOLDER.inject(capability);
     }
 
-    public static void ifPlayer(Entity entity, BiConsumer<PlayerEntity, Flight> action) {
+    public static void ifPlayer(Entity entity, BiConsumer<Player, Flight> action) {
         ifPlayer(entity, e -> true, action);
     }
 
-    public static void ifPlayer(Entity entity, Predicate<PlayerEntity> condition, BiConsumer<PlayerEntity, Flight> action) {
-        if (entity instanceof PlayerEntity) {
-            PlayerEntity player = (PlayerEntity) entity;
+    public static void ifPlayer(Entity entity, Predicate<Player> condition, BiConsumer<Player, Flight> action) {
+        if (entity instanceof Player) {
+            Player player = (Player) entity;
             get(player).filter(f -> condition.test(player))
                 .ifPresent(f -> action.accept(player, f));
         }
@@ -54,10 +54,10 @@ public final class Flights {
     @SubscribeEvent
     public static void onAttachCapabilities(AttachCapabilitiesEvent<Entity> event) {
         Entity entity = event.getObject();
-        if (entity instanceof PlayerEntity) {
+        if (entity instanceof Player) {
             Supplier<FlightDefault> factory = () -> {
                 FlightDefault flight = new FlightDefault();
-                WingsMod.instance().addFlightListeners((PlayerEntity) entity, flight);
+                WingsMod.instance().addFlightListeners((Player) entity, flight);
                 return flight;
             };
             FlightDefault flight = factory.get();
@@ -98,7 +98,7 @@ public final class Flights {
     @SubscribeEvent
     public static void onPlayerStartTracking(PlayerEvent.StartTracking event) {
         ifPlayer(event.getTarget(), (player, flight) ->
-            flight.sync(Flight.PlayerSet.ofPlayer((ServerPlayerEntity) event.getPlayer()))
+            flight.sync(Flight.PlayerSet.ofPlayer((ServerPlayer) event.getPlayer()))
         );
     }
 }

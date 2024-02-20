@@ -1,26 +1,26 @@
 package me.paulf.wings.server.apparatus;
 
 import me.paulf.wings.server.flight.Flight;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 
 public interface FlightApparatus {
     FlightApparatus NONE = new FlightApparatus() {
         @Override
-        public void onFlight(PlayerEntity player, Vector3d direction) {
+        public void onFlight(Player player, Vec3 direction) {
         }
 
         @Override
-        public void onLanding(PlayerEntity player, Vector3d direction) {
+        public void onLanding(Player player, Vec3 direction) {
         }
 
         @Override
-        public boolean isUsable(PlayerEntity player) {
+        public boolean isUsable(Player player) {
             return true;
         }
 
         @Override
-        public boolean isLandable(PlayerEntity player) {
+        public boolean isLandable(Player player) {
             return true;
         }
 
@@ -30,13 +30,13 @@ public interface FlightApparatus {
         }
     };
 
-    void onFlight(PlayerEntity player, Vector3d direction);
+    void onFlight(Player player, Vec3 direction);
 
-    void onLanding(PlayerEntity player, Vector3d direction);
+    void onLanding(Player player, Vec3 direction);
 
-    boolean isUsable(PlayerEntity player);
+    boolean isUsable(Player player);
 
-    boolean isLandable(PlayerEntity player);
+    boolean isLandable(Player player);
 
     FlightState createState(Flight flight);
 
@@ -44,6 +44,6 @@ public interface FlightApparatus {
         FlightState NONE = (player) -> {
         };
 
-        void onUpdate(PlayerEntity player);
+        void onUpdate(Player player);
     }
 }

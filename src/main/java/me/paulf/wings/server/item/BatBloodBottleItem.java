@@ -6,19 +6,21 @@ import me.paulf.wings.server.flight.Flight;
 import me.paulf.wings.server.flight.Flights;
 import me.paulf.wings.server.sound.WingsSounds;
 import net.minecraft.advancements.CriteriaTriggers;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.item.UseAction;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.UseAnim;
 import net.minecraft.stats.Stats;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.DrinkHelper;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.world.World;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.item.ItemUtils;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.level.Level;
+
+import net.minecraft.world.item.Item.Properties;
 
 public class BatBloodBottleItem extends Item {
     public BatBloodBottleItem(Properties properties) {
@@ -26,15 +28,15 @@ public class BatBloodBottleItem extends Item {
     }
 
     @Override
-    public ItemStack finishUsingItem(ItemStack stack, World world, LivingEntity living) {
-        if (living instanceof ServerPlayerEntity) {
-            CriteriaTriggers.CONSUME_ITEM.trigger((ServerPlayerEntity) living, stack);
-            if (removeWings((ServerPlayerEntity) living)) {
-                world.playSound(null, living.getX(), living.getY(), living.getZ(), WingsSounds.ITEM_ARMOR_EQUIP_WINGS.get(), SoundCategory.PLAYERS, 1.0F, 0.8F);
+    public ItemStack finishUsingItem(ItemStack stack, Level world, LivingEntity living) {
+        if (living instanceof ServerPlayer) {
+            CriteriaTriggers.CONSUME_ITEM.trigger((ServerPlayer) living, stack);
+            if (removeWings((ServerPlayer) living)) {
+                world.playSound(null, living.getX(), living.getY(), living.getZ(), WingsSounds.ITEM_ARMOR_EQUIP_WINGS.get(), SoundSource.PLAYERS, 1.0F, 0.8F);
             }
         }
-        if (living instanceof PlayerEntity) {
-            PlayerEntity player = (PlayerEntity) living;
+        if (living instanceof Player) {
+            Player player = (Player) living;
             player.awardStat(Stats.ITEM_USED.get(this));
             if (!player.abilities.instabuild) {
                 stack.shrink(1);
@@ -43,9 +45,9 @@ public class BatBloodBottleItem extends Item {
         if (stack.isEmpty()) {
             return new ItemStack(Items.GLASS_BOTTLE);
         }
-        if (living instanceof PlayerEntity && !((PlayerEntity) living).abilities.instabuild) {
+        if (living instanceof Player && !((Player) living).abilities.instabuild) {
             ItemStack emptyBottle = new ItemStack(Items.GLASS_BOTTLE);
-            PlayerEntity player = (PlayerEntity) living;
+            Player player = (Player) living;
             if (!player.inventory.add(emptyBottle)) {
                 player.drop(emptyBottle, false);
             }
@@ -59,20 +61,20 @@ public class BatBloodBottleItem extends Item {
     }
 
     @Override
-    public UseAction getUseAnimation(ItemStack stack) {
-        return UseAction.DRINK;
+    public UseAnim getUseAnimation(ItemStack stack) {
+        return UseAnim.DRINK;
     }
 
     @Override
-    public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
-        return DrinkHelper.useDrink(world, player, hand);
+    public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
+        return ItemUtils.useDrink(world, player, hand);
     }
 
-    public static boolean removeWings(ServerPlayerEntity player) {
+    public static boolean removeWings(ServerPlayer player) {
         return player.removeEffect(WingsEffects.WINGS.get());
     }
 
-    public static boolean removeWings(ServerPlayerEntity player, FlightApparatus wings) {
+    public static boolean removeWings(ServerPlayer player, FlightApparatus wings) {
         boolean changed = Flights.get(player).filter(flight -> flight.getWing() == wings).isPresent();
         return changed && player.removeEffect(WingsEffects.WINGS.get());
     }

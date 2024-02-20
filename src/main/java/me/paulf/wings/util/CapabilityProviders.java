@@ -2,8 +2,8 @@ package me.paulf.wings.util;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.Direction;
+import net.minecraft.nbt.Tag;
+import net.minecraft.core.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -32,14 +32,14 @@ public final class CapabilityProviders {
 
     public static <T> SingleBuilder<T> builder(Capability<T> capability) {
         return new NonSerializingSingleBuilderImpl<>(capability, capability.getDefaultInstance())
-            .serializedBy(new NBTSerializer<T, INBT>() {
+            .serializedBy(new NBTSerializer<T, Tag>() {
                 @Override
-                public INBT serialize(T instance) {
+                public Tag serialize(T instance) {
                     return capability.writeNBT(instance, null);
                 }
 
                 @Override
-                public T deserialize(INBT compound) {
+                public T deserialize(Tag compound) {
                     T instance = capability.getDefaultInstance();
                     capability.readNBT(instance, null, compound);
                     return instance;
@@ -111,7 +111,7 @@ public final class CapabilityProviders {
         private static final EmptySingleBuilder<?> INSTANCE = new EmptySingleBuilder<>();
 
         @Override
-        public <N extends INBT> SingleBuilder<T> serializedBy(NBTSerializer<T, N> serializer) {
+        public <N extends Tag> SingleBuilder<T> serializedBy(NBTSerializer<T, N> serializer) {
             return this;
         }
 
@@ -159,7 +159,7 @@ public final class CapabilityProviders {
         }
     }
 
-    private static final class SerializingSingleProvider<T, N extends INBT> extends SingleProvider<T> implements INBTSerializable<N> {
+    private static final class SerializingSingleProvider<T, N extends Tag> extends SingleProvider<T> implements INBTSerializable<N> {
         final NBTSerializer<T, N> serializer;
 
         private SerializingSingleProvider(Capability<? super T> capability, T instance, NBTSerializer<T, N> serializer) {
@@ -196,7 +196,7 @@ public final class CapabilityProviders {
     }
 
     public interface NonSerializingSingleBuilder<T> extends SingleBuilder<T> {
-        <N extends INBT> SingleBuilder<T> serializedBy(NBTSerializer<T, N> serializer);
+        <N extends Tag> SingleBuilder<T> serializedBy(NBTSerializer<T, N> serializer);
     }
 
     private static final class NonSerializingSingleBuilderImpl<T> extends AbstractSingleBuilder<T> implements NonSerializingSingleBuilder<T> {
@@ -205,7 +205,7 @@ public final class CapabilityProviders {
         }
 
         @Override
-        public <N extends INBT> SerializingSingleBuilderImpl<T, N> serializedBy(NBTSerializer<T, N> serializer) {
+        public <N extends Tag> SerializingSingleBuilderImpl<T, N> serializedBy(NBTSerializer<T, N> serializer) {
             return new SerializingSingleBuilderImpl<>(this.capability, this.instance, serializer);
         }
 
@@ -221,7 +221,7 @@ public final class CapabilityProviders {
         }
     }
 
-    private static final class SerializingSingleBuilderImpl<T, N extends INBT> extends AbstractSingleBuilder<T> implements SingleBuilder<T> {
+    private static final class SerializingSingleBuilderImpl<T, N extends Tag> extends AbstractSingleBuilder<T> implements SingleBuilder<T> {
         private final NBTSerializer<T, N> serializer;
 
         private SerializingSingleBuilderImpl(Capability<? super T> capability, T instance, NBTSerializer<T, N> serializer) {

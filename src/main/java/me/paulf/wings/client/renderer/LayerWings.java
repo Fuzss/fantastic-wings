@@ -1,30 +1,30 @@
 package me.paulf.wings.client.renderer;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import me.paulf.wings.client.flight.FlightViews;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.LivingRenderer;
-import net.minecraft.client.renderer.entity.layers.LayerRenderer;
-import net.minecraft.client.renderer.entity.model.BipedModel;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.client.renderer.entity.layers.RenderLayer;
+import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.entity.LivingEntity;
 
-public final class LayerWings extends LayerRenderer<LivingEntity, BipedModel<LivingEntity>> {
+public final class LayerWings extends RenderLayer<LivingEntity, HumanoidModel<LivingEntity>> {
     private final TransformFunction transform;
 
-    public LayerWings(LivingRenderer<LivingEntity, BipedModel<LivingEntity>> renderer, TransformFunction transform) {
+    public LayerWings(LivingEntityRenderer<LivingEntity, HumanoidModel<LivingEntity>> renderer, TransformFunction transform) {
         super(renderer);
         this.transform = transform;
     }
 
     @Override
-    public void render(MatrixStack matrixStack, IRenderTypeBuffer buffer, int packedLight, LivingEntity player, float limbSwing, float limbSwingAmount, float delta, float age, float headYaw, float headPitch) {
+    public void render(PoseStack matrixStack, MultiBufferSource buffer, int packedLight, LivingEntity player, float limbSwing, float limbSwingAmount, float delta, float age, float headYaw, float headPitch) {
         if (!player.isInvisible()) {
             FlightViews.get(player).ifPresent(flight -> {
                 flight.ifFormPresent(form -> {
-                    IVertexBuilder builder = buffer.getBuffer(RenderType.entityCutout(form.getTexture()));
+                    VertexConsumer builder = buffer.getBuffer(RenderType.entityCutout(form.getTexture()));
                     matrixStack.pushPose();
                     this.transform.apply(player, matrixStack);
                     form.render(matrixStack, builder, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F, delta);
@@ -36,6 +36,6 @@ public final class LayerWings extends LayerRenderer<LivingEntity, BipedModel<Liv
 
     @FunctionalInterface
     public interface TransformFunction {
-        void apply(LivingEntity player, MatrixStack stack);
+        void apply(LivingEntity player, PoseStack stack);
     }
 }

@@ -1,6 +1,6 @@
 package me.paulf.wings.server.asm;
 
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.living.LivingEvent;
 
 public final class GetLivingHeadLimitEvent extends LivingEvent {

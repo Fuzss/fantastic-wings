@@ -1,6 +1,6 @@
 package me.paulf.wings.server.asm;
 
-import net.minecraft.entity.Entity;
+import net.minecraft.world.entity.Entity;
 import net.minecraftforge.eventbus.api.Event;
 
 public final class GetCameraEyeHeightEvent extends Event {

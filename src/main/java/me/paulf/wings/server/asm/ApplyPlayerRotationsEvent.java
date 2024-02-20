@@ -1,21 +1,21 @@
 package me.paulf.wings.server.asm;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.entity.player.PlayerEntity;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 
 public class ApplyPlayerRotationsEvent extends PlayerEvent {
-    private final MatrixStack matrixStack;
+    private final PoseStack matrixStack;
 
     private final float delta;
 
-    public ApplyPlayerRotationsEvent(PlayerEntity player, MatrixStack matrixStack, float delta) {
+    public ApplyPlayerRotationsEvent(Player player, PoseStack matrixStack, float delta) {
         super(player);
         this.matrixStack = matrixStack;
         this.delta = delta;
     }
 
-    public MatrixStack getMatrixStack() {
+    public PoseStack getMatrixStack() {
         return this.matrixStack;
     }
 

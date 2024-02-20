@@ -1,6 +1,6 @@
 package me.paulf.wings.util;
 
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 
 public final class HandlerSlot {
