@@ -10,7 +10,7 @@ public final class ModelWingsInsectoid extends ModelWings<AnimatorInsectoid> {
     private final ModelPart wingLeft;
     private final ModelPart wingRight;
 
-    public ModelWingsInsectoid() {
+    public ModelWingsInsectoid(ModelPart modelPart) {
         this.texWidth = this.texHeight = 64;
         this.root = new ModelPart(this, 0, 0);
         this.wingLeft = new ModelPart(this, 0, 0);

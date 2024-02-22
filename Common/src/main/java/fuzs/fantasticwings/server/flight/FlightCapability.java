@@ -1,6 +1,7 @@
 package fuzs.fantasticwings.server.flight;
 
 import fuzs.fantasticwings.FantasticWings;
+import fuzs.fantasticwings.init.ModTags;
 import fuzs.fantasticwings.server.flight.apparatus.FlightApparatus;
 import fuzs.fantasticwings.server.network.ServerboundControlFlyingMessage;
 import fuzs.fantasticwings.util.CubicBezier;
@@ -9,6 +10,7 @@ import fuzs.puzzleslib.api.capability.v3.data.CapabilityComponent;
 import fuzs.puzzleslib.api.network.v3.PlayerSet;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -91,7 +93,8 @@ public final class FlightCapability extends CapabilityComponent<Player> {
     }
 
     public boolean canFly() {
-        return this.holder.flightApparatus().isUsable(this.getHolder());
+        return this.holder.flightApparatus().isUsable(this.getHolder()) && !this.getHolder().getItemBySlot(EquipmentSlot.CHEST).is(
+                ModTags.WING_OBSTRUCTIONS);
     }
 
     public boolean canLand() {
@@ -115,18 +118,16 @@ public final class FlightCapability extends CapabilityComponent<Player> {
                                 vy * speed + Y_BOOST * (player.getXRot() > 0.0F ? elevationBoost : 1.0D),
                                 vz * vxz * speed
                         ));
+                if (!this.holder.flightApparatus().isUsable(player)) {
+                    this.setIsFlying(false);
+                }
             }
             if (this.canLand()) {
-                Vec3 mot = player.getDeltaMovement();
-                if (mot.y() < 0.0D) {
-                    player.setDeltaMovement(mot.multiply(1.0D, FALL_REDUCTION, 1.0D));
+                Vec3 deltaMovement = player.getDeltaMovement();
+                if (deltaMovement.y() < 0.0D) {
+                    player.setDeltaMovement(deltaMovement.multiply(1.0D, FALL_REDUCTION, 1.0D));
                 }
                 player.fallDistance = 0.0F;
-            }
-        }
-        if (!player.level().isClientSide) {
-            if (!this.holder.flightApparatus().isUsable(player) && this.isFlying()) {
-                this.setIsFlying(false);
             }
         }
     }

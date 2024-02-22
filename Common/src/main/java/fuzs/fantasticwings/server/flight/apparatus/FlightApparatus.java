@@ -22,12 +22,12 @@ public interface FlightApparatus {
 
         @Override
         public boolean isUsable(Player player) {
-            return true;
+            return false;
         }
 
         @Override
         public boolean isLandable(Player player) {
-            return true;
+            return false;
         }
     };
 

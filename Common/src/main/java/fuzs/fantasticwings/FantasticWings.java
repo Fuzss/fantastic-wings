@@ -2,6 +2,7 @@ package fuzs.fantasticwings;
 
 import fuzs.fantasticwings.init.ModMobEffects;
 import fuzs.fantasticwings.server.ServerEventHandler;
+import fuzs.fantasticwings.server.command.WingsCommand;
 import fuzs.fantasticwings.server.config.ServerConfig;
 import fuzs.fantasticwings.server.flight.apparatus.FlightApparatusImpl;
 import fuzs.fantasticwings.server.network.ServerboundControlFlyingMessage;
@@ -36,7 +37,7 @@ public class FantasticWings implements ModConstructor {
     }
 
     private static void registerEventHandlers() {
-        RegisterCommandsCallback.EVENT.register(ServerEventHandler::onRegisterCommands);
+        RegisterCommandsCallback.EVENT.register((dispatcher, context, environment) -> WingsCommand.register(dispatcher));
         EntityRidingEvents.START.register(ServerEventHandler::onStartRiding);
         PlayerTickEvents.END.register(ServerEventHandler::onEndPlayerTick);
         UseItemEvents.START.register(ServerEventHandler::onUseItemStart);

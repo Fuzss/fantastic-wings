@@ -3,6 +3,7 @@ package fuzs.fantasticwings.client;
 import com.mojang.blaze3d.platform.InputConstants;
 import fuzs.fantasticwings.FantasticWings;
 import fuzs.fantasticwings.client.handler.ClientEventHandler;
+import fuzs.fantasticwings.client.handler.FlyingCrouchHandler;
 import fuzs.fantasticwings.client.init.ModClientCapabilities;
 import fuzs.fantasticwings.client.init.WingFormRegistry;
 import fuzs.fantasticwings.client.renderer.entity.layers.LayerWings;
@@ -14,6 +15,8 @@ import fuzs.puzzleslib.api.client.core.v1.context.KeyMappingsContext;
 import fuzs.puzzleslib.api.client.core.v1.context.LivingEntityRenderLayersContext;
 import fuzs.puzzleslib.api.client.event.v1.entity.ClientEntityLevelEvents;
 import fuzs.puzzleslib.api.client.event.v1.renderer.ComputeCameraAnglesCallback;
+import fuzs.puzzleslib.api.client.event.v1.renderer.RenderHandCallback;
+import fuzs.puzzleslib.api.client.event.v1.renderer.RenderPlayerEvents;
 import fuzs.puzzleslib.api.client.key.v1.KeyActivationHandler;
 import fuzs.puzzleslib.api.client.key.v1.KeyMappingHelper;
 import fuzs.puzzleslib.api.core.v1.context.AddReloadListenersContext;
@@ -24,7 +27,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.EntityType;
 
 public class FantasticWingsClient implements ClientModConstructor {
-    public static final KeyMapping FLY_KEY_MAPPING = KeyMappingHelper.registerKeyMapping(FantasticWings.id("fly"), InputConstants.KEY_R);
+    public static final KeyMapping FLY_KEY_MAPPING = KeyMappingHelper.registerKeyMapping(FantasticWings.id("fly"),
+            InputConstants.KEY_R
+    );
 
     @Override
     public void onConstructMod() {
@@ -36,6 +41,9 @@ public class FantasticWingsClient implements ClientModConstructor {
         ComputeCameraAnglesCallback.EVENT.register(ClientEventHandler::onComputeCameraAngles);
         ClientEntityLevelEvents.LOAD.register(ClientEventHandler::onEntityLoad);
         PlayerTickEvents.END.register(ClientEventHandler::onEndPlayerTick);
+        RenderHandCallback.EVENT.register(ClientEventHandler::onRenderHand);
+        RenderPlayerEvents.BEFORE.register(FlyingCrouchHandler::onBeforeRenderPlayer);
+        RenderPlayerEvents.AFTER.register(FlyingCrouchHandler::onAfterRenderPlayer);
     }
 
     @Override

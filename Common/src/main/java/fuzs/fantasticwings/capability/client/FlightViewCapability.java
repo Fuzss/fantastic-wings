@@ -30,12 +30,8 @@ public final class FlightViewCapability extends CapabilityComponent<AbstractClie
         this.animator.update(this.getFlight(), this.getHolder());
     }
 
-    public float tickEyeHeight(float eyeHeight) {
-        if (this.getFlight().isFlying() || (this.getFlight().getFlyingAmount(1.0F) > 0.0F && this.getHolder().getPose() == Pose.FALL_FLYING)) {
-            return 1.0F;
-        } else {
-            return eyeHeight;
-        }
+    public boolean resetEyeHeight() {
+        return this.getFlight().isFlying() || (this.getFlight().getFlyingAmount(1.0F) > 0.0F && this.getHolder().getPose() == Pose.FALL_FLYING);
     }
 
     public FlightCapability getFlight() {
