@@ -1,6 +1,4 @@
 {
-  "key.categories.wings": "Wings",
-  "key.wings.fly": "Fly",
   "item.wings.angel_wings_bottle": "Angel Wings Bottle",
   "item.wings.slime_wings_bottle": "Slime Wings Bottle",
   "item.wings.blue_butterfly_wings_bottle": "Blue Butterfly Wings Bottle",
@@ -19,12 +17,5 @@
   "commands.wings.give.failed": "Unable to apply wings (target already has specified wings)",
   "commands.wings.take.failed": "Target doesn't have wings to remove",
   "wings.wingsNotFound": "No such wings: %s",
-  "wings.dreamcatcher.jiu": "JiU's Wings",
-  "wings.dreamcatcher.sua": "SuA's Wings",
-  "wings.dreamcatcher.siyeon": "Siyeon's Wings",
-  "wings.dreamcatcher.handong": "Handong's Wings",
-  "wings.dreamcatcher.yoohyeon": "Yoohyeon's Wings",
-  "wings.dreamcatcher.dami": "Dami's Wings",
-  "wings.dreamcatcher.gahyeon": "Gahyeon's Wings",
   "subtitles.wings.item.armor.equip_wings": "Wings rustle"
 }

@@ -2,7 +2,7 @@ package fuzs.fantasticwings.client.model;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import fuzs.fantasticwings.client.flight.Animator;
+import fuzs.fantasticwings.client.animator.Animator;
 import fuzs.fantasticwings.util.MathHelper;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.model.Model;
@@ -11,6 +11,7 @@ import net.minecraft.world.phys.Vec3;
 
 
 public abstract class ModelWings<A extends Animator> extends Model {
+
     public ModelWings() {
         super(RenderType::entityCutout);
     }

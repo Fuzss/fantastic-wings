@@ -2,11 +2,11 @@ package fuzs.fantasticwings.client.handler;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import fuzs.fantasticwings.capability.client.FlightViewCapability;
+import fuzs.fantasticwings.client.flight.FlightViewCapability;
 import fuzs.fantasticwings.client.audio.WingsSound;
 import fuzs.fantasticwings.client.init.ModClientCapabilities;
 import fuzs.fantasticwings.init.ModCapabilities;
-import fuzs.fantasticwings.server.flight.FlightCapability;
+import fuzs.fantasticwings.flight.FlightCapability;
 import fuzs.fantasticwings.util.MathHelper;
 import fuzs.puzzleslib.api.event.v1.core.EventResult;
 import fuzs.puzzleslib.api.event.v1.data.MutableFloat;

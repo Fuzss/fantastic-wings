@@ -1,8 +1,8 @@
 package fuzs.fantasticwings.mixin;
 
 import fuzs.fantasticwings.init.ModCapabilities;
-import fuzs.fantasticwings.server.ServerEventHandler;
-import fuzs.fantasticwings.server.flight.FlightCapability;
+import fuzs.fantasticwings.handler.ServerEventHandler;
+import fuzs.fantasticwings.flight.FlightCapability;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;

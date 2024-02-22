@@ -8,14 +8,23 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public final class Model3DTexture extends ModelPart.Cube {
 
-    private Model3DTexture(
-        float posX, float posY, float posZ,
-        int width, int height,
-        float u1, float v1,
-        float u2, float v2,
-        int textureWidth, int textureHeight
-    ) {
-        super(0, 0, posX, posY, posZ, 0, 0, 0, 0.0F, 0.0F, 0.0F, false, textureWidth, textureHeight, EnumSet.allOf(Direction.class));
+    private Model3DTexture(float posX, float posY, float posZ, int width, int height, float u1, float v1, float u2, float v2, int textureWidth, int textureHeight) {
+        super(0,
+                0,
+                posX,
+                posY,
+                posZ,
+                0,
+                0,
+                0,
+                0.0F,
+                0.0F,
+                0.0F,
+                false,
+                textureWidth,
+                textureHeight,
+                EnumSet.allOf(Direction.class)
+        );
         int faceCount = 2 + 2 * width + 2 * height;
         ModelPart.Polygon[] polygons = new ModelPart.Polygon[faceCount];
         float x0 = this.minX;
@@ -54,14 +63,23 @@ public final class Model3DTexture extends ModelPart.Cube {
 
     private static FaceAdder getFaceAdder(ModelPart.Polygon[] polygons) {
         AtomicInteger polygonIndex = new AtomicInteger();
-        return (float fx0, float fy0, float fz0, float fx1, float fy1, float fz1, float fu1, float fv1, float fu2, float fv2, Direction normal) -> {
+        return (float x0, float y0, float z0, float x1, float y1, float z1, float u1, float v1, float u2, float v2, Direction normal) -> {
             ModelPart.Vertex[] vertices = new ModelPart.Vertex[4];
             boolean vertical = normal.getAxis().isVertical();
-            vertices[0] = new ModelPart.Vertex(fx1, fy0, fz0, 0.0F, 0.0F);
-            vertices[1] = new ModelPart.Vertex(fx0, fy0, vertical ? fz0 : fz1, 0.0F, 0.0F);
-            vertices[2] = new ModelPart.Vertex(fx0, fy1, fz1, 0.0F, 0.0F);
-            vertices[3] = new ModelPart.Vertex(fx1, fy1, vertical ? fz1 : fz0, 0.0F, 0.0F);
-            polygons[polygonIndex.getAndIncrement()] = new ModelPart.Polygon(vertices, fu1, fv1, fu2, fv2, 64, 64, false, normal);
+            vertices[0] = new ModelPart.Vertex(x1, y0, z0, 0.0F, 0.0F);
+            vertices[1] = new ModelPart.Vertex(x0, y0, vertical ? z0 : z1, 0.0F, 0.0F);
+            vertices[2] = new ModelPart.Vertex(x0, y1, z1, 0.0F, 0.0F);
+            vertices[3] = new ModelPart.Vertex(x1, y1, vertical ? z1 : z0, 0.0F, 0.0F);
+            polygons[polygonIndex.getAndIncrement()] = new ModelPart.Polygon(vertices,
+                    u1,
+                    v1,
+                    u2,
+                    v2,
+                    64,
+                    64,
+                    false,
+                    normal
+            );
         };
     }
 
@@ -71,18 +89,18 @@ public final class Model3DTexture extends ModelPart.Cube {
         void add(float x, float y, float z, float x2, float y2, float z2, float u1, float v1, float u2, float v2, Direction normal);
     }
 
-    public static Model3DTexture create(
-        float posX, float posY, float posZ,
-        int width, int height,
-        int u, int v,
-        int textureWidth, int textureHeight
-    ) {
-        return new Model3DTexture(
-            posX, posY, posZ,
-            width, height,
-            (float) u, (float) v,
-            (float) (u + width), (float) (v + height),
-                textureWidth, textureHeight
+    public static Model3DTexture create(float posX, float posY, float posZ, int width, int height, int u, int v, int textureWidth, int textureHeight) {
+        return new Model3DTexture(posX,
+                posY,
+                posZ,
+                width,
+                height,
+                (float) u,
+                (float) v,
+                (float) (u + width),
+                (float) (v + height),
+                textureWidth,
+                textureHeight
         );
     }
 }

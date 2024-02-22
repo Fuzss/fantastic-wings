@@ -3,7 +3,7 @@ package fuzs.fantasticwings.client.model;
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import fuzs.fantasticwings.client.flight.AnimatorAvian;
+import fuzs.fantasticwings.client.animator.AnimatorAvian;
 import net.minecraft.client.model.geom.ModelPart;
 
 public final class ModelWingsAvian extends ModelWings<AnimatorAvian> {
@@ -11,7 +11,7 @@ public final class ModelWingsAvian extends ModelWings<AnimatorAvian> {
     private final ImmutableList<ModelPart> bonesLeft, bonesRight;
     private final ImmutableList<ModelPart> feathersLeft, feathersRight;
 
-    public ModelWingsAvian() {
+    public ModelWingsAvian(ModelPart modelPart) {
         this.texWidth = this.texHeight = 64;
         this.root = new ModelPart(this, 0, 0);
         ModelPart coracoidLeft = new ModelPart(this, 0, 28);

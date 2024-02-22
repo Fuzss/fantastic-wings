@@ -2,9 +2,9 @@ package fuzs.fantasticwings.world.effect;
 
 import fuzs.fantasticwings.init.ModCapabilities;
 import fuzs.fantasticwings.init.ModSoundEvents;
-import fuzs.fantasticwings.server.flight.FlightCapability;
-import fuzs.fantasticwings.server.flight.apparatus.FlightApparatus;
-import fuzs.fantasticwings.server.flight.apparatus.FlightApparatusImpl;
+import fuzs.fantasticwings.flight.FlightCapability;
+import fuzs.fantasticwings.flight.apparatus.FlightApparatus;
+import fuzs.fantasticwings.flight.apparatus.FlightApparatusImpl;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.InstantenousMobEffect;
@@ -13,8 +13,8 @@ import net.minecraft.world.entity.LivingEntity;
 
 public class WingsMobEffect extends InstantenousMobEffect {
 
-    public WingsMobEffect(MobEffectCategory category) {
-        super(category, 0x97CAE4);
+    public WingsMobEffect(MobEffectCategory category, int color) {
+        super(category, color);
     }
 
     @Override

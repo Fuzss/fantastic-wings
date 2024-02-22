@@ -1,6 +1,6 @@
 package fuzs.fantasticwings.client.audio;
 
-import fuzs.fantasticwings.server.flight.FlightCapability;
+import fuzs.fantasticwings.flight.FlightCapability;
 import fuzs.fantasticwings.init.ModSoundEvents;
 import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;

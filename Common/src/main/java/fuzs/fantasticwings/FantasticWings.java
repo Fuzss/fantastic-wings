@@ -1,11 +1,14 @@
 package fuzs.fantasticwings;
 
+import fuzs.fantasticwings.init.ModCapabilities;
 import fuzs.fantasticwings.init.ModMobEffects;
-import fuzs.fantasticwings.server.ServerEventHandler;
-import fuzs.fantasticwings.server.command.WingsCommand;
-import fuzs.fantasticwings.server.config.ServerConfig;
-import fuzs.fantasticwings.server.flight.apparatus.FlightApparatusImpl;
-import fuzs.fantasticwings.server.network.ServerboundControlFlyingMessage;
+import fuzs.fantasticwings.init.ModSoundEvents;
+import fuzs.fantasticwings.init.ModTags;
+import fuzs.fantasticwings.handler.ServerEventHandler;
+import fuzs.fantasticwings.commands.WingsCommand;
+import fuzs.fantasticwings.config.ServerConfig;
+import fuzs.fantasticwings.flight.apparatus.FlightApparatusImpl;
+import fuzs.fantasticwings.network.ServerboundControlFlyingMessage;
 import fuzs.puzzleslib.api.config.v3.ConfigHolder;
 import fuzs.puzzleslib.api.core.v1.ModConstructor;
 import fuzs.puzzleslib.api.core.v1.context.CreativeModeTabContext;
@@ -33,6 +36,10 @@ public class FantasticWings implements ModConstructor {
 
     @Override
     public void onConstructMod() {
+        ModMobEffects.touch();
+        ModSoundEvents.touch();
+        ModTags.touch();
+        ModCapabilities.touch();
         registerEventHandlers();
     }
 

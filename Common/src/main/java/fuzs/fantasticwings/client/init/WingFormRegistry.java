@@ -1,13 +1,15 @@
 package fuzs.fantasticwings.client.init;
 
-import fuzs.fantasticwings.client.apparatus.WingForm;
-import fuzs.fantasticwings.client.flight.Animator;
-import fuzs.fantasticwings.client.flight.AnimatorAvian;
-import fuzs.fantasticwings.client.flight.AnimatorInsectoid;
+import fuzs.fantasticwings.client.animator.Animator;
+import fuzs.fantasticwings.client.animator.AnimatorAvian;
+import fuzs.fantasticwings.client.animator.AnimatorInsectoid;
+import fuzs.fantasticwings.client.flight.apparatus.WingForm;
 import fuzs.fantasticwings.client.model.ModelWings;
 import fuzs.fantasticwings.client.model.ModelWingsAvian;
 import fuzs.fantasticwings.client.model.ModelWingsInsectoid;
-import fuzs.fantasticwings.server.flight.apparatus.FlightApparatusImpl;
+import fuzs.fantasticwings.flight.apparatus.FlightApparatusImpl;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
@@ -17,6 +19,7 @@ import java.util.function.Supplier;
 public class WingFormRegistry implements ResourceManagerReloadListener {
     public static final WingFormRegistry INSTANCE = new WingFormRegistry();
 
+    private final Minecraft minecraft = Minecraft.getInstance();
     private ModelWings<AnimatorAvian> avianWings;
     private ModelWings<AnimatorInsectoid> insectoidWings;
 
@@ -26,8 +29,9 @@ public class WingFormRegistry implements ResourceManagerReloadListener {
 
     @Override
     public void onResourceManagerReload(ResourceManager resourceManager) {
-        this.avianWings = new ModelWingsAvian();
-        this.insectoidWings = new ModelWingsInsectoid();
+        EntityModelSet entityModels = this.minecraft.getEntityModels();
+        this.avianWings = new ModelWingsAvian(entityModels.bakeLayer(ModModelLayers.AVIAN_WINGS));
+        this.insectoidWings = new ModelWingsInsectoid(entityModels.bakeLayer(ModModelLayers.INSECTOID_WINGS));
     }
 
     public void registerAll() {
@@ -41,6 +45,7 @@ public class WingFormRegistry implements ResourceManagerReloadListener {
         WingForm.register(FlightApparatusImpl.FIRE, this::createAvianWings);
         WingForm.register(FlightApparatusImpl.MONARCH_BUTTERFLY, this::createInsectoidWings);
         WingForm.register(FlightApparatusImpl.SLIME, this::createInsectoidWings);
+        WingForm.register(FlightApparatusImpl.METALLIC, this::createAvianWings);
     }
 
     private WingForm<AnimatorAvian> createAvianWings(ResourceLocation resourceLocation) {

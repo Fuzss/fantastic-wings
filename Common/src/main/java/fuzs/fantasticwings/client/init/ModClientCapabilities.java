@@ -1,7 +1,7 @@
 package fuzs.fantasticwings.client.init;
 
 import fuzs.fantasticwings.FantasticWings;
-import fuzs.fantasticwings.capability.client.FlightViewCapability;
+import fuzs.fantasticwings.client.flight.FlightViewCapability;
 import fuzs.puzzleslib.api.capability.v3.CapabilityController;
 import fuzs.puzzleslib.api.capability.v3.data.EntityCapabilityKey;
 import net.minecraft.client.player.AbstractClientPlayer;

@@ -1,7 +1,7 @@
 package fuzs.fantasticwings.init;
 
 import fuzs.fantasticwings.FantasticWings;
-import fuzs.fantasticwings.server.flight.FlightCapability;
+import fuzs.fantasticwings.flight.FlightCapability;
 import fuzs.puzzleslib.api.capability.v3.CapabilityController;
 import fuzs.puzzleslib.api.capability.v3.data.EntityCapabilityKey;
 import fuzs.puzzleslib.api.capability.v3.data.SyncStrategy;
