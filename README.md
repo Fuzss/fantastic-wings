@@ -1,6 +1,5 @@
-# Wings
+# Fantastic Wings
 
-[![GitHub](https://img.shields.io/github/license/pau101/Wings.svg)](https://github.com/pau101/Wings/blob/master/LICENSE.md)
-[![](http://cf.way2muchnoise.eu/full_wings_downloads.svg)](https://minecraft.curseforge.com/projects/wings)
+A Minecraft mod. Downloads can be found on [CurseForge](https://www.curseforge.com/members/fuzs_/projects) and [Modrinth](https://modrinth.com/user/Fuzs).
 
-Wings is a Forge mod for Minecraft: Java Edition which introduces an assortment of avian and insectoid wings for aerial travel.
+![](https://raw.githubusercontent.com/Fuzss/modresources/main/pages/data/fantasticwings/banner.png)
