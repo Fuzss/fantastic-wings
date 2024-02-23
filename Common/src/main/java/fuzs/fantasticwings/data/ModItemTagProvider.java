@@ -1,6 +1,6 @@
 package fuzs.fantasticwings.data;
 
-import fuzs.fantasticwings.init.ModTags;
+import fuzs.fantasticwings.init.ModRegistry;
 import fuzs.puzzleslib.api.data.v2.AbstractTagProvider;
 import fuzs.puzzleslib.api.data.v2.core.DataProviderContext;
 import net.minecraft.core.HolderLookup;
@@ -14,6 +14,6 @@ public class ModItemTagProvider extends AbstractTagProvider.Items {
 
     @Override
     public void addTags(HolderLookup.Provider provider) {
-        this.tag(ModTags.WING_OBSTRUCTIONS).add(Items.ELYTRA);
+        this.tag(ModRegistry.WING_OBSTRUCTIONS).add(Items.ELYTRA);
     }
 }

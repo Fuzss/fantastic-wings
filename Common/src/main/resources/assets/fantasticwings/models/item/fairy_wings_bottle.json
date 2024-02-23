@@ -1,6 +1,0 @@
-{
-  "parent": "item/generated",
-  "textures": {
-    "layer0": "wings:item/fairy_wings_bottle"
-  }
-}

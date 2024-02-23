@@ -26,11 +26,11 @@ public final class ModelWingsInsectoid extends ModelWings<AnimatorInsectoid> {
         PartDefinition partDefinition = meshDefinition.getRoot();
         partDefinition.addOrReplaceChild("left_wing",
                 CubeListBuilder.create().texOffs(0, 0).addBox(0.0F, -8.0F, 0.0F, 19.0F, 24.0F, 0.0F),
-                PartPose.offset(0.0F, 2.0F, 3.5F)
+                PartPose.offset(0.0F, 2.0F, 2.5F)
         );
         partDefinition.addOrReplaceChild("right_wing",
                 CubeListBuilder.create().texOffs(0, 24).addBox(-19.0F, -8.0F, 0.0F, 19.0F, 24.0F, 0.0F),
-                PartPose.offset(0.0F, 2.0F, 3.5F)
+                PartPose.offset(0.0F, 2.0F, 2.5F)
         );
         return LayerDefinition.create(meshDefinition, 64, 64);
     }

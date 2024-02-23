@@ -76,6 +76,6 @@ public abstract class State {
     }
 
     protected State getDescent(FlightCapability flight, Player player) {
-        return flight.canLand() ? this.createLand() : this.createFall();
+        return flight.canSlowlyDescend() ? this.createLand() : this.createFall();
     }
 }

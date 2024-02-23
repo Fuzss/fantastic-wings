@@ -1,7 +1,6 @@
 package fuzs.fantasticwings.world.effect;
 
-import fuzs.fantasticwings.init.ModCapabilities;
-import fuzs.fantasticwings.init.ModSoundEvents;
+import fuzs.fantasticwings.init.ModRegistry;
 import fuzs.fantasticwings.flight.FlightCapability;
 import fuzs.fantasticwings.flight.apparatus.FlightApparatus;
 import fuzs.fantasticwings.flight.apparatus.FlightApparatusImpl;
@@ -28,7 +27,7 @@ public class WingsMobEffect extends InstantenousMobEffect {
                                 serverPlayer.getX(),
                                 serverPlayer.getY(),
                                 serverPlayer.getZ(),
-                                ModSoundEvents.ITEM_ARMOR_EQUIP_WINGS.value(),
+                                ModRegistry.ITEM_ARMOR_EQUIP_WINGS.value(),
                                 SoundSource.PLAYERS,
                                 1.0F,
                                 this.isBeneficial() ? 1.0F : 0.8F
@@ -42,7 +41,7 @@ public class WingsMobEffect extends InstantenousMobEffect {
     }
 
     public static boolean giveWings(ServerPlayer serverPlayer, FlightApparatus.Holder flightApparatus) {
-        FlightCapability flightCapability = ModCapabilities.FLIGHT_CAPABILITY.get(serverPlayer);
+        FlightCapability flightCapability = ModRegistry.FLIGHT_CAPABILITY.get(serverPlayer);
         if (!flightCapability.getWings().is(flightApparatus)) {
             flightCapability.setWings(flightApparatus);
             return true;
@@ -56,9 +55,9 @@ public class WingsMobEffect extends InstantenousMobEffect {
     }
 
     public static boolean takeWings(ServerPlayer serverPlayer, FlightApparatus.Holder flightApparatus) {
-        FlightCapability flightCapability = ModCapabilities.FLIGHT_CAPABILITY.get(serverPlayer);
-        if (flightApparatus.isEmpty() || flightCapability.getWings().is(flightApparatus)) {
-            flightCapability.setWings(flightApparatus);
+        FlightCapability flightCapability = ModRegistry.FLIGHT_CAPABILITY.get(serverPlayer);
+        if (!flightCapability.getWings().isEmpty() && (flightApparatus.isEmpty() || flightCapability.getWings().is(flightApparatus))) {
+            flightCapability.setWings(FlightApparatus.Holder.empty());
             return true;
         } else {
             return false;

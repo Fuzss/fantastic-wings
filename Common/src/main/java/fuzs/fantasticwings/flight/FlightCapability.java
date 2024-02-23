@@ -2,7 +2,7 @@ package fuzs.fantasticwings.flight;
 
 import fuzs.fantasticwings.FantasticWings;
 import fuzs.fantasticwings.flight.apparatus.FlightApparatus;
-import fuzs.fantasticwings.init.ModTags;
+import fuzs.fantasticwings.init.ModRegistry;
 import fuzs.fantasticwings.network.ServerboundControlFlyingMessage;
 import fuzs.fantasticwings.util.CubicBezier;
 import fuzs.fantasticwings.util.MathHelper;
@@ -25,6 +25,7 @@ public final class FlightCapability extends CapabilityComponent<Player> {
     private static final float MIN_SPEED = 0.03F;
     private static final float MAX_SPEED = 0.0715F;
     private static final float Y_BOOST = 0.05F;
+    private static final float MANUAL_Y_BOOST = 0.06F;
     private static final float FALL_REDUCTION = 0.9F;
     private static final float PITCH_OFFSET = 30.0F;
 
@@ -58,12 +59,8 @@ public final class FlightCapability extends CapabilityComponent<Player> {
     public void setTimeFlying(int timeFlying) {
         if (this.timeFlying != timeFlying) {
             this.timeFlying = timeFlying;
-            this.setChanged();
+            this.setChanged(PlayerSet.ofNone());
         }
-    }
-
-    public int getTimeFlying() {
-        return this.timeFlying;
     }
 
     public void setWings(FlightApparatus.Holder flightApparatus) {
@@ -78,32 +75,31 @@ public final class FlightCapability extends CapabilityComponent<Player> {
     }
 
     public float getFlyingAmount(float delta) {
-        return FLY_AMOUNT_CURVE.eval(MathHelper.lerp(this.getPrevTimeFlying(),
-                this.getTimeFlying(),
-                delta
-        ) / MAX_TIME_FLYING);
+        return FLY_AMOUNT_CURVE.eval(MathHelper.lerp(this.prevTimeFlying, this.timeFlying, delta) / MAX_TIME_FLYING);
     }
 
-    private void setPrevTimeFlying(int prevTimeFlying) {
-        this.prevTimeFlying = prevTimeFlying;
-    }
-
-    private int getPrevTimeFlying() {
-        return this.prevTimeFlying;
+    public boolean canUseWings() {
+        return !this.getHolder().getAbilities().flying && !this.getHolder()
+                .getItemBySlot(EquipmentSlot.CHEST)
+                .is(ModRegistry.WING_OBSTRUCTIONS);
     }
 
     public boolean canFly() {
-        return this.holder.flightApparatus().isUsable(this.getHolder()) && !this.getHolder().getItemBySlot(EquipmentSlot.CHEST).is(
-                ModTags.WING_OBSTRUCTIONS);
+        return this.holder.flightApparatus().isUsableForFlying(this.getHolder()) && this.canUseWings();
     }
 
-    public boolean canLand() {
-        return this.holder.flightApparatus().isLandable(this.getHolder());
+    public boolean canSlowlyDescend() {
+        return this.holder.flightApparatus()
+                .isUsableForSlowlyDescending(this.getHolder()) && this.canUseWings() && (this.isFlying() || !this.getHolder()
+                .isDescending() && !this.getHolder().getAbilities().mayfly);
     }
 
     private void onWornUpdate() {
         Player player = this.getHolder();
-        if (!player.level().isClientSide) {
+        if (!player.level().isClientSide && this.isFlying() && !this.canFly()) {
+            this.setIsFlying(false);
+        }
+        if (player.isEffectiveAi()) {
             if (this.isFlying()) {
                 float speed = Mth.clampedLerp(MIN_SPEED, MAX_SPEED, player.zza);
                 float elevationBoost = MathHelper.transform(Math.abs(player.getXRot()), 45.0F, 90.0F, 1.0F, 0.0F);
@@ -118,11 +114,15 @@ public final class FlightCapability extends CapabilityComponent<Player> {
                                 vy * speed + Y_BOOST * (player.getXRot() > 0.0F ? elevationBoost : 1.0D),
                                 vz * vxz * speed
                         ));
-                if (!this.holder.flightApparatus().isUsable(player)) {
-                    this.setIsFlying(false);
+                // similar to swimming where jumping and sneaking help with ascending / descending
+                if (player.jumping) {
+                    // with the elevation boost this can get quite crazy, so don't add as much as when descending
+                    player.setDeltaMovement(player.getDeltaMovement().add(0.0, MANUAL_Y_BOOST / 2.0F, 0.0));
+                } else if (player.isDescending()) {
+                    player.setDeltaMovement(player.getDeltaMovement().add(0.0, -MANUAL_Y_BOOST, 0.0));
                 }
             }
-            if (this.canLand()) {
+            if (this.canSlowlyDescend()) {
                 Vec3 deltaMovement = player.getDeltaMovement();
                 if (deltaMovement.y() < 0.0D) {
                     player.setDeltaMovement(deltaMovement.multiply(1.0D, FALL_REDUCTION, 1.0D));
@@ -134,35 +134,30 @@ public final class FlightCapability extends CapabilityComponent<Player> {
 
     public void tick() {
         Player player = this.getHolder();
-        if (this.canFly() || player.level().isClientSide) {
+        if (!this.holder.isEmpty() || !player.isEffectiveAi()) {
             this.onWornUpdate();
-        } else if (!player.level().isClientSide) {
-            this.setWings(FlightApparatus.Holder.empty());
-            if (this.isFlying()) {
-                this.setIsFlying(false);
-            }
+        } else if (!player.level().isClientSide && this.isFlying()) {
+            this.setIsFlying(false);
         }
-        this.setPrevTimeFlying(this.getTimeFlying());
+        this.prevTimeFlying = this.timeFlying;
         if (this.isFlying()) {
-            if (this.getTimeFlying() < MAX_TIME_FLYING) {
-                this.setTimeFlying(this.getTimeFlying() + 1);
+            if (this.timeFlying < MAX_TIME_FLYING) {
+                this.setTimeFlying(this.timeFlying + 1);
             } else if (player.isLocalPlayer() && player.onGround()) {
                 this.setIsFlying(false, PlayerSet.ofNone());
                 FantasticWings.NETWORK.sendMessage(new ServerboundControlFlyingMessage(false));
             }
-        } else {
-            if (this.getTimeFlying() > INITIAL_TIME_FLYING) {
-                this.setTimeFlying(this.getTimeFlying() - 1);
-            }
+        } else if (this.timeFlying > INITIAL_TIME_FLYING) {
+            this.setTimeFlying(this.timeFlying - 1);
         }
     }
 
     public void onFlown(Vec3 direction) {
         Player player = this.getHolder();
         if (this.isFlying()) {
-            this.holder.flightApparatus().onFlight(player, direction);
-        } else if (player.getDeltaMovement().y() < -0.5) {
-            this.holder.flightApparatus().onLanding(player, direction);
+            this.holder.flightApparatus().onFlying(player, direction);
+        } else if (this.canSlowlyDescend() && player.getDeltaMovement().y() < -0.5) {
+            this.holder.flightApparatus().onSlowlyDescending(player, direction);
         }
     }
 
@@ -170,13 +165,13 @@ public final class FlightCapability extends CapabilityComponent<Player> {
     public void write(CompoundTag compoundTag) {
         compoundTag.putBoolean(KEY_IS_FLYING, this.isFlying);
         compoundTag.putInt(KEY_TIME_FLYING, this.timeFlying);
-        compoundTag.put(KEY_WING_TYPE, this.holder.writeToNBTTag());
+        compoundTag.put(KEY_WING_TYPE, this.holder.writeToNbtTag());
     }
 
     @Override
     public void read(CompoundTag compoundTag) {
         this.isFlying = compoundTag.getBoolean(KEY_IS_FLYING);
-        this.setTimeFlying(compoundTag.getInt(KEY_TIME_FLYING));
-        this.holder = FlightApparatus.Holder.readFromNBTTag(compoundTag.getCompound(KEY_WING_TYPE));
+        this.timeFlying = compoundTag.getInt(KEY_TIME_FLYING);
+        this.holder = FlightApparatus.Holder.readFromNbtTag(compoundTag.getCompound(KEY_WING_TYPE));
     }
 }

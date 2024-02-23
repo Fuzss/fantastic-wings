@@ -2,11 +2,11 @@ package fuzs.fantasticwings.flight.apparatus;
 
 public interface WingSettings {
 
-    int getRequiredFlightSatiation();
+    int getRequiredFoodLevelForFlying();
 
-    float getFlyingExertion();
+    float getExhaustionFromFlying();
 
-    int getRequiredLandSatiation();
+    int getRequiredFoodLevelForSlowlyDescending();
 
-    float getLandingExertion();
+    float getExhaustionFromSlowlyDescending();
 }

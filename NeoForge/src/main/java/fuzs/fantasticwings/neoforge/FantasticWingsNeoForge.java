@@ -4,6 +4,7 @@ import fuzs.fantasticwings.FantasticWings;
 import fuzs.fantasticwings.data.ModItemTagProvider;
 import fuzs.fantasticwings.data.client.ModLanguageProvider;
 import fuzs.fantasticwings.data.client.ModModelProvider;
+import fuzs.fantasticwings.neoforge.data.client.ModSoundProvider;
 import fuzs.puzzleslib.api.core.v1.ModConstructor;
 import fuzs.puzzleslib.neoforge.api.data.v2.core.DataProviderHelper;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -20,7 +21,8 @@ public class FantasticWingsNeoForge {
         DataProviderHelper.registerDataProviders(FantasticWings.MOD_ID,
                 ModItemTagProvider::new,
                 ModLanguageProvider::new,
-                ModModelProvider::new
+                ModModelProvider::new,
+                ModSoundProvider::new
         );
     }
 }

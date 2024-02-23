@@ -1,19 +1,15 @@
 package fuzs.fantasticwings;
 
-import fuzs.fantasticwings.init.ModCapabilities;
-import fuzs.fantasticwings.init.ModMobEffects;
-import fuzs.fantasticwings.init.ModSoundEvents;
-import fuzs.fantasticwings.init.ModTags;
-import fuzs.fantasticwings.handler.ServerEventHandler;
 import fuzs.fantasticwings.commands.WingsCommand;
 import fuzs.fantasticwings.config.ServerConfig;
 import fuzs.fantasticwings.flight.apparatus.FlightApparatusImpl;
+import fuzs.fantasticwings.handler.ServerEventHandler;
+import fuzs.fantasticwings.init.ModRegistry;
 import fuzs.fantasticwings.network.ServerboundControlFlyingMessage;
 import fuzs.puzzleslib.api.config.v3.ConfigHolder;
 import fuzs.puzzleslib.api.core.v1.ModConstructor;
 import fuzs.puzzleslib.api.core.v1.context.CreativeModeTabContext;
 import fuzs.puzzleslib.api.event.v1.entity.EntityRidingEvents;
-import fuzs.puzzleslib.api.event.v1.entity.living.UseItemEvents;
 import fuzs.puzzleslib.api.event.v1.entity.player.PlayerInteractEvents;
 import fuzs.puzzleslib.api.event.v1.entity.player.PlayerTickEvents;
 import fuzs.puzzleslib.api.event.v1.server.RegisterCommandsCallback;
@@ -36,18 +32,14 @@ public class FantasticWings implements ModConstructor {
 
     @Override
     public void onConstructMod() {
-        ModMobEffects.touch();
-        ModSoundEvents.touch();
-        ModTags.touch();
-        ModCapabilities.touch();
+        ModRegistry.touch();
         registerEventHandlers();
     }
 
     private static void registerEventHandlers() {
-        RegisterCommandsCallback.EVENT.register((dispatcher, context, environment) -> WingsCommand.register(dispatcher));
+        RegisterCommandsCallback.EVENT.register(WingsCommand::register);
         EntityRidingEvents.START.register(ServerEventHandler::onStartRiding);
         PlayerTickEvents.END.register(ServerEventHandler::onEndPlayerTick);
-        UseItemEvents.START.register(ServerEventHandler::onUseItemStart);
         PlayerInteractEvents.ATTACK_ENTITY.register(ServerEventHandler::onAttackEntity);
     }
 
@@ -60,11 +52,11 @@ public class FantasticWings implements ModConstructor {
     public void onRegisterCreativeModeTabs(CreativeModeTabContext context) {
         context.registerCreativeModeTab(CreativeModeTabConfigurator.from(MOD_ID)
                 .icon(() -> PotionUtils.setPotion(Items.POTION.getDefaultInstance(),
-                        ModMobEffects.BAT_BLOOD_POTION.value()
+                        ModRegistry.BAT_BLOOD_POTION.value()
                 ))
                 .displayItems((itemDisplayParameters, output) -> {
                     output.accept(PotionUtils.setPotion(Items.POTION.getDefaultInstance(),
-                            ModMobEffects.BAT_BLOOD_POTION.value()
+                            ModRegistry.BAT_BLOOD_POTION.value()
                     ));
                     FlightApparatusImpl.forEach(flightApparatus -> {
                         output.accept(PotionUtils.setPotion(Items.POTION.getDefaultInstance(),

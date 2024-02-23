@@ -2,7 +2,7 @@ package fuzs.fantasticwings.mixin;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import fuzs.fantasticwings.init.ModCapabilities;
+import fuzs.fantasticwings.init.ModRegistry;
 import net.minecraft.network.Connection;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -21,6 +21,7 @@ abstract class ServerGamePacketListenerImplMixin extends ServerCommonPacketListe
 
     @WrapOperation(method = "handleMovePlayer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;isFallFlying()Z"))
     public boolean handleMovePlayer(ServerPlayer serverPlayer, Operation<Boolean> operation) {
-        return operation.call(serverPlayer) || ModCapabilities.FLIGHT_CAPABILITY.get(serverPlayer).isFlying();
+        // disables server-side movement checks when flying just like for elytra gliding
+        return operation.call(serverPlayer) || ModRegistry.FLIGHT_CAPABILITY.get(serverPlayer).isFlying();
     }
 }

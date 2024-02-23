@@ -2,7 +2,8 @@ package fuzs.fantasticwings.flight.apparatus;
 
 import fuzs.fantasticwings.FantasticWings;
 import fuzs.fantasticwings.config.ServerConfig;
-import fuzs.fantasticwings.init.ModMobEffects;
+import fuzs.fantasticwings.init.ModRegistry;
+import fuzs.puzzleslib.api.client.data.v2.AbstractModelProvider;
 import fuzs.puzzleslib.api.init.v3.PotionBrewingRegistry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -13,6 +14,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.Potions;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.*;
 
@@ -41,6 +43,8 @@ public enum FlightApparatusImpl implements WingSettingsApparatus, StringRepresen
     private final String name;
     private final Supplier<Item> ingredient;
     private final Function<ServerConfig, WingSettings> settingsExtractor;
+    @Nullable
+    private Potion potion;
 
     FlightApparatusImpl(String name, Supplier<Item> ingredient, Function<ServerConfig, WingSettings> settingsExtractor) {
         this.name = name;
@@ -68,9 +72,13 @@ public enum FlightApparatusImpl implements WingSettingsApparatus, StringRepresen
         return this.resourceLocation().withSuffix("_bottle");
     }
 
+    public ResourceLocation modelLocation() {
+        return AbstractModelProvider.decorateItemModelLocation(this.textureLocation());
+    }
+
     public void registerPotion(BiConsumer<String, Supplier<Potion>> consumer) {
         consumer.accept(this.name, () -> {
-            return new Potion(new MobEffectInstance(ModMobEffects.GROW_WINGS_MOB_EFFECT.value(), this.ordinal()));
+            return new Potion(new MobEffectInstance(ModRegistry.GROW_WINGS_MOB_EFFECT.value(), 1, this.ordinal()));
         });
     }
 
@@ -86,7 +94,9 @@ public enum FlightApparatusImpl implements WingSettingsApparatus, StringRepresen
     }
 
     public Potion getPotion() {
-        return BuiltInRegistries.POTION.get(this.resourceLocation());
+        return this.potion != null ?
+                this.potion :
+                (this.potion = BuiltInRegistries.POTION.get(this.resourceLocation()));
     }
 
     public static void forEach(Consumer<FlightApparatusImpl> consumer) {

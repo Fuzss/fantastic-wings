@@ -1,9 +1,9 @@
-package fuzs.fantasticwings.client.init;
+package fuzs.fantasticwings.client.flight.apparatus;
 
 import fuzs.fantasticwings.client.animator.Animator;
 import fuzs.fantasticwings.client.animator.AnimatorAvian;
 import fuzs.fantasticwings.client.animator.AnimatorInsectoid;
-import fuzs.fantasticwings.client.flight.apparatus.WingForm;
+import fuzs.fantasticwings.client.init.ClientModRegistry;
 import fuzs.fantasticwings.client.model.ModelWings;
 import fuzs.fantasticwings.client.model.ModelWingsAvian;
 import fuzs.fantasticwings.client.model.ModelWingsInsectoid;
@@ -30,8 +30,8 @@ public class WingFormRegistry implements ResourceManagerReloadListener {
     @Override
     public void onResourceManagerReload(ResourceManager resourceManager) {
         EntityModelSet entityModels = this.minecraft.getEntityModels();
-        this.avianWings = new ModelWingsAvian(entityModels.bakeLayer(ModModelLayers.AVIAN_WINGS));
-        this.insectoidWings = new ModelWingsInsectoid(entityModels.bakeLayer(ModModelLayers.INSECTOID_WINGS));
+        this.avianWings = new ModelWingsAvian(entityModels.bakeLayer(ClientModRegistry.AVIAN_WINGS));
+        this.insectoidWings = new ModelWingsInsectoid(entityModels.bakeLayer(ClientModRegistry.INSECTOID_WINGS));
     }
 
     public void registerAll() {

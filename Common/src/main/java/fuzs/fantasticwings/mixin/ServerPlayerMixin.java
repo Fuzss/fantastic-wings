@@ -1,7 +1,7 @@
 package fuzs.fantasticwings.mixin;
 
 import com.mojang.authlib.GameProfile;
-import fuzs.fantasticwings.init.ModCapabilities;
+import fuzs.fantasticwings.init.ModRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -31,6 +31,6 @@ abstract class ServerPlayerMixin extends Player {
             )
     )
     public void checkMovementStatistics(double dx, double dy, double dz, CallbackInfo callback) {
-        ModCapabilities.FLIGHT_CAPABILITY.get(this).onFlown(new Vec3(dx, dy, dz));
+        ModRegistry.FLIGHT_CAPABILITY.get(this).onFlown(new Vec3(dx, dy, dz));
     }
 }

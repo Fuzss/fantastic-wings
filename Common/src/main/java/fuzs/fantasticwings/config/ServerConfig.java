@@ -31,35 +31,35 @@ public class ServerConfig implements ConfigCore {
     public static final class WingSettingsConfig implements WingSettings, ConfigCore {
         @Config(description = "Minimum amount of saturation required to be allowed to start and continue to fly.")
         @Config.IntRange(min = 0, max = 20)
-        int requiredFlightSatiation = 5;
+        int requiredFoodLevelForFlying = 6;
         @Config(description = "Exhaustion caused from continuously flying.")
         @Config.DoubleRange(min = 0.0, max = 10.0)
-        double flyingExertion = 0.0001;
+        double exhaustionFromFlying = 0.0001;
         @Config(description = "Minimum amount of saturation required to be able to slowly descent back to the ground.")
         @Config.IntRange(min = 0, max = 20)
-        int requiredLandSatiation = 2;
-        @Config(description = "Exhaustion caused from descending back to the ground.")
+        int requiredFoodLevelForSlowlyDescending = 2;
+        @Config(description = "Exhaustion caused from slowly descending back to the ground.")
         @Config.DoubleRange(min = 0.0D, max = 10.0D)
-        double landingExertion = 0.005;
+        double exhaustionFromSlowlyDescending = 0.005;
 
         @Override
-        public int getRequiredFlightSatiation() {
-            return this.requiredFlightSatiation;
+        public int getRequiredFoodLevelForFlying() {
+            return this.requiredFoodLevelForFlying;
         }
 
         @Override
-        public float getFlyingExertion() {
-            return (float) this.flyingExertion;
+        public float getExhaustionFromFlying() {
+            return (float) this.exhaustionFromFlying;
         }
 
         @Override
-        public int getRequiredLandSatiation() {
-            return this.requiredLandSatiation;
+        public int getRequiredFoodLevelForSlowlyDescending() {
+            return this.requiredFoodLevelForSlowlyDescending;
         }
 
         @Override
-        public float getLandingExertion() {
-            return (float) this.landingExertion;
+        public float getExhaustionFromSlowlyDescending() {
+            return (float) this.exhaustionFromSlowlyDescending;
         }
     }
 }

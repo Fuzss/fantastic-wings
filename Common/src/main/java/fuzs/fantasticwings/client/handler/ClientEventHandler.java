@@ -2,11 +2,11 @@ package fuzs.fantasticwings.client.handler;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import fuzs.fantasticwings.client.flight.FlightViewCapability;
 import fuzs.fantasticwings.client.audio.WingsSound;
-import fuzs.fantasticwings.client.init.ModClientCapabilities;
-import fuzs.fantasticwings.init.ModCapabilities;
+import fuzs.fantasticwings.client.flight.FlightViewCapability;
+import fuzs.fantasticwings.client.init.ClientModRegistry;
 import fuzs.fantasticwings.flight.FlightCapability;
+import fuzs.fantasticwings.init.ModRegistry;
 import fuzs.fantasticwings.util.MathHelper;
 import fuzs.puzzleslib.api.event.v1.core.EventResult;
 import fuzs.puzzleslib.api.event.v1.data.MutableFloat;
@@ -14,22 +14,23 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.util.Mth;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
-public final class ClientEventHandler {
+public class ClientEventHandler {
 
     public static void onAnimatePlayerModel(Player player, PlayerModel<?> model, float ticksExisted, float pitch) {
-        FlightCapability flightCapability = ModCapabilities.FLIGHT_CAPABILITY.get(player);
+        FlightCapability flightCapability = ModRegistry.FLIGHT_CAPABILITY.get(player);
         float delta = ticksExisted - player.tickCount;
         float flyingAmount = flightCapability.getFlyingAmount(delta);
         if (flyingAmount != 0.0F) {
@@ -43,7 +44,7 @@ public final class ClientEventHandler {
     }
 
     public static void onApplyRotations(Player player, PoseStack poseStack, float delta) {
-        FlightCapability flightCapability = ModCapabilities.FLIGHT_CAPABILITY.get(player);
+        FlightCapability flightCapability = ModRegistry.FLIGHT_CAPABILITY.get(player);
         float amt = flightCapability.getFlyingAmount(delta);
         if (amt > 0.0F) {
             float roll = MathHelper.lerpDegrees(
@@ -60,7 +61,7 @@ public final class ClientEventHandler {
 
     public static void onComputeCameraAngles(GameRenderer renderer, Camera camera, float partialTick, MutableFloat pitch, MutableFloat yaw, MutableFloat roll) {
         LivingEntity cameraEntity = (LivingEntity) camera.getEntity();
-        ModCapabilities.FLIGHT_CAPABILITY.getIfProvided(cameraEntity).ifPresent(flightViewCapability -> {
+        ModRegistry.FLIGHT_CAPABILITY.getIfProvided(cameraEntity).ifPresent(flightViewCapability -> {
             float flyingAmount = flightViewCapability.getFlyingAmount(partialTick);
             if (flyingAmount > 0.0F) {
                 float newRoll = MathHelper.lerpDegrees(
@@ -75,7 +76,7 @@ public final class ClientEventHandler {
 
     public static EventResult onEntityLoad(Entity entity, ClientLevel level) {
         if (entity instanceof LocalPlayer localPlayer) {
-            FlightCapability flightCapability = ModCapabilities.FLIGHT_CAPABILITY.get(localPlayer);
+            FlightCapability flightCapability = ModRegistry.FLIGHT_CAPABILITY.get(localPlayer);
             Minecraft.getInstance().getSoundManager().play(new WingsSound(localPlayer, flightCapability));
         }
 
@@ -83,16 +84,15 @@ public final class ClientEventHandler {
     }
 
     public static void onEndPlayerTick(Player player) {
-        ModClientCapabilities.FLIGHT_VIEW_CAPABILITY.getIfProvided(player).ifPresent(FlightViewCapability::tick);
+        ClientModRegistry.FLIGHT_VIEW_CAPABILITY.getIfProvided(player).ifPresent(FlightViewCapability::tick);
     }
 
-    public static EventResult onRenderHand(Player player, InteractionHand hand, ItemStack stack, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight, float partialTick, float interpolatedPitch, float swingProgress, float equipProgress) {
-        if (hand == InteractionHand.OFF_HAND && stack.isEmpty() && !player.isScoping() && !player.isInvisible()) {
-            ItemInHandRenderer itemInHandRenderer = Minecraft.getInstance().getEntityRenderDispatcher().getItemInHandRenderer();
-            if (!itemInHandRenderer.mainHandItem.is(Items.FILLED_MAP) && ModCapabilities.FLIGHT_CAPABILITY.get(player).isFlying()) {
+    public static EventResult onRenderOffHand(ItemInHandRenderer itemInHandRenderer, AbstractClientPlayer player, HumanoidArm humanoidArm, ItemStack itemStack, PoseStack poseStack, MultiBufferSource multiBufferSource, int combinedLight, float partialTick, float interpolatedPitch, float swingProgress, float equipProgress) {
+        if (itemStack.isEmpty() && !player.isScoping() && !player.isInvisible()) {
+            if (!itemInHandRenderer.mainHandItem.is(Items.FILLED_MAP) && ModRegistry.FLIGHT_CAPABILITY.get(player).isFlying()) {
                 itemInHandRenderer.renderPlayerArm(poseStack,
                         multiBufferSource,
-                        packedLight,
+                        combinedLight,
                         equipProgress,
                         swingProgress,
                         player.getMainArm().getOpposite()
@@ -104,7 +104,7 @@ public final class ClientEventHandler {
     }
 
     public static void onTurn(Entity entity, float deltaYaw) {
-        if (entity instanceof Player player && ModCapabilities.FLIGHT_CAPABILITY.get(player).isFlying()) {
+        if (entity instanceof Player player && ModRegistry.FLIGHT_CAPABILITY.get(player).isFlying()) {
             float theta = Mth.wrapDegrees(player.getYRot() - player.yBodyRot);
             if (theta < -50.0F || theta > 50.0F) {
                 player.yBodyRot += deltaYaw;

@@ -11,33 +11,33 @@ public interface FlightApparatus {
     FlightApparatus NONE = new FlightApparatus() {
 
         @Override
-        public void onFlight(Player player, Vec3 direction) {
+        public void onFlying(Player player, Vec3 direction) {
             // NO-OP
         }
 
         @Override
-        public void onLanding(Player player, Vec3 direction) {
+        public void onSlowlyDescending(Player player, Vec3 direction) {
             // NO-OP
         }
 
         @Override
-        public boolean isUsable(Player player) {
+        public boolean isUsableForFlying(Player player) {
             return false;
         }
 
         @Override
-        public boolean isLandable(Player player) {
+        public boolean isUsableForSlowlyDescending(Player player) {
             return false;
         }
     };
 
-    void onFlight(Player player, Vec3 direction);
+    void onFlying(Player player, Vec3 direction);
 
-    void onLanding(Player player, Vec3 direction);
+    void onSlowlyDescending(Player player, Vec3 direction);
 
-    boolean isUsable(Player player);
+    boolean isUsableForFlying(Player player);
 
-    boolean isLandable(Player player);
+    boolean isUsableForSlowlyDescending(Player player);
 
     record Holder(FlightApparatus flightApparatus, boolean isEmpty) {
         private static final String KEY_IS_EMPTY = FantasticWings.id("is_empty").toString();
@@ -64,7 +64,7 @@ public interface FlightApparatus {
             return this.flightApparatus == other.flightApparatus();
         }
 
-        public CompoundTag writeToNBTTag() {
+        public CompoundTag writeToNbtTag() {
             CompoundTag compoundTag = new CompoundTag();
             compoundTag.putBoolean(KEY_IS_EMPTY, this.isEmpty);
             if (!this.isEmpty) {
@@ -73,7 +73,7 @@ public interface FlightApparatus {
             return compoundTag;
         }
 
-        public static Holder readFromNBTTag(CompoundTag compoundTag) {
+        public static Holder readFromNbtTag(CompoundTag compoundTag) {
             boolean isEmpty = compoundTag.getBoolean(KEY_IS_EMPTY);
             if (!isEmpty) {
                 return new Holder(FlightApparatusImpl.byId(compoundTag.getByte(KEY_FLIGHT_APPARATUS)), false);

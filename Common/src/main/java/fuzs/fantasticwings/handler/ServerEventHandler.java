@@ -1,17 +1,14 @@
 package fuzs.fantasticwings.handler;
 
-import fuzs.fantasticwings.init.ModCapabilities;
-import fuzs.fantasticwings.init.ModMobEffects;
 import fuzs.fantasticwings.flight.FlightCapability;
+import fuzs.fantasticwings.init.ModRegistry;
 import fuzs.puzzleslib.api.core.v1.CommonAbstractions;
 import fuzs.puzzleslib.api.event.v1.core.EventResult;
-import fuzs.puzzleslib.api.event.v1.data.MutableInt;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -40,7 +37,7 @@ public class ServerEventHandler {
             }
             player.awardStat(Stats.ITEM_USED.get(Items.GLASS_BOTTLE));
             ItemStack batBlood = PotionUtils.setPotion(Items.POTION.getDefaultInstance(),
-                    ModMobEffects.BAT_BLOOD_POTION.value()
+                    ModRegistry.BAT_BLOOD_POTION.value()
             );
             if (itemInHand.isEmpty()) {
                 CommonAbstractions.INSTANCE.onPlayerDestroyItem(player, itemStack, interactionHand);
@@ -53,23 +50,15 @@ public class ServerEventHandler {
     }
 
     public static EventResult onStartRiding(Level level, Entity rider, Entity vehicle) {
-        return ModCapabilities.FLIGHT_CAPABILITY.getIfProvided(rider).filter(FlightCapability::isFlying).isPresent() ? EventResult.INTERRUPT : EventResult.PASS;
+        return ModRegistry.FLIGHT_CAPABILITY.getIfProvided(rider).filter(FlightCapability::isFlying).isPresent() ? EventResult.INTERRUPT : EventResult.PASS;
     }
 
     public static void onEndPlayerTick(Player player) {
-        ModCapabilities.FLIGHT_CAPABILITY.get(player).tick();
-    }
-
-    public static EventResult onUseItemStart(LivingEntity entity, ItemStack stack, MutableInt remainingUseDuration) {
-        MobEffect mobEffect = PotionUtils.getPotion(stack).getEffects().get(0).getEffect();
-        if (mobEffect == ModMobEffects.GROW_WINGS_MOB_EFFECT.value() || mobEffect == ModMobEffects.SHED_WINGS_MOB_EFFECT.value()) {
-            remainingUseDuration.accept(40);
-        }
-        return EventResult.PASS;
+        ModRegistry.FLIGHT_CAPABILITY.get(player).tick();
     }
 
     public static boolean onUpdateBodyRotation(LivingEntity living, float movementYaw) {
-        if (living instanceof Player player && ModCapabilities.FLIGHT_CAPABILITY.get(player).isFlying()) {
+        if (living instanceof Player player && ModRegistry.FLIGHT_CAPABILITY.get(player).isFlying()) {
             living.yBodyRot += Mth.wrapDegrees(movementYaw - living.yBodyRot) * 0.3F;
             float theta = Mth.clamp(Mth.wrapDegrees(living.getYRot() - living.yBodyRot), -50.0F, 50.0F);
             living.yBodyRot = living.getYRot() - theta;

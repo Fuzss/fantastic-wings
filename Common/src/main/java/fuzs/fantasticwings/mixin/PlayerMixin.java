@@ -1,16 +1,14 @@
 package fuzs.fantasticwings.mixin;
 
-import fuzs.fantasticwings.init.ModCapabilities;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import fuzs.fantasticwings.init.ModRegistry;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Player.class)
 abstract class PlayerMixin extends LivingEntity {
@@ -19,16 +17,19 @@ abstract class PlayerMixin extends LivingEntity {
         super(entityType, level);
     }
 
-    @Inject(method = "updatePlayerPose", at = @At("HEAD"), cancellable = true)
-    protected void updatePlayerPose(CallbackInfo callback) {
-        if (this.canPlayerFitWithinBlocksAndEntitiesWhen(Pose.SWIMMING)) {
-            if (ModCapabilities.FLIGHT_CAPABILITY.get(Player.class.cast(this)).isFlying()) {
-                this.setPose(Pose.FALL_FLYING);
-                callback.cancel();
-            }
-        }
+    @WrapOperation(method = "updatePlayerPose", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;isFallFlying()Z"))
+    protected boolean updatePlayerPose$0(Player player, Operation<Boolean> operation) {
+        return operation.call(player) || ModRegistry.FLIGHT_CAPABILITY.get(Player.class.cast(this)).isFlying();
     }
 
-    @Shadow
-    abstract boolean canPlayerFitWithinBlocksAndEntitiesWhen(Pose pose);
+    @WrapOperation(method = "updatePlayerPose", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;isShiftKeyDown()Z"))
+    protected boolean updatePlayerPose$1(Player player, Operation<Boolean> operation) {
+        // crouching increases falling speed when not flying but having wings,
+        // treat this just like creative mode descending where the pose and therefore eye height is not offset for crouching
+        if (!ModRegistry.FLIGHT_CAPABILITY.get(Player.class.cast(this)).getWings().isEmpty() && this.getDeltaMovement().y() < -0.5) {
+            return false;
+        } else {
+            return operation.call(player);
+        }
+    }
 }

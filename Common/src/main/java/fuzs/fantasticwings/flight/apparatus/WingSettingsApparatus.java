@@ -8,25 +8,27 @@ public interface WingSettingsApparatus extends FlightApparatus {
     WingSettings getWingSettings();
 
     @Override
-    default void onFlight(Player player, Vec3 direction) {
+    default void onFlying(Player player, Vec3 direction) {
         int distance = Math.round((float) direction.length() * 100.0F);
         if (distance > 0) {
-            player.causeFoodExhaustion(distance * this.getWingSettings().getFlyingExertion());
+            player.causeFoodExhaustion(distance * this.getWingSettings().getExhaustionFromFlying());
         }
     }
 
     @Override
-    default void onLanding(Player player, Vec3 direction) {
-        player.causeFoodExhaustion(this.getWingSettings().getLandingExertion());
+    default void onSlowlyDescending(Player player, Vec3 direction) {
+        player.causeFoodExhaustion(this.getWingSettings().getExhaustionFromSlowlyDescending());
     }
 
     @Override
-    default boolean isUsable(Player player) {
-        return player.getFoodData().getFoodLevel() >= this.getWingSettings().getRequiredFlightSatiation();
+    default boolean isUsableForFlying(Player player) {
+        return player.getAbilities().invulnerable || player.getFoodData().getFoodLevel() >= this.getWingSettings()
+                .getRequiredFoodLevelForFlying();
     }
 
     @Override
-    default boolean isLandable(Player player) {
-        return player.getFoodData().getFoodLevel() >= this.getWingSettings().getRequiredLandSatiation();
+    default boolean isUsableForSlowlyDescending(Player player) {
+        return player.getAbilities().invulnerable || player.getFoodData().getFoodLevel() >= this.getWingSettings()
+                .getRequiredFoodLevelForSlowlyDescending();
     }
 }

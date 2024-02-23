@@ -6,8 +6,8 @@ import fuzs.fantasticwings.client.animator.Animator;
 import fuzs.fantasticwings.client.flight.apparatus.WingForm;
 import fuzs.fantasticwings.client.animator.state.State;
 import fuzs.fantasticwings.client.animator.state.StateIdle;
-import fuzs.fantasticwings.init.ModCapabilities;
 import fuzs.fantasticwings.flight.FlightCapability;
+import fuzs.fantasticwings.init.ModRegistry;
 import fuzs.puzzleslib.api.capability.v3.data.CapabilityComponent;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.resources.ResourceLocation;
@@ -35,7 +35,7 @@ public final class FlightViewCapability extends CapabilityComponent<AbstractClie
     }
 
     public FlightCapability getFlight() {
-        return ModCapabilities.FLIGHT_CAPABILITY.get(this.getHolder());
+        return ModRegistry.FLIGHT_CAPABILITY.get(this.getHolder());
     }
 
     private interface Strategy {
