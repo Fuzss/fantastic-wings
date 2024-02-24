@@ -16,10 +16,13 @@ import fuzs.puzzleslib.api.event.v1.server.RegisterCommandsCallback;
 import fuzs.puzzleslib.api.item.v2.CreativeModeTabConfigurator;
 import fuzs.puzzleslib.api.network.v3.NetworkHandlerV3;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.stream.Stream;
 
 public class FantasticWings implements ModConstructor {
     public static final String MOD_ID = "fantasticwings";
@@ -50,20 +53,22 @@ public class FantasticWings implements ModConstructor {
 
     @Override
     public void onRegisterCreativeModeTabs(CreativeModeTabContext context) {
-        context.registerCreativeModeTab(CreativeModeTabConfigurator.from(MOD_ID)
-                .icon(() -> PotionUtils.setPotion(Items.POTION.getDefaultInstance(),
-                        ModRegistry.BAT_BLOOD_POTION.value()
-                ))
-                .displayItems((itemDisplayParameters, output) -> {
-                    output.accept(PotionUtils.setPotion(Items.POTION.getDefaultInstance(),
-                            ModRegistry.BAT_BLOOD_POTION.value()
-                    ));
-                    FlightApparatusImpl.forEach(flightApparatus -> {
-                        output.accept(PotionUtils.setPotion(Items.POTION.getDefaultInstance(),
-                                flightApparatus.getPotion()
-                        ));
-                    });
-                }));
+        context.registerCreativeModeTab(CreativeModeTabConfigurator.from(MOD_ID).icon(() -> {
+            return PotionUtils.setPotion(Items.POTION.getDefaultInstance(),
+                    FlightApparatusImpl.MONARCH_BUTTERFLY.getPotion()
+            );
+        }).icons(() -> {
+            return Stream.of(FlightApparatusImpl.values()).map(flightApparatus -> {
+                return PotionUtils.setPotion(Items.POTION.getDefaultInstance(), flightApparatus.getPotion());
+            }).toArray(ItemStack[]::new);
+        }).displayItems((itemDisplayParameters, output) -> {
+            output.accept(PotionUtils.setPotion(Items.POTION.getDefaultInstance(),
+                    ModRegistry.BAT_BLOOD_POTION.value()
+            ));
+            FlightApparatusImpl.forEach(flightApparatus -> {
+                output.accept(PotionUtils.setPotion(Items.POTION.getDefaultInstance(), flightApparatus.getPotion()));
+            });
+        }));
     }
 
     public static ResourceLocation id(String path) {

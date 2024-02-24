@@ -76,8 +76,8 @@ public class FantasticWingsClient implements ClientModConstructor {
 
     @Override
     public void onRegisterAdditionalModels(AdditionalModelsContext context) {
-        context.registerAdditionalModel(AbstractModelProvider.decorateItemModelLocation(
-                BAT_BLOOD_BOTTLE_TEXTURE_LOCATION));
+//        context.registerAdditionalModel(AbstractModelProvider.decorateItemModelLocation(
+//                BAT_BLOOD_BOTTLE_TEXTURE_LOCATION));
         FlightApparatusImpl.forEach(flightApparatus -> {
             context.registerAdditionalModel(flightApparatus.modelLocation());
         });
@@ -85,10 +85,10 @@ public class FantasticWingsClient implements ClientModConstructor {
 
     @Override
     public void onRegisterItemModelProperties(ItemModelPropertiesContext context) {
-        registerPotionItemModelProperty(context,
-                BAT_BLOOD_BOTTLE_TEXTURE_LOCATION,
-                ModRegistry.BAT_BLOOD_POTION.value()
-        );
+//        registerPotionItemModelProperty(context,
+//                BAT_BLOOD_BOTTLE_TEXTURE_LOCATION,
+//                ModRegistry.BAT_BLOOD_POTION.value()
+//        );
         FlightApparatusImpl.forEach(flightApparatus -> {
             registerPotionItemModelProperty(context, flightApparatus.textureLocation(), flightApparatus.getPotion());
         });
