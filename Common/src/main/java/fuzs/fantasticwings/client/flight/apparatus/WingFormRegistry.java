@@ -8,6 +8,7 @@ import fuzs.fantasticwings.client.model.ModelWings;
 import fuzs.fantasticwings.client.model.ModelWingsAvian;
 import fuzs.fantasticwings.client.model.ModelWingsInsectoid;
 import fuzs.fantasticwings.flight.apparatus.FlightApparatusImpl;
+import fuzs.puzzleslib.api.core.v1.utility.ResourceLocationHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.resources.ResourceLocation;
@@ -57,7 +58,7 @@ public class WingFormRegistry implements ResourceManagerReloadListener {
     }
 
     private <A extends Animator> WingForm<A> createWings(ResourceLocation resourceLocation, Supplier<A> animator, Supplier<ModelWings<A>> model) {
-        ResourceLocation textureLocation = new ResourceLocation(resourceLocation.getNamespace(),
+        ResourceLocation textureLocation = ResourceLocationHelper.fromNamespaceAndPath(resourceLocation.getNamespace(),
                 "textures/entity/" + resourceLocation.getPath() + ".png"
         );
         return WingForm.of(animator, model, textureLocation);

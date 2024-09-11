@@ -2,12 +2,12 @@ package fuzs.fantasticwings.neoforge.data.client;
 
 import fuzs.fantasticwings.init.ModRegistry;
 import fuzs.puzzleslib.neoforge.api.data.v2.client.AbstractSoundDefinitionProvider;
-import fuzs.puzzleslib.neoforge.api.data.v2.core.ForgeDataProviderContext;
+import fuzs.puzzleslib.neoforge.api.data.v2.core.NeoForgeDataProviderContext;
 import net.neoforged.neoforge.common.data.SoundDefinition;
 
 public class ModSoundProvider extends AbstractSoundDefinitionProvider {
 
-    public ModSoundProvider(ForgeDataProviderContext context) {
+    public ModSoundProvider(NeoForgeDataProviderContext context) {
         super(context);
     }
 

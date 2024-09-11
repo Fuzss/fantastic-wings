@@ -36,8 +36,8 @@ public final class ModelWingsInsectoid extends ModelWings<AnimatorInsectoid> {
     }
 
     @Override
-    public void render(AnimatorInsectoid animator, float delta, PoseStack matrixStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+    public void render(AnimatorInsectoid animator, float delta, PoseStack matrixStack, VertexConsumer buffer, int packedLight, int packedOverlay, int color) {
         setAngles(this.wingLeft, this.wingRight, animator.getRotation(delta));
-        this.root.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.root.render(matrixStack, buffer, packedLight, packedOverlay, color);
     }
 }

@@ -8,6 +8,7 @@ import fuzs.fantasticwings.util.CubicBezier;
 import fuzs.fantasticwings.util.MathHelper;
 import fuzs.puzzleslib.api.capability.v3.data.CapabilityComponent;
 import fuzs.puzzleslib.api.network.v3.PlayerSet;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -32,7 +33,7 @@ public final class FlightCapability extends CapabilityComponent<Player> {
     private int prevTimeFlying = INITIAL_TIME_FLYING;
     private int timeFlying = INITIAL_TIME_FLYING;
     private boolean isFlying;
-    private FlightApparatus.Holder holder = FlightApparatus.Holder.empty();
+    private FlightApparatus.FlightApparatusHolder holder = FlightApparatus.FlightApparatusHolder.empty();
 
     public void setIsFlying(boolean isFlying) {
         this.setIsFlying(isFlying, null);
@@ -63,14 +64,14 @@ public final class FlightCapability extends CapabilityComponent<Player> {
         }
     }
 
-    public void setWings(FlightApparatus.Holder flightApparatus) {
+    public void setWings(FlightApparatus.FlightApparatusHolder flightApparatus) {
         if (!this.holder.is(flightApparatus)) {
             this.holder = flightApparatus;
             this.setChanged();
         }
     }
 
-    public FlightApparatus.Holder getWings() {
+    public FlightApparatus.FlightApparatusHolder getWings() {
         return this.holder;
     }
 
@@ -162,16 +163,16 @@ public final class FlightCapability extends CapabilityComponent<Player> {
     }
 
     @Override
-    public void write(CompoundTag compoundTag) {
+    public void write(CompoundTag compoundTag, HolderLookup.Provider registries) {
         compoundTag.putBoolean(KEY_IS_FLYING, this.isFlying);
         compoundTag.putInt(KEY_TIME_FLYING, this.timeFlying);
         compoundTag.put(KEY_WING_TYPE, this.holder.writeToNbtTag());
     }
 
     @Override
-    public void read(CompoundTag compoundTag) {
+    public void read(CompoundTag compoundTag, HolderLookup.Provider registries) {
         this.isFlying = compoundTag.getBoolean(KEY_IS_FLYING);
         this.timeFlying = compoundTag.getInt(KEY_TIME_FLYING);
-        this.holder = FlightApparatus.Holder.readFromNbtTag(compoundTag.getCompound(KEY_WING_TYPE));
+        this.holder = FlightApparatus.FlightApparatusHolder.readFromNbtTag(compoundTag.getCompound(KEY_WING_TYPE));
     }
 }

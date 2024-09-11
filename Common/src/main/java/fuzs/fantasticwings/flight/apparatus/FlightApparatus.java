@@ -39,20 +39,20 @@ public interface FlightApparatus {
 
     boolean isUsableForSlowlyDescending(Player player);
 
-    record Holder(FlightApparatus flightApparatus, boolean isEmpty) {
+    record FlightApparatusHolder(FlightApparatus flightApparatus, boolean isEmpty) {
         private static final String KEY_IS_EMPTY = FantasticWings.id("is_empty").toString();
         private static final String KEY_FLIGHT_APPARATUS = FantasticWings.id("flight_apparatus").toString();
-        private static final Holder EMPTY = new Holder(NONE, true);
+        private static final FlightApparatusHolder EMPTY = new FlightApparatusHolder(NONE, true);
 
-        public Holder {
+        public FlightApparatusHolder {
             Objects.requireNonNull(flightApparatus, "flight apparatus is null");
         }
 
-        public static Holder of(FlightApparatus flightApparatus) {
-            return new Holder(flightApparatus, false);
+        public static FlightApparatusHolder of(FlightApparatus flightApparatus) {
+            return new FlightApparatusHolder(flightApparatus, false);
         }
 
-        public static Holder empty() {
+        public static FlightApparatusHolder empty() {
             return EMPTY;
         }
 
@@ -60,7 +60,7 @@ public interface FlightApparatus {
             return this.flightApparatus == otherFlightApparatus;
         }
 
-        public boolean is(Holder other) {
+        public boolean is(FlightApparatusHolder other) {
             return this.flightApparatus == other.flightApparatus();
         }
 
@@ -73,10 +73,10 @@ public interface FlightApparatus {
             return compoundTag;
         }
 
-        public static Holder readFromNbtTag(CompoundTag compoundTag) {
+        public static FlightApparatusHolder readFromNbtTag(CompoundTag compoundTag) {
             boolean isEmpty = compoundTag.getBoolean(KEY_IS_EMPTY);
             if (!isEmpty) {
-                return new Holder(FlightApparatusImpl.byId(compoundTag.getByte(KEY_FLIGHT_APPARATUS)), false);
+                return new FlightApparatusHolder(FlightApparatusImpl.byId(compoundTag.getByte(KEY_FLIGHT_APPARATUS)), false);
             } else {
                 return empty();
             }

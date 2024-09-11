@@ -9,16 +9,18 @@ import fuzs.fantasticwings.network.ServerboundControlFlyingMessage;
 import fuzs.puzzleslib.api.config.v3.ConfigHolder;
 import fuzs.puzzleslib.api.core.v1.ModConstructor;
 import fuzs.puzzleslib.api.core.v1.context.CreativeModeTabContext;
+import fuzs.puzzleslib.api.core.v1.utility.ResourceLocationHelper;
 import fuzs.puzzleslib.api.event.v1.entity.EntityRidingEvents;
 import fuzs.puzzleslib.api.event.v1.entity.player.PlayerInteractEvents;
 import fuzs.puzzleslib.api.event.v1.entity.player.PlayerTickEvents;
 import fuzs.puzzleslib.api.event.v1.server.RegisterCommandsCallback;
+import fuzs.puzzleslib.api.event.v1.server.RegisterPotionBrewingMixesCallback;
 import fuzs.puzzleslib.api.item.v2.CreativeModeTabConfigurator;
-import fuzs.puzzleslib.api.network.v3.NetworkHandlerV3;
+import fuzs.puzzleslib.api.network.v3.NetworkHandler;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.PotionContents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +31,7 @@ public class FantasticWings implements ModConstructor {
     public static final String MOD_NAME = "Fantastic Wings";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_NAME);
 
-    public static final NetworkHandlerV3 NETWORK = NetworkHandlerV3.builder(MOD_ID)
+    public static final NetworkHandler NETWORK = NetworkHandler.builder(MOD_ID)
             .registerServerbound(ServerboundControlFlyingMessage.class);
     public static final ConfigHolder CONFIG = ConfigHolder.builder(MOD_ID).server(ServerConfig.class);
 
@@ -44,34 +46,32 @@ public class FantasticWings implements ModConstructor {
         EntityRidingEvents.START.register(ServerEventHandler::onStartRiding);
         PlayerTickEvents.END.register(ServerEventHandler::onEndPlayerTick);
         PlayerInteractEvents.ATTACK_ENTITY.register(ServerEventHandler::onAttackEntity);
-    }
-
-    @Override
-    public void onCommonSetup() {
-        FlightApparatusImpl.forEach(FlightApparatusImpl::registerBrewingRecipes);
+        RegisterPotionBrewingMixesCallback.EVENT.register((RegisterPotionBrewingMixesCallback.Builder builder) -> {
+            FlightApparatusImpl.forEach(flightApparatus -> flightApparatus.onRegisterPotionBrewingMixes(builder));
+        });
     }
 
     @Override
     public void onRegisterCreativeModeTabs(CreativeModeTabContext context) {
         context.registerCreativeModeTab(CreativeModeTabConfigurator.from(MOD_ID).icon(() -> {
-            return PotionUtils.setPotion(Items.POTION.getDefaultInstance(),
+            return PotionContents.createItemStack(Items.POTION,
                     FlightApparatusImpl.MONARCH_BUTTERFLY.getPotion()
             );
         }).icons(() -> {
             return Stream.of(FlightApparatusImpl.values()).map(flightApparatus -> {
-                return PotionUtils.setPotion(Items.POTION.getDefaultInstance(), flightApparatus.getPotion());
+                return PotionContents.createItemStack(Items.POTION, flightApparatus.getPotion());
             }).toArray(ItemStack[]::new);
         }).displayItems((itemDisplayParameters, output) -> {
-            output.accept(PotionUtils.setPotion(Items.POTION.getDefaultInstance(),
-                    ModRegistry.BAT_BLOOD_POTION.value()
+            output.accept(PotionContents.createItemStack(Items.POTION,
+                    ModRegistry.BAT_BLOOD_POTION
             ));
             FlightApparatusImpl.forEach(flightApparatus -> {
-                output.accept(PotionUtils.setPotion(Items.POTION.getDefaultInstance(), flightApparatus.getPotion()));
+                output.accept(PotionContents.createItemStack(Items.POTION, flightApparatus.getPotion()));
             });
         }));
     }
 
     public static ResourceLocation id(String path) {
-        return new ResourceLocation(MOD_ID, path);
+        return ResourceLocationHelper.fromNamespaceAndPath(MOD_ID, path);
     }
 }

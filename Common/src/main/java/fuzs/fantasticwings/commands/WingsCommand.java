@@ -1,5 +1,6 @@
 package fuzs.fantasticwings.commands;
 
+import com.google.common.collect.ImmutableList;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -38,10 +39,11 @@ public class WingsCommand {
                                 .then(Commands.argument("wings", WingsArgument.wings())
                                         .executes(WingsCommand::giveWing))))
                 .then(Commands.literal("take")
+                        .executes(ctx -> takeWings(ctx, ImmutableList.of(ctx.getSource().getPlayerOrException())))
                         .then(Commands.argument("targets", EntityArgument.players())
                                 .then(Commands.argument("wings", WingsArgument.wings())
                                         .executes(WingsCommand::takeSpecificWings))
-                                .executes(WingsCommand::takeWings))));
+                                .executes(ctx -> takeWings(ctx, EntityArgument.getPlayers(ctx, "targets"))))));
     }
 
     private static int giveWing(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
@@ -67,8 +69,7 @@ public class WingsCommand {
         return count;
     }
 
-    private static int takeWings(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        Collection<ServerPlayer> targets = EntityArgument.getPlayers(ctx, "targets");
+    private static int takeWings(CommandContext<CommandSourceStack> ctx, Collection<ServerPlayer> targets) throws CommandSyntaxException {
         int count = 0;
         for (ServerPlayer player : targets) {
             if (WingsMobEffect.takeWings(player)) {

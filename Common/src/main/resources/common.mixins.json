@@ -13,7 +13,7 @@
     "client.EntityMixin",
     "client.PlayerModelMixin",
     "client.PlayerRendererMixin",
-    "client.PotionUtilsMixin"
+    "client.PotionContentsMixin"
   ],
   "injectors": {
     "defaultRequire": 1

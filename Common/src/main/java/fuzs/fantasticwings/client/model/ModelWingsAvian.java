@@ -128,7 +128,7 @@ public final class ModelWingsAvian extends ModelWings<AnimatorAvian> {
     }
 
     @Override
-    public void render(AnimatorAvian animator, float delta, PoseStack matrixStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+    public void render(AnimatorAvian animator, float delta, PoseStack matrixStack, VertexConsumer buffer, int packedLight, int packedOverlay, int color) {
         for (int i = 0; i < this.bonesLeft.size(); i++) {
             ModelPart left = this.bonesLeft.get(i);
             ModelPart right = this.bonesRight.get(i);
@@ -139,7 +139,7 @@ public final class ModelWingsAvian extends ModelWings<AnimatorAvian> {
             ModelPart right = this.feathersRight.get(i);
             setAngles(left, right, animator.getFeatherRotation(i, delta));
         }
-        this.root.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        this.root.render(matrixStack, buffer, packedLight, packedOverlay, color);
     }
 
     private static void add3DTexture(ModelPart model, int u, int v, float offX, float offY, float offZ, int width, int height) {

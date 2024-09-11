@@ -3,9 +3,9 @@ package fuzs.fantasticwings.client.flight;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import fuzs.fantasticwings.client.animator.Animator;
-import fuzs.fantasticwings.client.flight.apparatus.WingForm;
 import fuzs.fantasticwings.client.animator.state.State;
 import fuzs.fantasticwings.client.animator.state.StateIdle;
+import fuzs.fantasticwings.client.flight.apparatus.WingForm;
 import fuzs.fantasticwings.flight.FlightCapability;
 import fuzs.fantasticwings.init.ModRegistry;
 import fuzs.puzzleslib.api.capability.v3.data.CapabilityComponent;
@@ -142,7 +142,7 @@ public final class FlightViewCapability extends CapabilityComponent<AbstractClie
                     }
 
                     @Override
-                    public void render(PoseStack matrixStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha, float delta) {
+                    public void render(PoseStack matrixStack, VertexConsumer buffer, int packedLight, int packedOverlay, int color, float delta) {
                         WingStrategy.this.shape.getModel()
                                 .render(WingStrategy.this.animator,
                                         delta,
@@ -150,10 +150,7 @@ public final class FlightViewCapability extends CapabilityComponent<AbstractClie
                                         buffer,
                                         packedLight,
                                         packedOverlay,
-                                        red,
-                                        green,
-                                        blue,
-                                        alpha
+                                        color
                                 );
                     }
                 });

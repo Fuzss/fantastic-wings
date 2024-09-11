@@ -15,7 +15,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.level.Level;
 
 public class ServerEventHandler {
@@ -36,9 +36,7 @@ public class ServerEventHandler {
                 itemInHand.shrink(1);
             }
             player.awardStat(Stats.ITEM_USED.get(Items.GLASS_BOTTLE));
-            ItemStack batBlood = PotionUtils.setPotion(Items.POTION.getDefaultInstance(),
-                    ModRegistry.BAT_BLOOD_POTION.value()
-            );
+            ItemStack batBlood = PotionContents.createItemStack(Items.POTION, ModRegistry.BAT_BLOOD_POTION);
             if (itemInHand.isEmpty()) {
                 CommonAbstractions.INSTANCE.onPlayerDestroyItem(player, itemStack, interactionHand);
                 player.setItemInHand(interactionHand, batBlood);

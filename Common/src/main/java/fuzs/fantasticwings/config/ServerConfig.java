@@ -39,7 +39,7 @@ public class ServerConfig implements ConfigCore {
         @Config.IntRange(min = 0, max = 20)
         int requiredFoodLevelForSlowlyDescending = 2;
         @Config(description = "Exhaustion caused from slowly descending back to the ground.")
-        @Config.DoubleRange(min = 0.0D, max = 10.0D)
+        @Config.DoubleRange(min = 0.0, max = 10.0)
         double exhaustionFromSlowlyDescending = 0.005;
 
         @Override

@@ -4,8 +4,9 @@ import fuzs.fantasticwings.FantasticWings;
 import fuzs.fantasticwings.config.ServerConfig;
 import fuzs.fantasticwings.init.ModRegistry;
 import fuzs.puzzleslib.api.client.data.v2.AbstractModelProvider;
-import fuzs.puzzleslib.api.init.v3.PotionBrewingRegistry;
-import net.minecraft.core.registries.BuiltInRegistries;
+import fuzs.puzzleslib.api.event.v1.server.RegisterPotionBrewingMixesCallback;
+import fuzs.puzzleslib.api.init.v3.registry.RegistryManager;
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ByIdMap;
 import net.minecraft.util.StringRepresentable;
@@ -16,7 +17,11 @@ import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.Potions;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.*;
+import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.IntFunction;
+import java.util.function.Supplier;
 
 public enum FlightApparatusImpl implements WingSettingsApparatus, StringRepresentable {
     ANGEL("angel_wings", () -> Items.FEATHER, serverConfig -> serverConfig.angelWings),
@@ -44,7 +49,7 @@ public enum FlightApparatusImpl implements WingSettingsApparatus, StringRepresen
     private final Supplier<Item> ingredient;
     private final Function<ServerConfig, WingSettings> settingsExtractor;
     @Nullable
-    private Potion potion;
+    private Holder<Potion> potion;
 
     FlightApparatusImpl(String name, Supplier<Item> ingredient, Function<ServerConfig, WingSettings> settingsExtractor) {
         this.name = name;
@@ -56,8 +61,8 @@ public enum FlightApparatusImpl implements WingSettingsApparatus, StringRepresen
         return BY_ID.apply(id);
     }
 
-    public Holder holder() {
-        return Holder.of(this);
+    public FlightApparatusHolder holder() {
+        return FlightApparatusHolder.of(this);
     }
 
     public String id() {
@@ -76,27 +81,26 @@ public enum FlightApparatusImpl implements WingSettingsApparatus, StringRepresen
         return AbstractModelProvider.decorateItemModelLocation(this.textureLocation());
     }
 
-    public void registerPotion(BiConsumer<String, Supplier<Potion>> consumer) {
-        consumer.accept(this.name, () -> {
-            return new Potion(new MobEffectInstance(ModRegistry.GROW_WINGS_MOB_EFFECT.value(), 1, this.ordinal()));
+    public void registerPotion(RegistryManager registryManager) {
+        this.potion = registryManager.registerPotion(this.name, () -> {
+            return new Potion(new MobEffectInstance(ModRegistry.GROW_WINGS_MOB_EFFECT, 1, this.ordinal()));
         });
     }
 
-    public void registerBrewingRecipes() {
-        PotionBrewingRegistry.INSTANCE.registerPotionRecipe(Potions.SLOW_FALLING,
+    public void onRegisterPotionBrewingMixes(RegisterPotionBrewingMixesCallback.Builder builder) {
+        builder.registerPotionRecipe(Potions.SLOW_FALLING,
                 this.ingredient.get(),
                 this.getPotion()
         );
-        PotionBrewingRegistry.INSTANCE.registerPotionRecipe(Potions.LONG_SLOW_FALLING,
+        builder.registerPotionRecipe(Potions.LONG_SLOW_FALLING,
                 this.ingredient.get(),
                 this.getPotion()
         );
     }
 
-    public Potion getPotion() {
-        return this.potion != null ?
-                this.potion :
-                (this.potion = BuiltInRegistries.POTION.get(this.resourceLocation()));
+    public Holder<Potion> getPotion() {
+        Objects.requireNonNull(this.potion, "potion is null");
+        return this.potion;
     }
 
     public static void forEach(Consumer<FlightApparatusImpl> consumer) {

@@ -55,6 +55,6 @@ public final class WingForm<A extends Animator> {
 
         ResourceLocation getTexture();
 
-        void render(PoseStack matrixStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha, float delta);
+        void render(PoseStack matrixStack, VertexConsumer buffer, int packedLight, int packedOverlay, int color, float delta);
     }
 }

@@ -20,7 +20,7 @@ abstract class PlayerRendererMixin extends LivingEntityRenderer<AbstractClientPl
     }
 
     @Inject(method = "setupRotations", at = @At("TAIL"))
-    protected void setupRotations(AbstractClientPlayer entityLiving, PoseStack poseStack, float ageInTicks, float rotationYaw, float partialTicks, CallbackInfo callback) {
-        ClientEventHandler.onApplyRotations(entityLiving, poseStack, partialTicks);
+    protected void setupRotations(AbstractClientPlayer entityLiving, PoseStack poseStack, float bob, float yBodyRot, float partialTick, float scale, CallbackInfo callback) {
+        ClientEventHandler.onApplyRotations(entityLiving, poseStack, partialTick);
     }
 }

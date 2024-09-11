@@ -35,10 +35,7 @@ public class LayerWings extends RenderLayer<AbstractClientPlayer, PlayerModel<Ab
                         vertexConsumer,
                         packedLight,
                         OverlayTexture.NO_OVERLAY,
-                        1.0F,
-                        1.0F,
-                        1.0F,
-                        1.0F,
+                        -1,
                         partialTick
                 );
                 poseStack.popPose();
