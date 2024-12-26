@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "fantasticwings:item/blank",
+    "layer1": "fantasticwings:item/dragon_wings_bottle"
+  }
+}
