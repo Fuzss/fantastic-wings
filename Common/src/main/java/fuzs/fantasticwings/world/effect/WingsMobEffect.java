@@ -4,6 +4,7 @@ import fuzs.fantasticwings.flight.FlightCapability;
 import fuzs.fantasticwings.flight.apparatus.FlightApparatus;
 import fuzs.fantasticwings.flight.apparatus.FlightApparatusImpl;
 import fuzs.fantasticwings.init.ModRegistry;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.InstantenousMobEffect;
@@ -17,24 +18,21 @@ public class WingsMobEffect extends InstantenousMobEffect {
     }
 
     @Override
-    public boolean applyEffectTick(LivingEntity livingEntity, int amplifier) {
-        if (!livingEntity.level().isClientSide && livingEntity instanceof ServerPlayer serverPlayer) {
-            if (this.isBeneficial() ?
-                    giveWings(serverPlayer, amplifier) : takeWings(serverPlayer)) {
-                serverPlayer.level()
-                        .playSound(null,
-                                serverPlayer.getX(),
-                                serverPlayer.getY(),
-                                serverPlayer.getZ(),
-                                ModRegistry.ITEM_ARMOR_EQUIP_WINGS.value(),
-                                SoundSource.PLAYERS,
-                                1.0F,
-                                this.isBeneficial() ? 1.0F : 0.8F
-                        );
+    public boolean applyEffectTick(ServerLevel serverLevel, LivingEntity livingEntity, int amplifier) {
+        if (livingEntity instanceof ServerPlayer serverPlayer) {
+            if (this.isBeneficial() ? giveWings(serverPlayer, amplifier) : takeWings(serverPlayer)) {
+                serverLevel.playSound(null,
+                        serverPlayer.getX(),
+                        serverPlayer.getY(),
+                        serverPlayer.getZ(),
+                        ModRegistry.ITEM_ARMOR_EQUIP_WINGS.value(),
+                        SoundSource.PLAYERS,
+                        1.0F,
+                        this.isBeneficial() ? 1.0F : 0.8F);
             }
         }
 
-        return super.applyEffectTick(livingEntity, amplifier);
+        return super.applyEffectTick(serverLevel, livingEntity, amplifier);
     }
 
     public static boolean giveWings(ServerPlayer serverPlayer, int wingsTypeId) {
@@ -57,7 +55,8 @@ public class WingsMobEffect extends InstantenousMobEffect {
 
     public static boolean takeWings(ServerPlayer serverPlayer, FlightApparatus.FlightApparatusHolder flightApparatus) {
         FlightCapability flightCapability = ModRegistry.FLIGHT_CAPABILITY.get(serverPlayer);
-        if (!flightCapability.getWings().isEmpty() && (flightApparatus.isEmpty() || flightCapability.getWings().is(flightApparatus))) {
+        if (!flightCapability.getWings().isEmpty() &&
+                (flightApparatus.isEmpty() || flightCapability.getWings().is(flightApparatus))) {
             flightCapability.setWings(FlightApparatus.FlightApparatusHolder.empty());
             return true;
         } else {

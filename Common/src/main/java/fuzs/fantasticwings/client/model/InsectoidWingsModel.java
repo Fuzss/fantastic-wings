@@ -10,12 +10,12 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 
-public final class ModelWingsInsectoid extends ModelWings<AnimatorInsectoid> {
+public final class InsectoidWingsModel extends WingsModel<AnimatorInsectoid> {
     private final ModelPart root;
     private final ModelPart wingLeft;
     private final ModelPart wingRight;
 
-    public ModelWingsInsectoid(ModelPart modelPart) {
+    public InsectoidWingsModel(ModelPart modelPart) {
         this.root = modelPart;
         this.wingLeft = modelPart.getChild("left_wing");
         this.wingRight = modelPart.getChild("right_wing");
@@ -36,8 +36,8 @@ public final class ModelWingsInsectoid extends ModelWings<AnimatorInsectoid> {
     }
 
     @Override
-    public void render(AnimatorInsectoid animator, float delta, PoseStack matrixStack, VertexConsumer buffer, int packedLight, int packedOverlay, int color) {
-        setAngles(this.wingLeft, this.wingRight, animator.getRotation(delta));
-        this.root.render(matrixStack, buffer, packedLight, packedOverlay, color);
+    public void render(AnimatorInsectoid animator, float partialTick, PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int color) {
+        setAngles(this.wingLeft, this.wingRight, animator.getRotation(partialTick));
+        this.root.render(poseStack, buffer, packedLight, packedOverlay, color);
     }
 }

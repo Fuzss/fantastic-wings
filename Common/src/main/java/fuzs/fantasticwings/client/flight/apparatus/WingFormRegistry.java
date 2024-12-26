@@ -4,9 +4,9 @@ import fuzs.fantasticwings.client.animator.Animator;
 import fuzs.fantasticwings.client.animator.AnimatorAvian;
 import fuzs.fantasticwings.client.animator.AnimatorInsectoid;
 import fuzs.fantasticwings.client.init.ClientModRegistry;
-import fuzs.fantasticwings.client.model.ModelWings;
-import fuzs.fantasticwings.client.model.ModelWingsAvian;
-import fuzs.fantasticwings.client.model.ModelWingsInsectoid;
+import fuzs.fantasticwings.client.model.WingsModel;
+import fuzs.fantasticwings.client.model.AvianWingsModel;
+import fuzs.fantasticwings.client.model.InsectoidWingsModel;
 import fuzs.fantasticwings.flight.apparatus.FlightApparatusImpl;
 import fuzs.puzzleslib.api.core.v1.utility.ResourceLocationHelper;
 import net.minecraft.client.Minecraft;
@@ -21,8 +21,8 @@ public class WingFormRegistry implements ResourceManagerReloadListener {
     public static final WingFormRegistry INSTANCE = new WingFormRegistry();
 
     private final Minecraft minecraft = Minecraft.getInstance();
-    private ModelWings<AnimatorAvian> avianWings;
-    private ModelWings<AnimatorInsectoid> insectoidWings;
+    private WingsModel<AnimatorAvian> avianWings;
+    private WingsModel<AnimatorInsectoid> insectoidWings;
 
     private WingFormRegistry() {
         // NO-OP
@@ -31,8 +31,8 @@ public class WingFormRegistry implements ResourceManagerReloadListener {
     @Override
     public void onResourceManagerReload(ResourceManager resourceManager) {
         EntityModelSet entityModels = this.minecraft.getEntityModels();
-        this.avianWings = new ModelWingsAvian(entityModels.bakeLayer(ClientModRegistry.AVIAN_WINGS));
-        this.insectoidWings = new ModelWingsInsectoid(entityModels.bakeLayer(ClientModRegistry.INSECTOID_WINGS));
+        this.avianWings = new AvianWingsModel(entityModels.bakeLayer(ClientModRegistry.AVIAN_WINGS));
+        this.insectoidWings = new InsectoidWingsModel(entityModels.bakeLayer(ClientModRegistry.INSECTOID_WINGS));
     }
 
     public void registerAll() {
@@ -57,7 +57,7 @@ public class WingFormRegistry implements ResourceManagerReloadListener {
         return this.createWings(resourceLocation, AnimatorInsectoid::new, () -> this.insectoidWings);
     }
 
-    private <A extends Animator> WingForm<A> createWings(ResourceLocation resourceLocation, Supplier<A> animator, Supplier<ModelWings<A>> model) {
+    private <A extends Animator> WingForm<A> createWings(ResourceLocation resourceLocation, Supplier<A> animator, Supplier<WingsModel<A>> model) {
         ResourceLocation textureLocation = ResourceLocationHelper.fromNamespaceAndPath(resourceLocation.getNamespace(),
                 "textures/entity/" + resourceLocation.getPath() + ".png"
         );

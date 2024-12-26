@@ -75,8 +75,8 @@ public final class FlightCapability extends CapabilityComponent<Player> {
         return this.holder;
     }
 
-    public float getFlyingAmount(float delta) {
-        return FLY_AMOUNT_CURVE.eval(MathHelper.lerp(this.prevTimeFlying, this.timeFlying, delta) / MAX_TIME_FLYING);
+    public float getFlyingAmount(float partialTick) {
+        return FLY_AMOUNT_CURVE.eval(MathHelper.lerp(this.prevTimeFlying, this.timeFlying, partialTick) / MAX_TIME_FLYING);
     }
 
     public boolean canUseWings() {

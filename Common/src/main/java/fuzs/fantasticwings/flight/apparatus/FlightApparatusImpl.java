@@ -30,8 +30,7 @@ public enum FlightApparatusImpl implements WingSettingsApparatus, StringRepresen
     BLUE_BUTTERFLY("blue_butterfly_wings", () -> Items.BLUE_DYE, serverConfig -> serverConfig.blueButterflyWings),
     MONARCH_BUTTERFLY("monarch_butterfly_wings",
             () -> Items.ORANGE_DYE,
-            serverConfig -> serverConfig.monarchButterflyWings
-    ),
+            serverConfig -> serverConfig.monarchButterflyWings),
     FIRE("fire_wings", () -> Items.BLAZE_POWDER, serverConfig -> serverConfig.fireWings),
     BAT("bat_wings", () -> Items.LEATHER, serverConfig -> serverConfig.batWings),
     FAIRY("fairy_wings", () -> Items.OXEYE_DAISY, serverConfig -> serverConfig.fairyWings),
@@ -42,8 +41,7 @@ public enum FlightApparatusImpl implements WingSettingsApparatus, StringRepresen
     private static final FlightApparatusImpl[] VALUES = values();
     private static final IntFunction<FlightApparatusImpl> BY_ID = ByIdMap.continuous(Enum::ordinal,
             VALUES,
-            ByIdMap.OutOfBoundsStrategy.ZERO
-    );
+            ByIdMap.OutOfBoundsStrategy.ZERO);
 
     private final String name;
     private final Supplier<Item> ingredient;
@@ -83,19 +81,13 @@ public enum FlightApparatusImpl implements WingSettingsApparatus, StringRepresen
 
     public void registerPotion(RegistryManager registryManager) {
         this.potion = registryManager.registerPotion(this.name, () -> {
-            return new Potion(new MobEffectInstance(ModRegistry.GROW_WINGS_MOB_EFFECT, 1, this.ordinal()));
+            return new Potion(this.name, new MobEffectInstance(ModRegistry.GROW_WINGS_MOB_EFFECT, 1, this.ordinal()));
         });
     }
 
     public void onRegisterPotionBrewingMixes(RegisterPotionBrewingMixesCallback.Builder builder) {
-        builder.registerPotionRecipe(Potions.SLOW_FALLING,
-                this.ingredient.get(),
-                this.getPotion()
-        );
-        builder.registerPotionRecipe(Potions.LONG_SLOW_FALLING,
-                this.ingredient.get(),
-                this.getPotion()
-        );
+        builder.registerPotionRecipe(Potions.SLOW_FALLING, this.ingredient.get(), this.getPotion());
+        builder.registerPotionRecipe(Potions.LONG_SLOW_FALLING, this.ingredient.get(), this.getPotion());
     }
 
     public Holder<Potion> getPotion() {

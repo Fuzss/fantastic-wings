@@ -9,10 +9,14 @@ import fuzs.fantasticwings.init.ModRegistry;
 import fuzs.puzzleslib.api.client.data.v2.AbstractLanguageProvider;
 import fuzs.puzzleslib.api.data.v2.core.DataProviderContext;
 import net.minecraft.core.Holder;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.alchemy.PotionContents;
 
 import java.util.Objects;
-import java.util.Optional;
+import java.util.function.Function;
 
 public class ModLanguageProvider extends AbstractLanguageProvider {
 
@@ -51,10 +55,12 @@ public class ModLanguageProvider extends AbstractLanguageProvider {
 
     private static void addPotion(TranslationBuilder builder, Holder<Potion> potion, String value) {
         Objects.requireNonNull(potion, "potion is null");
-        String potionName = Potion.getName(Optional.of(potion), "");
-        builder.add("item.minecraft.tipped_arrow.effect." + potionName, "Arrow of " + value);
-        builder.add("item.minecraft.potion.effect." + potionName, value + " Bottle");
-        builder.add("item.minecraft.splash_potion.effect." + potionName, "Splash " + value + " Bottle");
-        builder.add("item.minecraft.lingering_potion.effect." + potionName, "Lingering " + value + " Bottle");
+        Function<Item, Component> potionNameGetter = (Item item) -> {
+            return new PotionContents(potion).getName(item.getDescriptionId() + ".effect.");
+        };
+        builder.add(potionNameGetter.apply(Items.TIPPED_ARROW), "Arrow of " + value);
+        builder.add(potionNameGetter.apply(Items.POTION), value + " Bottle");
+        builder.add(potionNameGetter.apply(Items.SPLASH_POTION), "Splash " + value + " Bottle");
+        builder.add(potionNameGetter.apply(Items.LINGERING_POTION), "Lingering " + value + " Bottle");
     }
 }
