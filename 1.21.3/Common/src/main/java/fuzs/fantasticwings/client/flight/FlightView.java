@@ -6,36 +6,43 @@ import fuzs.fantasticwings.client.animator.Animator;
 import fuzs.fantasticwings.client.animator.state.State;
 import fuzs.fantasticwings.client.animator.state.StateIdle;
 import fuzs.fantasticwings.client.flight.apparatus.WingForm;
+import fuzs.fantasticwings.client.init.ClientModRegistry;
 import fuzs.fantasticwings.flight.FlightCapability;
 import fuzs.fantasticwings.init.ModRegistry;
-import fuzs.puzzleslib.api.capability.v3.data.CapabilityComponent;
-import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.function.Consumer;
 
-public final class FlightViewCapability extends CapabilityComponent<AbstractClientPlayer> {
-    private WingState animator = PresentWingState.VOID;
+public record FlightView(WingState animator) {
+    public static final FlightView VOID = new FlightView(PresentWingState.VOID);
 
     public void ifFormPresent(Consumer<WingForm.FormRenderer> consumer) {
         this.animator.ifFormPresent(consumer);
     }
 
-    public void tick() {
-        this.animator = WingForm.get(this.getFlight().getWings().flightApparatus())
-                .map(view -> this.animator.next(view))
+    public static void onEndPlayerTick(Player player) {
+        ClientModRegistry.FLIGHT_VIEW_ATTACHMENT_TYPE.update(player, flightView -> {
+            return flightView.tick(player);
+        });
+    }
+
+    private FlightView tick(Player player) {
+        WingState animator = WingForm.get(this.getFlight(player).getWings().flightApparatus())
+                .map(this.animator::next)
                 .orElseGet(this.animator::nextAbsent);
-        this.animator.update(this.getFlight(), this.getHolder());
+        animator.update(this.getFlight(player), player);
+        return new FlightView(animator);
     }
 
-    public boolean resetEyeHeight() {
-        return this.getFlight().isFlying() || (this.getFlight().getFlyingAmount(1.0F) > 0.0F && this.getHolder().getPose() == Pose.FALL_FLYING);
+    public boolean resetEyeHeight(Player player) {
+        return this.getFlight(player).isFlying() ||
+                (this.getFlight(player).getFlyingAmount(1.0F) > 0.0F && player.getPose() == Pose.FALL_FLYING);
     }
 
-    public FlightCapability getFlight() {
-        return ModRegistry.FLIGHT_CAPABILITY.get(this.getHolder());
+    public FlightCapability getFlight(Player player) {
+        return ModRegistry.FLIGHT_CAPABILITY.get(player);
     }
 
     private interface Strategy {
@@ -125,8 +132,7 @@ public final class FlightViewCapability extends CapabilityComponent<AbstractClie
                         player.getX() - player.xo,
                         player.getY() - player.yo,
                         player.getZ() - player.zo,
-                        player
-                );
+                        player);
                 if (!this.state.equals(state)) {
                     state.beginAnimation(this.animator);
                 }
@@ -137,21 +143,18 @@ public final class FlightViewCapability extends CapabilityComponent<AbstractClie
             public void ifFormPresent(Consumer<WingForm.FormRenderer> consumer) {
                 consumer.accept(new WingForm.FormRenderer() {
                     @Override
-                    public ResourceLocation getTexture() {
+                    public ResourceLocation getTextureLocation() {
                         return WingStrategy.this.shape.getTextureLocation();
                     }
 
                     @Override
-                    public void render(PoseStack matrixStack, VertexConsumer buffer, int packedLight, int packedOverlay, int color, float delta) {
+                    public void render(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int color, float partialTick) {
                         WingStrategy.this.shape.getModel()
-                                .render(WingStrategy.this.animator,
-                                        delta,
-                                        matrixStack,
+                                .render(WingStrategy.this.animator, partialTick, poseStack,
                                         buffer,
                                         packedLight,
                                         packedOverlay,
-                                        color
-                                );
+                                        color);
                     }
                 });
             }

@@ -3,7 +3,7 @@ package fuzs.fantasticwings.client.flight.apparatus;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import fuzs.fantasticwings.client.animator.Animator;
-import fuzs.fantasticwings.client.model.ModelWings;
+import fuzs.fantasticwings.client.model.WingsModel;
 import fuzs.fantasticwings.flight.apparatus.FlightApparatus;
 import fuzs.fantasticwings.flight.apparatus.FlightApparatusImpl;
 import net.minecraft.resources.ResourceLocation;
@@ -18,10 +18,10 @@ public final class WingForm<A extends Animator> {
     private static final Map<FlightApparatus, WingForm<?>> FORMS = new HashMap<>();
 
     private final Supplier<A> animator;
-    private final Supplier<ModelWings<A>> model;
+    private final Supplier<WingsModel<A>> model;
     private final ResourceLocation textureLocation;
 
-    private WingForm(Supplier<A> animator, Supplier<ModelWings<A>> model, ResourceLocation textureLocation) {
+    private WingForm(Supplier<A> animator, Supplier<WingsModel<A>> model, ResourceLocation textureLocation) {
         this.animator = animator;
         this.model = model;
         this.textureLocation = textureLocation;
@@ -31,7 +31,7 @@ public final class WingForm<A extends Animator> {
         return this.animator.get();
     }
 
-    public ModelWings<A> getModel() {
+    public WingsModel<A> getModel() {
         return this.model.get();
     }
 
@@ -39,7 +39,7 @@ public final class WingForm<A extends Animator> {
         return this.textureLocation;
     }
 
-    public static <A extends Animator> WingForm<A> of(Supplier<A> animator, Supplier<ModelWings<A>> model, ResourceLocation textureLocation) {
+    public static <A extends Animator> WingForm<A> of(Supplier<A> animator, Supplier<WingsModel<A>> model, ResourceLocation textureLocation) {
         return new WingForm<>(animator, model, textureLocation);
     }
 
@@ -53,8 +53,8 @@ public final class WingForm<A extends Animator> {
 
     public interface FormRenderer {
 
-        ResourceLocation getTexture();
+        ResourceLocation getTextureLocation();
 
-        void render(PoseStack matrixStack, VertexConsumer buffer, int packedLight, int packedOverlay, int color, float delta);
+        void render(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int color, float partialTick);
     }
 }

@@ -9,7 +9,7 @@ import fuzs.puzzleslib.api.capability.v3.CapabilityController;
 import fuzs.puzzleslib.api.capability.v3.data.EntityCapabilityKey;
 import fuzs.puzzleslib.api.capability.v3.data.SyncStrategy;
 import fuzs.puzzleslib.api.init.v3.registry.RegistryManager;
-import fuzs.puzzleslib.api.init.v3.tags.BoundTagFactory;
+import fuzs.puzzleslib.api.init.v3.tags.TagFactory;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.core.Holder;
 import net.minecraft.sounds.SoundEvent;
@@ -24,28 +24,31 @@ import net.minecraft.world.item.alchemy.Potion;
 public class ModRegistry {
     static final RegistryManager REGISTRIES = RegistryManager.from(FantasticWings.MOD_ID);
     public static final Holder.Reference<MobEffect> GROW_WINGS_MOB_EFFECT = REGISTRIES.registerMobEffect("grow_wings",
-            () -> new WingsMobEffect(MobEffectCategory.BENEFICIAL, 0x97CAE4)
-    );
+            () -> new WingsMobEffect(MobEffectCategory.BENEFICIAL, 0x97CAE4));
     public static final Holder.Reference<MobEffect> SHED_WINGS_MOB_EFFECT = REGISTRIES.registerMobEffect("shed_wings",
-            () -> new WingsMobEffect(MobEffectCategory.HARMFUL, 0x9B172D)
-    );
+            () -> new WingsMobEffect(MobEffectCategory.HARMFUL, 0x9B172D));
     public static final Holder.Reference<Potion> BAT_BLOOD_POTION = REGISTRIES.registerPotion("bat_blood",
-            () -> new Potion(new MobEffectInstance(SHED_WINGS_MOB_EFFECT, 1))
-    );
+            () -> new Potion("bat_blood", new MobEffectInstance(SHED_WINGS_MOB_EFFECT, 1)));
     public static final Holder.Reference<SoundEvent> ITEM_ARMOR_EQUIP_WINGS = REGISTRIES.registerSoundEvent(
             "item.armor.equip_wings");
     public static final Holder.Reference<SoundEvent> ITEM_WINGS_FLYING = REGISTRIES.registerSoundEvent(
             "item.wings.flying");
     public static final Holder.Reference<ArgumentTypeInfo<?, ?>> WINGS_ARGUMENT_TYPE = REGISTRIES.registerArgumentType(
-            "wings", WingsArgument.class, WingsArgument::wings);
-    static final BoundTagFactory TAGS = BoundTagFactory.make(FantasticWings.MOD_ID);
+            "wings",
+            WingsArgument.class,
+            WingsArgument::wings);
+
+    static final TagFactory TAGS = TagFactory.make(FantasticWings.MOD_ID);
     public static final TagKey<Item> WING_OBSTRUCTIONS = TAGS.registerItemTag("wing_obstructions");
+
     static final CapabilityController CAPABILITIES = CapabilityController.from(FantasticWings.MOD_ID);
     public static final EntityCapabilityKey<Player, FlightCapability> FLIGHT_CAPABILITY = CAPABILITIES.registerEntityCapability(
-            "flight", FlightCapability.class, FlightCapability::new, Player.class).setSyncStrategy(
-            SyncStrategy.TRACKING);
+            "flight",
+            FlightCapability.class,
+            FlightCapability::new,
+            Player.class).setSyncStrategy(SyncStrategy.TRACKING);
 
-    public static void touch() {
+    public static void bootstrap() {
         FlightApparatusImpl.forEach(flightApparatus -> {
             flightApparatus.registerPotion(REGISTRIES);
         });

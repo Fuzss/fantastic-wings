@@ -1,13 +1,13 @@
 package fuzs.fantasticwings.client;
 
 import fuzs.fantasticwings.FantasticWings;
+import fuzs.fantasticwings.client.flight.FlightView;
 import fuzs.fantasticwings.client.flight.apparatus.WingFormRegistry;
 import fuzs.fantasticwings.client.handler.ClientEventHandler;
-import fuzs.fantasticwings.client.handler.FlyingCrouchHandler;
 import fuzs.fantasticwings.client.handler.PotionItemModelHandler;
 import fuzs.fantasticwings.client.init.ClientModRegistry;
-import fuzs.fantasticwings.client.model.ModelWingsAvian;
-import fuzs.fantasticwings.client.model.ModelWingsInsectoid;
+import fuzs.fantasticwings.client.model.AvianWingsModel;
+import fuzs.fantasticwings.client.model.InsectoidWingsModel;
 import fuzs.fantasticwings.client.renderer.entity.layers.LayerWings;
 import fuzs.fantasticwings.flight.FlightCapability;
 import fuzs.fantasticwings.flight.apparatus.FlightApparatusImpl;
@@ -19,8 +19,8 @@ import fuzs.puzzleslib.api.client.event.v1.AddResourcePackReloadListenersCallbac
 import fuzs.puzzleslib.api.client.event.v1.ModelEvents;
 import fuzs.puzzleslib.api.client.event.v1.entity.ClientEntityLevelEvents;
 import fuzs.puzzleslib.api.client.event.v1.renderer.ComputeCameraAnglesCallback;
+import fuzs.puzzleslib.api.client.event.v1.renderer.ExtractRenderStateCallbackV2;
 import fuzs.puzzleslib.api.client.event.v1.renderer.RenderHandEvents;
-import fuzs.puzzleslib.api.client.event.v1.renderer.RenderPlayerEvents;
 import fuzs.puzzleslib.api.client.key.v1.KeyActivationHandler;
 import fuzs.puzzleslib.api.event.v1.entity.player.PlayerTickEvents;
 import fuzs.puzzleslib.api.network.v3.PlayerSet;
@@ -44,20 +44,18 @@ public class FantasticWingsClient implements ClientModConstructor {
 
     @Override
     public void onConstructMod() {
-        ClientModRegistry.touch();
+        ClientModRegistry.bootstrap();
         registerEventHandlers();
     }
 
     private static void registerEventHandlers() {
         ComputeCameraAnglesCallback.EVENT.register(ClientEventHandler::onComputeCameraAngles);
         ClientEntityLevelEvents.LOAD.register(ClientEventHandler::onEntityLoad);
-        PlayerTickEvents.END.register(ClientEventHandler::onEndPlayerTick);
+        PlayerTickEvents.END.register(FlightView::onEndPlayerTick);
+        ExtractRenderStateCallbackV2.EVENT.register(ClientEventHandler::onExtractRenderState);
         RenderHandEvents.OFF_HAND.register(ClientEventHandler::onRenderOffHand);
-        RenderPlayerEvents.BEFORE.register(FlyingCrouchHandler::onBeforeRenderPlayer);
-        RenderPlayerEvents.AFTER.register(FlyingCrouchHandler::onAfterRenderPlayer);
         ModelEvents.MODIFY_UNBAKED_MODEL.register(PotionItemModelHandler::onModifyUnbakedModel);
-        AddResourcePackReloadListenersCallback.EVENT.register(
-                (BiConsumer<ResourceLocation, PreparableReloadListener> consumer) -> {
+        AddResourcePackReloadListenersCallback.EVENT.register((BiConsumer<ResourceLocation, PreparableReloadListener> consumer) -> {
             consumer.accept(FantasticWings.id("wing_models"), WingFormRegistry.INSTANCE);
         });
     }
@@ -69,13 +67,14 @@ public class FantasticWingsClient implements ClientModConstructor {
 
     @Override
     public void onRegisterKeyMappings(KeyMappingsContext context) {
-        context.registerKeyMapping(ClientModRegistry.FLY_KEY_MAPPING, KeyActivationHandler.forGame((Minecraft minecraft) -> {
-            FlightCapability flightCapability = ModRegistry.FLIGHT_CAPABILITY.get(minecraft.player);
-            if (flightCapability.canFly()) {
-                flightCapability.toggleIsFlying(PlayerSet.ofNone());
-                FantasticWings.NETWORK.sendMessage(new ServerboundControlFlyingMessage(flightCapability.isFlying()));
-            }
-        }));
+        context.registerKeyMapping(ClientModRegistry.FLY_KEY_MAPPING,
+                KeyActivationHandler.forGame((Minecraft minecraft) -> {
+                    FlightCapability flightCapability = ModRegistry.FLIGHT_CAPABILITY.get(minecraft.player);
+                    if (flightCapability.canFly()) {
+                        flightCapability.toggleIsFlying(PlayerSet.ofNone());
+                        FantasticWings.NETWORK.sendMessage(new ServerboundControlFlyingMessage(flightCapability.isFlying()));
+                    }
+                }));
     }
 
     @Override
@@ -102,23 +101,20 @@ public class FantasticWingsClient implements ClientModConstructor {
         context.registerItemProperty(itemModelProperty,
                 (ItemStack itemStack, ClientLevel clientLevel, LivingEntity livingEntity, int i) -> {
                     Optional<Holder<Potion>> optional = itemStack.getOrDefault(DataComponents.POTION_CONTENTS,
-                            PotionContents.EMPTY
-                    ).potion();
+                            PotionContents.EMPTY).potion();
                     return optional.filter(potionHolder -> potionHolder.is(potion)).isPresent() ? 1.0F : 0.0F;
                 },
-                PotionItemModelHandler.POTION_ITEMS
-        );
+                PotionItemModelHandler.POTION_ITEMS);
     }
 
     @Override
     public void onRegisterLayerDefinitions(LayerDefinitionsContext context) {
-        context.registerLayerDefinition(ClientModRegistry.INSECTOID_WINGS, ModelWingsInsectoid::createWingsLayer);
-        context.registerLayerDefinition(ClientModRegistry.AVIAN_WINGS, ModelWingsAvian::createWingsLayer);
+        context.registerLayerDefinition(ClientModRegistry.INSECTOID_WINGS, InsectoidWingsModel::createWingsLayer);
+        context.registerLayerDefinition(ClientModRegistry.AVIAN_WINGS, AvianWingsModel::createWingsLayer);
     }
 
     @Override
     public void onRegisterLivingEntityRenderLayers(LivingEntityRenderLayersContext context) {
         context.registerRenderLayer(EntityType.PLAYER, LayerWings::new);
     }
-
 }

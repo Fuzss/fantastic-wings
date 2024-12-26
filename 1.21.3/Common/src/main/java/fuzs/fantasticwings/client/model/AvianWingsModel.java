@@ -12,12 +12,12 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 
-public final class ModelWingsAvian extends ModelWings<AnimatorAvian> {
+public final class AvianWingsModel extends WingsModel<AnimatorAvian> {
     private final ModelPart root;
     private final ImmutableList<ModelPart> bonesLeft, bonesRight;
     private final ImmutableList<ModelPart> feathersLeft, feathersRight;
 
-    public ModelWingsAvian(ModelPart modelPart) {
+    public AvianWingsModel(ModelPart modelPart) {
         this.root = modelPart;
         ModelPart leftCoracoid = modelPart.getChild("left_coracoid");
         ModelPart rightCoracoid = modelPart.getChild("right_coracoid");
@@ -128,18 +128,18 @@ public final class ModelWingsAvian extends ModelWings<AnimatorAvian> {
     }
 
     @Override
-    public void render(AnimatorAvian animator, float delta, PoseStack matrixStack, VertexConsumer buffer, int packedLight, int packedOverlay, int color) {
+    public void render(AnimatorAvian animator, float partialTick, PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int color) {
         for (int i = 0; i < this.bonesLeft.size(); i++) {
             ModelPart left = this.bonesLeft.get(i);
             ModelPart right = this.bonesRight.get(i);
-            setAngles(left, right, animator.getWingRotation(i, delta));
+            setAngles(left, right, animator.getWingRotation(i, partialTick));
         }
         for (int i = 0; i < this.feathersLeft.size(); i++) {
             ModelPart left = this.feathersLeft.get(i);
             ModelPart right = this.feathersRight.get(i);
-            setAngles(left, right, animator.getFeatherRotation(i, delta));
+            setAngles(left, right, animator.getFeatherRotation(i, partialTick));
         }
-        this.root.render(matrixStack, buffer, packedLight, packedOverlay, color);
+        this.root.render(poseStack, buffer, packedLight, packedOverlay, color);
     }
 
     private static void add3DTexture(ModelPart model, int u, int v, float offX, float offY, float offZ, int width, int height) {
