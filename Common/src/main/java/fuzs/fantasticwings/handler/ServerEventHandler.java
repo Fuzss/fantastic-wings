@@ -15,7 +15,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.level.Level;
 
 public class ServerEventHandler {
@@ -23,36 +22,37 @@ public class ServerEventHandler {
     public static EventResult onAttackEntity(Player player, Level level, InteractionHand interactionHand, Entity entity) {
         ItemStack itemInHand = player.getItemInHand(interactionHand);
         if (entity.getType() == EntityType.BAT && itemInHand.is(Items.GLASS_BOTTLE)) {
-            level.playSound(
-                player,
-                player.getX(), player.getY(), player.getZ(),
-                SoundEvents.BOTTLE_FILL,
-                SoundSource.NEUTRAL,
-                1.0F,
-                1.0F
-            );
-            ItemStack itemStack = itemInHand.copy();
+            level.playSound(player,
+                    player.getX(),
+                    player.getY(),
+                    player.getZ(),
+                    SoundEvents.BOTTLE_FILL,
+                    SoundSource.NEUTRAL,
+                    1.0F,
+                    1.0F);
+            ItemStack originalItemInHand = itemInHand.copy();
             if (!player.getAbilities().instabuild) {
                 itemInHand.shrink(1);
             }
             player.awardStat(Stats.ITEM_USED.get(Items.GLASS_BOTTLE));
-            ItemStack batBlood = PotionContents.createItemStack(Items.POTION, ModRegistry.BAT_BLOOD_POTION);
+            ItemStack itemStack = new ItemStack(ModRegistry.BOTTLED_BAT_BLOOD_ITEM);
             if (itemInHand.isEmpty()) {
-                CommonAbstractions.INSTANCE.onPlayerDestroyItem(player, itemStack, interactionHand);
-                player.setItemInHand(interactionHand, batBlood);
-            } else if (!player.getInventory().add(batBlood)) {
-                player.drop(batBlood, false);
+                CommonAbstractions.INSTANCE.onPlayerDestroyItem(player, originalItemInHand, interactionHand);
+                player.setItemInHand(interactionHand, itemStack);
+            } else if (!player.getInventory().add(itemStack)) {
+                player.drop(itemStack, false);
             }
         }
         return EventResult.PASS;
     }
 
     public static EventResult onStartRiding(Level level, Entity rider, Entity vehicle) {
-        return ModRegistry.FLIGHT_CAPABILITY.getIfProvided(rider).filter(FlightCapability::isFlying).isPresent() ? EventResult.INTERRUPT : EventResult.PASS;
+        return ModRegistry.FLIGHT_CAPABILITY.getIfProvided(rider).filter(FlightCapability::isFlying).isPresent() ?
+                EventResult.INTERRUPT : EventResult.PASS;
     }
 
     public static void onEndPlayerTick(Player player) {
-        ModRegistry.FLIGHT_CAPABILITY.get(player).tick();
+        ModRegistry.FLIGHT_CAPABILITY.get(player).tick(player);
     }
 
     public static boolean onUpdateBodyRotation(LivingEntity living, float movementYaw) {

@@ -10,7 +10,6 @@ import fuzs.fantasticwings.client.init.ClientModRegistry;
 import fuzs.fantasticwings.flight.FlightCapability;
 import fuzs.fantasticwings.init.ModRegistry;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.function.Consumer;
@@ -29,16 +28,13 @@ public record FlightView(WingState animator) {
     }
 
     private FlightView tick(Player player) {
-        WingState animator = WingForm.get(this.getFlight(player).getWings().flightApparatus())
+        WingState animator = this.getFlight(player)
+                .getWings()
+                .flatMap(WingForm::get)
                 .map(this.animator::next)
                 .orElseGet(this.animator::nextAbsent);
         animator.update(this.getFlight(player), player);
         return new FlightView(animator);
-    }
-
-    public boolean resetEyeHeight(Player player) {
-        return this.getFlight(player).isFlying() ||
-                (this.getFlight(player).getFlyingAmount(1.0F) > 0.0F && player.getPose() == Pose.FALL_FLYING);
     }
 
     public FlightCapability getFlight(Player player) {
@@ -150,7 +146,9 @@ public record FlightView(WingState animator) {
                     @Override
                     public void render(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int color, float partialTick) {
                         WingStrategy.this.shape.getModel()
-                                .render(WingStrategy.this.animator, partialTick, poseStack,
+                                .render(WingStrategy.this.animator,
+                                        partialTick,
+                                        poseStack,
                                         buffer,
                                         packedLight,
                                         packedOverlay,

@@ -5,18 +5,13 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import fuzs.fantasticwings.client.animator.Animator;
 import fuzs.fantasticwings.client.model.WingsModel;
 import fuzs.fantasticwings.flight.apparatus.FlightApparatus;
-import fuzs.fantasticwings.flight.apparatus.FlightApparatusImpl;
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 public final class WingForm<A extends Animator> {
-    private static final Map<FlightApparatus, WingForm<?>> FORMS = new HashMap<>();
-
     private final Supplier<A> animator;
     private final Supplier<WingsModel<A>> model;
     private final ResourceLocation textureLocation;
@@ -43,12 +38,8 @@ public final class WingForm<A extends Animator> {
         return new WingForm<>(animator, model, textureLocation);
     }
 
-    public static Optional<WingForm<?>> get(FlightApparatus wings) {
-        return Optional.ofNullable(FORMS.get(wings));
-    }
-
-    public static void register(FlightApparatusImpl wings, Function<ResourceLocation, WingForm<?>> form) {
-        FORMS.put(wings, form.apply(wings.resourceLocation()));
+    public static Optional<WingForm<?>> get(Holder<FlightApparatus> holder) {
+        return Optional.of(WingFormRegistry.INSTANCE.createWings(holder));
     }
 
     public interface FormRenderer {

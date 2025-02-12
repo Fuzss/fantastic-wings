@@ -16,6 +16,6 @@ public class ModItemTagProvider extends AbstractTagProvider<Item> {
 
     @Override
     public void addTags(HolderLookup.Provider provider) {
-        this.add(ModRegistry.WING_OBSTRUCTIONS).add(Items.ELYTRA);
+        this.tag(ModRegistry.WING_OBSTRUCTIONS).add(Items.ELYTRA);
     }
 }

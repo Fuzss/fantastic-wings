@@ -8,13 +8,18 @@ import fuzs.fantasticwings.util.CubicBezier;
 import fuzs.fantasticwings.util.MathHelper;
 import fuzs.puzzleslib.api.capability.v3.data.CapabilityComponent;
 import fuzs.puzzleslib.api.network.v3.PlayerSet;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 public final class FlightCapability extends CapabilityComponent<Player> {
     private static final String KEY_IS_FLYING = FantasticWings.id("is_flying").toString();
@@ -33,17 +38,17 @@ public final class FlightCapability extends CapabilityComponent<Player> {
     private int prevTimeFlying = INITIAL_TIME_FLYING;
     private int timeFlying = INITIAL_TIME_FLYING;
     private boolean isFlying;
-    private FlightApparatus.FlightApparatusHolder holder = FlightApparatus.FlightApparatusHolder.empty();
+    private Optional<Holder<FlightApparatus>> holder = Optional.empty();
 
-    public void setIsFlying(boolean isFlying) {
-        this.setIsFlying(isFlying, null);
+    public void setIsFlying(Player player, boolean isFlying) {
+        this.setIsFlying(player, isFlying, null);
     }
 
-    public void setIsFlying(boolean isFlying, @Nullable PlayerSet playerSet) {
+    public void setIsFlying(Player player, boolean isFlying, @Nullable PlayerSet playerSet) {
         if (this.isFlying != isFlying) {
             this.isFlying = isFlying;
             if (this.isFlying) {
-                this.getHolder().unRide();
+                player.unRide();
             }
             this.setChanged(playerSet);
         }
@@ -53,8 +58,8 @@ public final class FlightCapability extends CapabilityComponent<Player> {
         return this.isFlying;
     }
 
-    public void toggleIsFlying(PlayerSet playerSet) {
-        this.setIsFlying(!this.isFlying, playerSet);
+    public void toggleIsFlying(Player player, PlayerSet playerSet) {
+        this.setIsFlying(player, !this.isFlying, playerSet);
     }
 
     public void setTimeFlying(int timeFlying) {
@@ -64,41 +69,50 @@ public final class FlightCapability extends CapabilityComponent<Player> {
         }
     }
 
-    public void setWings(FlightApparatus.FlightApparatusHolder flightApparatus) {
-        if (!this.holder.is(flightApparatus)) {
-            this.holder = flightApparatus;
+    public void setWings(@Nullable Holder<FlightApparatus> flightApparatus) {
+        if (!this.is(flightApparatus)) {
+            this.holder = Optional.ofNullable(flightApparatus);
             this.setChanged();
         }
     }
 
-    public FlightApparatus.FlightApparatusHolder getWings() {
+    public Optional<Holder<FlightApparatus>> getWings() {
         return this.holder;
     }
 
+    public boolean isEmpty() {
+        return this.holder.isEmpty();
+    }
+
+    public boolean is(Holder<FlightApparatus> flightApparatus) {
+        return this.holder.filter((Holder<FlightApparatus> holder) -> holder.is(flightApparatus)).isPresent();
+    }
+
     public float getFlyingAmount(float partialTick) {
-        return FLY_AMOUNT_CURVE.eval(MathHelper.lerp(this.prevTimeFlying, this.timeFlying, partialTick) / MAX_TIME_FLYING);
+        return FLY_AMOUNT_CURVE.eval(
+                MathHelper.lerp(this.prevTimeFlying, this.timeFlying, partialTick) / MAX_TIME_FLYING);
     }
 
-    public boolean canUseWings() {
-        return !this.getHolder().getAbilities().flying && !this.getHolder()
-                .getItemBySlot(EquipmentSlot.CHEST)
-                .is(ModRegistry.WING_OBSTRUCTIONS);
+    public boolean canUseWings(Player player) {
+        return !player.getAbilities().flying &&
+                !player.getItemBySlot(EquipmentSlot.CHEST).is(ModRegistry.WING_OBSTRUCTIONS);
     }
 
-    public boolean canFly() {
-        return this.holder.flightApparatus().isUsableForFlying(this.getHolder()) && this.canUseWings();
+    public boolean canFly(Player player) {
+        return this.canUseWings(player) &&
+                this.holder.filter((Holder<FlightApparatus> holder) -> holder.value().isUsableForFlying(player))
+                        .isPresent();
     }
 
-    public boolean canSlowlyDescend() {
-        return this.holder.flightApparatus()
-                .isUsableForSlowlyDescending(this.getHolder()) && this.canUseWings() && (this.isFlying() || !this.getHolder()
-                .isDescending() && !this.getHolder().getAbilities().mayfly);
+    public boolean canSlowlyDescend(Player player) {
+        return this.canUseWings(player) && this.holder.filter((Holder<FlightApparatus> holder) -> holder.value()
+                .isUsableForSlowlyDescending(player)).isPresent() &&
+                (this.isFlying() || !this.getHolder().isDescending() && !this.getHolder().getAbilities().mayfly);
     }
 
-    private void onWornUpdate() {
-        Player player = this.getHolder();
-        if (!player.level().isClientSide && this.isFlying() && !this.canFly()) {
-            this.setIsFlying(false);
+    private void onWornUpdate(Player player) {
+        if (!player.level().isClientSide && this.isFlying() && !this.canFly(player)) {
+            this.setIsFlying(player, false);
         }
         if (player.isEffectiveAi()) {
             if (this.isFlying()) {
@@ -113,8 +127,7 @@ public final class FlightCapability extends CapabilityComponent<Player> {
                 player.setDeltaMovement(player.getDeltaMovement()
                         .add(vx * vxz * speed,
                                 vy * speed + Y_BOOST * (player.getXRot() > 0.0F ? elevationBoost : 1.0D),
-                                vz * vxz * speed
-                        ));
+                                vz * vxz * speed));
                 // similar to swimming where jumping and sneaking help with ascending / descending
                 if (player.jumping) {
                     // with the elevation boost this can get quite crazy, so don't add as much as when descending
@@ -123,7 +136,7 @@ public final class FlightCapability extends CapabilityComponent<Player> {
                     player.setDeltaMovement(player.getDeltaMovement().add(0.0, -MANUAL_Y_BOOST, 0.0));
                 }
             }
-            if (this.canSlowlyDescend()) {
+            if (this.canSlowlyDescend(player)) {
                 Vec3 deltaMovement = player.getDeltaMovement();
                 if (deltaMovement.y() < 0.0D) {
                     player.setDeltaMovement(deltaMovement.multiply(1.0D, FALL_REDUCTION, 1.0D));
@@ -133,19 +146,18 @@ public final class FlightCapability extends CapabilityComponent<Player> {
         }
     }
 
-    public void tick() {
-        Player player = this.getHolder();
-        if (!this.holder.isEmpty() || !player.isEffectiveAi()) {
-            this.onWornUpdate();
+    public void tick(Player player) {
+        if (this.holder.isPresent() || !player.isEffectiveAi()) {
+            this.onWornUpdate(player);
         } else if (!player.level().isClientSide && this.isFlying()) {
-            this.setIsFlying(false);
+            this.setIsFlying(player, false);
         }
         this.prevTimeFlying = this.timeFlying;
         if (this.isFlying()) {
             if (this.timeFlying < MAX_TIME_FLYING) {
                 this.setTimeFlying(this.timeFlying + 1);
             } else if (player.isLocalPlayer() && player.onGround()) {
-                this.setIsFlying(false, PlayerSet.ofNone());
+                this.setIsFlying(player, false, PlayerSet.ofNone());
                 FantasticWings.NETWORK.sendMessage(new ServerboundControlFlyingMessage(false));
             }
         } else if (this.timeFlying > INITIAL_TIME_FLYING) {
@@ -153,26 +165,34 @@ public final class FlightCapability extends CapabilityComponent<Player> {
         }
     }
 
-    public void onFlown(Vec3 direction) {
-        Player player = this.getHolder();
-        if (this.isFlying()) {
-            this.holder.flightApparatus().onFlying(player, direction);
-        } else if (this.canSlowlyDescend() && player.getDeltaMovement().y() < -0.5) {
-            this.holder.flightApparatus().onSlowlyDescending(player, direction);
-        }
+    public void onFlown(Player player, Vec3 direction) {
+        this.holder.ifPresent((Holder<FlightApparatus> holder) -> {
+            if (this.isFlying()) {
+                holder.value().onFlying(player, direction);
+            } else if (this.canSlowlyDescend(player) && player.getDeltaMovement().y() < -0.5) {
+                holder.value().onSlowlyDescending(player, direction);
+            }
+        });
     }
 
     @Override
     public void write(CompoundTag compoundTag, HolderLookup.Provider registries) {
         compoundTag.putBoolean(KEY_IS_FLYING, this.isFlying);
         compoundTag.putInt(KEY_TIME_FLYING, this.timeFlying);
-        compoundTag.put(KEY_WING_TYPE, this.holder.writeToNbtTag());
+        this.holder.ifPresent((Holder<FlightApparatus> flightApparatus) -> {
+            FlightApparatus.CODEC.encodeStart(registries.createSerializationContext(NbtOps.INSTANCE), flightApparatus)
+                    .ifSuccess((Tag tag) -> compoundTag.put("variant", tag));
+        });
     }
 
     @Override
     public void read(CompoundTag compoundTag, HolderLookup.Provider registries) {
         this.isFlying = compoundTag.getBoolean(KEY_IS_FLYING);
         this.timeFlying = compoundTag.getInt(KEY_TIME_FLYING);
-        this.holder = FlightApparatus.FlightApparatusHolder.readFromNbtTag(compoundTag.getCompound(KEY_WING_TYPE));
+        if (compoundTag.contains(KEY_WING_TYPE, Tag.TAG_COMPOUND)) {
+            FlightApparatus.CODEC.parse(registries.createSerializationContext(NbtOps.INSTANCE),
+                            compoundTag.getCompound(KEY_WING_TYPE))
+                    .ifSuccess((Holder<FlightApparatus> holder) -> this.holder = Optional.of(holder));
+        }
     }
 }

@@ -18,8 +18,8 @@ public record ServerboundControlFlyingMessage(boolean isFlying) implements Serve
             @Override
             public void handle(ServerboundControlFlyingMessage message, MinecraftServer server, ServerGamePacketListenerImpl handler, ServerPlayer player, ServerLevel level) {
                 FlightCapability flightCapability = ModRegistry.FLIGHT_CAPABILITY.get(player);
-                if (flightCapability.canFly() || !message.isFlying) {
-                    flightCapability.setIsFlying(message.isFlying, PlayerSet.nearPlayer(player));
+                if (flightCapability.canFly(player) || !message.isFlying) {
+                    flightCapability.setIsFlying(player, message.isFlying, PlayerSet.nearPlayer(player));
                 }
             }
         };

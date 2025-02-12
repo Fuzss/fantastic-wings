@@ -31,6 +31,6 @@ abstract class ServerPlayerMixin extends Player {
             )
     )
     public void checkMovementStatistics(double dx, double dy, double dz, CallbackInfo callback) {
-        ModRegistry.FLIGHT_CAPABILITY.get(this).onFlown(new Vec3(dx, dy, dz));
+        ModRegistry.FLIGHT_CAPABILITY.get(this).onFlown(this, new Vec3(dx, dy, dz));
     }
 }
