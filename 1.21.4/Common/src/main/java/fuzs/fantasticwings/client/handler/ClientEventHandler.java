@@ -9,7 +9,7 @@ import fuzs.fantasticwings.client.init.ClientModRegistry;
 import fuzs.fantasticwings.flight.FlightCapability;
 import fuzs.fantasticwings.init.ModRegistry;
 import fuzs.fantasticwings.util.MathHelper;
-import fuzs.puzzleslib.api.client.util.v1.RenderPropertyKey;
+import fuzs.puzzleslib.api.client.renderer.v1.RenderPropertyKey;
 import fuzs.puzzleslib.api.event.v1.core.EventResult;
 import fuzs.puzzleslib.api.event.v1.data.MutableFloat;
 import net.minecraft.client.Camera;
@@ -115,8 +115,7 @@ public class ClientEventHandler {
             FlightCapability flightCapability = ModRegistry.FLIGHT_CAPABILITY.get(player);
             // crouching increases falling speed when not flying but having wings,
             // treat this just like creative mode descending where the player model is not offset for crouching
-            return flightCapability.isFlying() ||
-                    !flightCapability.getWings().isEmpty() && player.getDeltaMovement().y() < -0.5;
+            return flightCapability.isFlying() || !flightCapability.isEmpty() && player.getDeltaMovement().y() < -0.5;
         }
 
         return false;

@@ -4,43 +4,36 @@ import fuzs.fantasticwings.FantasticWings;
 import fuzs.fantasticwings.client.flight.FlightView;
 import fuzs.fantasticwings.client.flight.apparatus.WingFormRegistry;
 import fuzs.fantasticwings.client.handler.ClientEventHandler;
-import fuzs.fantasticwings.client.handler.PotionItemModelHandler;
 import fuzs.fantasticwings.client.init.ClientModRegistry;
 import fuzs.fantasticwings.client.model.AvianWingsModel;
 import fuzs.fantasticwings.client.model.InsectoidWingsModel;
-import fuzs.fantasticwings.client.renderer.entity.layers.LayerWings;
+import fuzs.fantasticwings.client.renderer.entity.layers.ModWingsLayer;
+import fuzs.fantasticwings.client.renderer.item.properties.select.FlightApparatusProperty;
 import fuzs.fantasticwings.flight.FlightCapability;
-import fuzs.fantasticwings.flight.apparatus.FlightApparatusImpl;
 import fuzs.fantasticwings.init.ModRegistry;
 import fuzs.fantasticwings.network.ServerboundControlFlyingMessage;
 import fuzs.puzzleslib.api.client.core.v1.ClientModConstructor;
-import fuzs.puzzleslib.api.client.core.v1.context.*;
+import fuzs.puzzleslib.api.client.core.v1.context.ItemModelsContext;
+import fuzs.puzzleslib.api.client.core.v1.context.KeyMappingsContext;
+import fuzs.puzzleslib.api.client.core.v1.context.LayerDefinitionsContext;
+import fuzs.puzzleslib.api.client.core.v1.context.LivingEntityRenderLayersContext;
 import fuzs.puzzleslib.api.client.event.v1.AddResourcePackReloadListenersCallback;
-import fuzs.puzzleslib.api.client.event.v1.ModelEvents;
 import fuzs.puzzleslib.api.client.event.v1.entity.ClientEntityLevelEvents;
 import fuzs.puzzleslib.api.client.event.v1.renderer.ComputeCameraAnglesCallback;
-import fuzs.puzzleslib.api.client.event.v1.renderer.ExtractRenderStateCallbackV2;
+import fuzs.puzzleslib.api.client.event.v1.renderer.ExtractRenderStateCallback;
 import fuzs.puzzleslib.api.client.event.v1.renderer.RenderHandEvents;
 import fuzs.puzzleslib.api.client.key.v1.KeyActivationHandler;
 import fuzs.puzzleslib.api.event.v1.entity.player.PlayerTickEvents;
 import fuzs.puzzleslib.api.network.v3.PlayerSet;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.core.Holder;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.alchemy.Potion;
-import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.world.entity.player.Player;
 
-import java.util.Optional;
 import java.util.function.BiConsumer;
 
 public class FantasticWingsClient implements ClientModConstructor {
-    public static final ResourceLocation BAT_BLOOD_BOTTLE_TEXTURE_LOCATION = FantasticWings.id("bat_blood_bottle");
 
     @Override
     public void onConstructMod() {
@@ -52,69 +45,40 @@ public class FantasticWingsClient implements ClientModConstructor {
         ComputeCameraAnglesCallback.EVENT.register(ClientEventHandler::onComputeCameraAngles);
         ClientEntityLevelEvents.LOAD.register(ClientEventHandler::onEntityLoad);
         PlayerTickEvents.END.register(FlightView::onEndPlayerTick);
-        ExtractRenderStateCallbackV2.EVENT.register(ClientEventHandler::onExtractRenderState);
+        ExtractRenderStateCallback.EVENT.register(ClientEventHandler::onExtractRenderState);
         RenderHandEvents.OFF_HAND.register(ClientEventHandler::onRenderOffHand);
-        ModelEvents.MODIFY_UNBAKED_MODEL.register(PotionItemModelHandler::onModifyUnbakedModel);
         AddResourcePackReloadListenersCallback.EVENT.register((BiConsumer<ResourceLocation, PreparableReloadListener> consumer) -> {
             consumer.accept(FantasticWings.id("wing_models"), WingFormRegistry.INSTANCE);
         });
     }
 
     @Override
-    public void onClientSetup() {
-        WingFormRegistry.INSTANCE.registerAll();
-    }
-
-    @Override
     public void onRegisterKeyMappings(KeyMappingsContext context) {
         context.registerKeyMapping(ClientModRegistry.FLY_KEY_MAPPING,
                 KeyActivationHandler.forGame((Minecraft minecraft) -> {
-                    FlightCapability flightCapability = ModRegistry.FLIGHT_CAPABILITY.get(minecraft.player);
-                    if (flightCapability.canFly()) {
-                        flightCapability.toggleIsFlying(PlayerSet.ofNone());
+                    Player player = minecraft.player;
+                    FlightCapability flightCapability = ModRegistry.FLIGHT_CAPABILITY.get(player);
+                    if (flightCapability.canFly(player)) {
+                        flightCapability.toggleIsFlying(player, PlayerSet.ofNone());
                         FantasticWings.NETWORK.sendMessage(new ServerboundControlFlyingMessage(flightCapability.isFlying()));
                     }
                 }));
     }
 
     @Override
-    public void onRegisterAdditionalModels(AdditionalModelsContext context) {
-//        context.registerAdditionalModel(AbstractModelProvider.decorateItemModelLocation(
-//                BAT_BLOOD_BOTTLE_TEXTURE_LOCATION));
-        FlightApparatusImpl.forEach(flightApparatus -> {
-            context.registerAdditionalModel(flightApparatus.modelLocation());
-        });
-    }
-
-    @Override
-    public void onRegisterItemModelProperties(ItemModelPropertiesContext context) {
-//        registerPotionItemModelProperty(context,
-//                BAT_BLOOD_BOTTLE_TEXTURE_LOCATION,
-//                ModRegistry.BAT_BLOOD_POTION.value()
-//        );
-        FlightApparatusImpl.forEach(flightApparatus -> {
-            registerPotionItemModelProperty(context, flightApparatus.textureLocation(), flightApparatus.getPotion());
-        });
-    }
-
-    private static void registerPotionItemModelProperty(ItemModelPropertiesContext context, ResourceLocation itemModelProperty, Holder<Potion> potion) {
-        context.registerItemProperty(itemModelProperty,
-                (ItemStack itemStack, ClientLevel clientLevel, LivingEntity livingEntity, int i) -> {
-                    Optional<Holder<Potion>> optional = itemStack.getOrDefault(DataComponents.POTION_CONTENTS,
-                            PotionContents.EMPTY).potion();
-                    return optional.filter(potionHolder -> potionHolder.is(potion)).isPresent() ? 1.0F : 0.0F;
-                },
-                PotionItemModelHandler.POTION_ITEMS);
+    public void onRegisterItemModels(ItemModelsContext context) {
+        context.registerSelectItemModelProperty(FantasticWings.id("wings"), FlightApparatusProperty.TYPE);
     }
 
     @Override
     public void onRegisterLayerDefinitions(LayerDefinitionsContext context) {
-        context.registerLayerDefinition(ClientModRegistry.INSECTOID_WINGS, InsectoidWingsModel::createWingsLayer);
-        context.registerLayerDefinition(ClientModRegistry.AVIAN_WINGS, AvianWingsModel::createWingsLayer);
+        context.registerLayerDefinition(WingFormRegistry.INSECTOID_WINGS_MODEL_LAYER,
+                InsectoidWingsModel::createWingsLayer);
+        context.registerLayerDefinition(WingFormRegistry.AVIAN_WINGS_MODEL_LAYER, AvianWingsModel::createWingsLayer);
     }
 
     @Override
     public void onRegisterLivingEntityRenderLayers(LivingEntityRenderLayersContext context) {
-        context.registerRenderLayer(EntityType.PLAYER, LayerWings::new);
+        context.registerRenderLayer(EntityType.PLAYER, ModWingsLayer::new);
     }
 }

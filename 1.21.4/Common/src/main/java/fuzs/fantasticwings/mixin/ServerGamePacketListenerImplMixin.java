@@ -19,7 +19,10 @@ abstract class ServerGamePacketListenerImplMixin extends ServerCommonPacketListe
         super(server, connection, cookie);
     }
 
-    @WrapOperation(method = "handleMovePlayer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;isFallFlying()Z"))
+    @WrapOperation(
+            method = "handleMovePlayer",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;isFallFlying()Z")
+    )
     public boolean handleMovePlayer(ServerPlayer serverPlayer, Operation<Boolean> operation) {
         // disables server-side movement checks when flying just like for elytra gliding
         return operation.call(serverPlayer) || ModRegistry.FLIGHT_CAPABILITY.get(serverPlayer).isFlying();

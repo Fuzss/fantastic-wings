@@ -5,17 +5,21 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
-import fuzs.fantasticwings.flight.apparatus.FlightApparatusImpl;
-import fuzs.fantasticwings.world.effect.WingsMobEffect;
+import fuzs.fantasticwings.flight.apparatus.FlightApparatus;
+import fuzs.fantasticwings.world.item.consume_effects.GrantWingsConsumeEffect;
+import fuzs.fantasticwings.world.item.consume_effects.TakeWingsConsumeEffect;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.commands.arguments.ResourceArgument;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.Collection;
+import java.util.Optional;
 
 public class WingsCommand {
     public static final String KEY_TAKE_WINGS_SINGLE = "commands.wings.take.success.single";
@@ -36,22 +40,26 @@ public class WingsCommand {
                 .requires(commandSourceStack -> commandSourceStack.hasPermission(2))
                 .then(Commands.literal("give")
                         .then(Commands.argument("targets", EntityArgument.players())
-                                .then(Commands.argument("wings", WingsArgument.wings())
+                                .then(Commands.argument("wings",
+                                                ResourceArgument.resource(context, FlightApparatus.REGISTRY_KEY))
                                         .executes(WingsCommand::giveWing))))
                 .then(Commands.literal("take")
                         .executes(ctx -> takeWings(ctx, ImmutableList.of(ctx.getSource().getPlayerOrException())))
                         .then(Commands.argument("targets", EntityArgument.players())
-                                .then(Commands.argument("wings", WingsArgument.wings())
+                                .then(Commands.argument("wings",
+                                                ResourceArgument.resource(context, FlightApparatus.REGISTRY_KEY))
                                         .executes(WingsCommand::takeSpecificWings))
                                 .executes(ctx -> takeWings(ctx, EntityArgument.getPlayers(ctx, "targets"))))));
     }
 
-    private static int giveWing(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        Collection<ServerPlayer> targets = EntityArgument.getPlayers(ctx, "targets");
-        FlightApparatusImpl wings = WingsArgument.getWings(ctx, "wings");
+    private static int giveWing(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        Collection<ServerPlayer> targets = EntityArgument.getPlayers(context, "targets");
+        Holder.Reference<FlightApparatus> holder = ResourceArgument.getResource(context,
+                "wings",
+                FlightApparatus.REGISTRY_KEY);
         int count = 0;
         for (ServerPlayer player : targets) {
-            if (WingsMobEffect.giveWings(player, wings.holder())) {
+            if (GrantWingsConsumeEffect.giveWings(player, holder)) {
                 count++;
             }
         }
@@ -59,20 +67,20 @@ public class WingsCommand {
             throw ERROR_GIVE_FAILED.create();
         }
         if (targets.size() == 1) {
-            ctx.getSource()
+            context.getSource()
                     .sendSuccess(() -> Component.translatable(KEY_GIVE_WINGS_SINGLE,
-                            targets.iterator().next().getDisplayName()
-                    ), true);
+                            targets.iterator().next().getDisplayName()), true);
         } else {
-            ctx.getSource().sendSuccess(() -> Component.translatable(KEY_GIVE_WINGS_MULTIPLE, targets.size()), true);
+            context.getSource()
+                    .sendSuccess(() -> Component.translatable(KEY_GIVE_WINGS_MULTIPLE, targets.size()), true);
         }
         return count;
     }
 
-    private static int takeWings(CommandContext<CommandSourceStack> ctx, Collection<ServerPlayer> targets) throws CommandSyntaxException {
+    private static int takeWings(CommandContext<CommandSourceStack> context, Collection<ServerPlayer> targets) throws CommandSyntaxException {
         int count = 0;
         for (ServerPlayer player : targets) {
-            if (WingsMobEffect.takeWings(player)) {
+            if (TakeWingsConsumeEffect.takeWings(player, Optional.empty())) {
                 count++;
             }
         }
@@ -80,22 +88,24 @@ public class WingsCommand {
             throw ERROR_TAKE_FAILED.create();
         }
         if (targets.size() == 1) {
-            ctx.getSource()
+            context.getSource()
                     .sendSuccess(() -> Component.translatable(KEY_TAKE_WINGS_SINGLE,
-                            targets.iterator().next().getDisplayName()
-                    ), true);
+                            targets.iterator().next().getDisplayName()), true);
         } else {
-            ctx.getSource().sendSuccess(() -> Component.translatable(KEY_TAKE_WINGS_MULTIPLE, targets.size()), true);
+            context.getSource()
+                    .sendSuccess(() -> Component.translatable(KEY_TAKE_WINGS_MULTIPLE, targets.size()), true);
         }
         return count;
     }
 
-    private static int takeSpecificWings(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        Collection<ServerPlayer> targets = EntityArgument.getPlayers(ctx, "targets");
-        FlightApparatusImpl wings = WingsArgument.getWings(ctx, "wings");
+    private static int takeSpecificWings(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+        Collection<ServerPlayer> targets = EntityArgument.getPlayers(context, "targets");
+        Holder.Reference<FlightApparatus> holder = ResourceArgument.getResource(context,
+                "wings",
+                FlightApparatus.REGISTRY_KEY);
         int count = 0;
         for (ServerPlayer player : targets) {
-            if (WingsMobEffect.takeWings(player, wings.holder())) {
+            if (TakeWingsConsumeEffect.takeWings(player, Optional.of(holder))) {
                 count++;
             }
         }
@@ -103,12 +113,12 @@ public class WingsCommand {
             throw ERROR_TAKE_FAILED.create();
         }
         if (targets.size() == 1) {
-            ctx.getSource()
+            context.getSource()
                     .sendSuccess(() -> Component.translatable(KEY_TAKE_WINGS_SINGLE,
-                            targets.iterator().next().getDisplayName()
-                    ), true);
+                            targets.iterator().next().getDisplayName()), true);
         } else {
-            ctx.getSource().sendSuccess(() -> Component.translatable(KEY_TAKE_WINGS_MULTIPLE, targets.size()), true);
+            context.getSource()
+                    .sendSuccess(() -> Component.translatable(KEY_TAKE_WINGS_MULTIPLE, targets.size()), true);
         }
         return count;
     }
