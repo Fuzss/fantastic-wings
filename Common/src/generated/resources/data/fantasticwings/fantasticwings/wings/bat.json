@@ -1,7 +1,5 @@
 {
-  "asset_id": "fantasticwings:fire",
-  "ingredient": "minecraft:blaze_powder",
-  "item_model": "fantasticwings:fire",
+  "asset_id": "fantasticwings:bat",
   "model": "avian",
   "wing_settings": {
     "exhaustion_from_flying": 1.0E-4,

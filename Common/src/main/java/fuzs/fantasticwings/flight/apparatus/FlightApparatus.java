@@ -5,10 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import fuzs.fantasticwings.FantasticWings;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.Holder;
-import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
-import net.minecraft.core.RegistryCodecs;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -18,27 +15,17 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ByIdMap;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Locale;
-import java.util.Optional;
 import java.util.function.IntFunction;
 
-public record FlightApparatus(ResourceLocation textureLocation,
-                              Model model,
-                              Optional<ResourceLocation> itemModel,
-                              HolderSet<Item> ingredient,
-                              WingSettings wingSettings) {
+public record FlightApparatus(ResourceLocation textureLocation, Model model, WingSettings wingSettings) {
     public static final ResourceKey<Registry<FlightApparatus>> REGISTRY_KEY = ResourceKey.createRegistryKey(
-            FantasticWings.id("flight_apparatus"));
+            FantasticWings.id("wings"));
     public static final Codec<FlightApparatus> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
                     ResourceLocation.CODEC.fieldOf("asset_id").forGetter(FlightApparatus::textureLocation),
                     Model.CODEC.fieldOf("model").forGetter(FlightApparatus::model),
-                    ResourceLocation.CODEC.optionalFieldOf("item_model").forGetter(FlightApparatus::itemModel),
-                    RegistryCodecs.homogeneousList(Registries.ITEM)
-                            .fieldOf("ingredient")
-                            .forGetter(FlightApparatus::ingredient),
                     WingSettings.CODEC.fieldOf("wing_settings").forGetter(FlightApparatus::wingSettings))
             .apply(instance, FlightApparatus::new));
     public static final StreamCodec<RegistryFriendlyByteBuf, FlightApparatus> DIRECT_STREAM_CODEC = StreamCodec.composite(
@@ -46,10 +33,6 @@ public record FlightApparatus(ResourceLocation textureLocation,
             FlightApparatus::textureLocation,
             Model.STREAM_CODEC,
             FlightApparatus::model,
-            ResourceLocation.STREAM_CODEC.apply(ByteBufCodecs::optional),
-            FlightApparatus::itemModel,
-            ByteBufCodecs.holderSet(Registries.ITEM),
-            FlightApparatus::ingredient,
             WingSettings.STREAM_CODEC,
             FlightApparatus::wingSettings,
             FlightApparatus::new);
