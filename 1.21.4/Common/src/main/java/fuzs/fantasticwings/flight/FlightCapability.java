@@ -19,6 +19,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.Optional;
 
 public final class FlightCapability extends CapabilityComponent<Player> {
@@ -69,10 +70,14 @@ public final class FlightCapability extends CapabilityComponent<Player> {
         }
     }
 
-    public void setWings(@Nullable Holder<FlightApparatus> flightApparatus) {
-        if (!this.is(flightApparatus)) {
+    public boolean setWings(@Nullable Holder<FlightApparatus> flightApparatus) {
+        if (flightApparatus == null && this.holder.isPresent() ||
+                flightApparatus != null && !this.is(flightApparatus)) {
             this.holder = Optional.ofNullable(flightApparatus);
             this.setChanged();
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -85,6 +90,7 @@ public final class FlightCapability extends CapabilityComponent<Player> {
     }
 
     public boolean is(Holder<FlightApparatus> flightApparatus) {
+        Objects.requireNonNull(flightApparatus, "flight apparatus is null");
         return this.holder.filter((Holder<FlightApparatus> holder) -> holder.is(flightApparatus)).isPresent();
     }
 
@@ -179,9 +185,9 @@ public final class FlightCapability extends CapabilityComponent<Player> {
     public void write(CompoundTag compoundTag, HolderLookup.Provider registries) {
         compoundTag.putBoolean(KEY_IS_FLYING, this.isFlying);
         compoundTag.putInt(KEY_TIME_FLYING, this.timeFlying);
-        this.holder.ifPresent((Holder<FlightApparatus> flightApparatus) -> {
-            FlightApparatus.CODEC.encodeStart(registries.createSerializationContext(NbtOps.INSTANCE), flightApparatus)
-                    .ifSuccess((Tag tag) -> compoundTag.put("variant", tag));
+        this.holder.ifPresent((Holder<FlightApparatus> holder) -> {
+            FlightApparatus.CODEC.encodeStart(registries.createSerializationContext(NbtOps.INSTANCE), holder)
+                    .ifSuccess((Tag tag) -> compoundTag.put(KEY_WING_TYPE, tag));
         });
     }
 
@@ -189,10 +195,11 @@ public final class FlightCapability extends CapabilityComponent<Player> {
     public void read(CompoundTag compoundTag, HolderLookup.Provider registries) {
         this.isFlying = compoundTag.getBoolean(KEY_IS_FLYING);
         this.timeFlying = compoundTag.getInt(KEY_TIME_FLYING);
-        if (compoundTag.contains(KEY_WING_TYPE, Tag.TAG_COMPOUND)) {
-            FlightApparatus.CODEC.parse(registries.createSerializationContext(NbtOps.INSTANCE),
-                            compoundTag.getCompound(KEY_WING_TYPE))
-                    .ifSuccess((Holder<FlightApparatus> holder) -> this.holder = Optional.of(holder));
+        if (compoundTag.contains(KEY_WING_TYPE)) {
+            this.holder = FlightApparatus.CODEC.parse(registries.createSerializationContext(NbtOps.INSTANCE),
+                    compoundTag.get(KEY_WING_TYPE)).resultOrPartial();
+        } else {
+            this.holder = Optional.empty();
         }
     }
 }

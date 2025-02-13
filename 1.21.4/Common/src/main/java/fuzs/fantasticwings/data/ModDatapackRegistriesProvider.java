@@ -71,6 +71,6 @@ public class ModDatapackRegistriesProvider extends AbstractDatapackRegistriesPro
                         model,
                         Optional.of(resourceKey.location()),
                         HolderSet.direct(item.builtInRegistryHolder()),
-                        new WingSettings(10, 0.0001F, 2, 0.005F)));
+                        new WingSettings(6, 0.0001F, 2, 0.005F)));
     }
 }

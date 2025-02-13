@@ -39,7 +39,7 @@ public record FlightApparatus(ResourceLocation textureLocation,
                     RegistryCodecs.homogeneousList(Registries.ITEM)
                             .fieldOf("ingredient")
                             .forGetter(FlightApparatus::ingredient),
-                    WingSettings.CODEC.fieldOf("wings_settings").forGetter(FlightApparatus::wingSettings))
+                    WingSettings.CODEC.fieldOf("wing_settings").forGetter(FlightApparatus::wingSettings))
             .apply(instance, FlightApparatus::new));
     public static final StreamCodec<RegistryFriendlyByteBuf, FlightApparatus> DIRECT_STREAM_CODEC = StreamCodec.composite(
             ResourceLocation.STREAM_CODEC,

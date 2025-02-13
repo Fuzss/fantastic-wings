@@ -12,11 +12,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.core.Holder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 
-public class WingFormRegistry implements ResourceManagerReloadListener {
+public final class WingFormRegistry implements ResourceManagerReloadListener {
     static final ModelLayerFactory MODEL_LAYERS = ModelLayerFactory.from(FantasticWings.MOD_ID);
     public static final ModelLayerLocation AVIAN_WINGS_MODEL_LAYER = MODEL_LAYERS.registerModelLayer("avian_wings");
     public static final ModelLayerLocation INSECTOID_WINGS_MODEL_LAYER = MODEL_LAYERS.registerModelLayer(
@@ -38,19 +38,10 @@ public class WingFormRegistry implements ResourceManagerReloadListener {
     }
 
     public WingForm<?> createWings(Holder<FlightApparatus> holder) {
-        ResourceLocation resourceLocation = FlightApparatus.transformTextureLocation(FlightApparatus.getTextureLocation(
-                holder.unwrapKey().orElseThrow()));
+        ResourceKey<FlightApparatus> resourceKey = holder.unwrapKey().orElseThrow();
         return switch (holder.value().model()) {
-            case AVIAN -> this.createAvianWings(resourceLocation);
-            case INSECTOID -> this.createInsectoidWings(resourceLocation);
+            case AVIAN -> new WingForm<>(resourceKey, AnimatorAvian::new, () -> this.avianWings);
+            case INSECTOID -> new WingForm<>(resourceKey, AnimatorInsectoid::new, () -> this.insectoidWings);
         };
-    }
-
-    private WingForm<AnimatorAvian> createAvianWings(ResourceLocation resourceLocation) {
-        return WingForm.of(AnimatorAvian::new, () -> this.avianWings, resourceLocation);
-    }
-
-    private WingForm<AnimatorInsectoid> createInsectoidWings(ResourceLocation resourceLocation) {
-        return WingForm.of(AnimatorInsectoid::new, () -> this.insectoidWings, resourceLocation);
     }
 }

@@ -22,7 +22,7 @@ public record FlightView(WingState animator) {
     }
 
     public static void onEndPlayerTick(Player player) {
-        ClientModRegistry.FLIGHT_VIEW_ATTACHMENT_TYPE.update(player, flightView -> {
+        ClientModRegistry.FLIGHT_VIEW_ATTACHMENT_TYPE.update(player, (FlightView flightView) -> {
             return flightView.tick(player);
         });
     }
@@ -145,14 +145,9 @@ public record FlightView(WingState animator) {
 
                     @Override
                     public void render(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int color, float partialTick) {
+                        WingStrategy.this.shape.getModel().setupAnim(WingStrategy.this.animator, partialTick);
                         WingStrategy.this.shape.getModel()
-                                .render(WingStrategy.this.animator,
-                                        partialTick,
-                                        poseStack,
-                                        buffer,
-                                        packedLight,
-                                        packedOverlay,
-                                        color);
+                                .renderToBuffer(poseStack, buffer, packedLight, packedOverlay, color);
                     }
                 });
             }

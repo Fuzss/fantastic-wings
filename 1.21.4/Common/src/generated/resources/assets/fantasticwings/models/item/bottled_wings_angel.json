@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "fantasticwings:item/slime"
+    "layer0": "fantasticwings:item/bottled_wings_angel"
   }
 }

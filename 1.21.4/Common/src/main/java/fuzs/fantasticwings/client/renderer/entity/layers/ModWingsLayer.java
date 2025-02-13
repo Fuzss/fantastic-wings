@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import fuzs.fantasticwings.client.handler.ClientEventHandler;
 import fuzs.fantasticwings.init.ModRegistry;
+import fuzs.puzzleslib.api.client.core.v1.ClientAbstractions;
 import fuzs.puzzleslib.api.client.renderer.v1.RenderPropertyKey;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -13,7 +14,6 @@ import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.entity.state.PlayerRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.util.Mth;
 
 public class ModWingsLayer extends RenderLayer<PlayerRenderState, PlayerModel> {
 
@@ -38,7 +38,7 @@ public class ModWingsLayer extends RenderLayer<PlayerRenderState, PlayerModel> {
                                 packedLight,
                                 OverlayTexture.NO_OVERLAY,
                                 -1,
-                                Mth.frac(renderState.ageInTicks));
+                                ClientAbstractions.INSTANCE.getPartialTick(renderState));
                         poseStack.popPose();
                     });
         }
