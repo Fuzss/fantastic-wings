@@ -34,21 +34,21 @@ public class ModLanguageProvider extends AbstractLanguageProvider {
         translationBuilder.add(ModRegistry.BOTTLED_WINGS_ITEM.value(), "Bottled Wings");
         translationBuilder.add(((WithDescriptionItem) ModRegistry.BOTTLED_WINGS_ITEM.value()).getDescriptionComponent(),
                 "Consume to grow a set of wings.");
-        addPotion(ModRegistry.ANGEL_FLIGHT_APPARATUS, "Angel Wings", translationBuilder);
-        addPotion(ModRegistry.BAT_FLIGHT_APPARATUS, "Bat Wings", translationBuilder);
-        addPotion(ModRegistry.BLUE_BUTTERFLY_FLIGHT_APPARATUS, "Blue Butterfly Wings", translationBuilder);
-        addPotion(ModRegistry.DRAGON_FLIGHT_APPARATUS, "Dragon Wings", translationBuilder);
-        addPotion(ModRegistry.EVIL_FLIGHT_APPARATUS, "Evil Wings", translationBuilder);
-        addPotion(ModRegistry.FAIRY_FLIGHT_APPARATUS, "Fairy Wings", translationBuilder);
-        addPotion(ModRegistry.FIRE_FLIGHT_APPARATUS, "Fire Wings", translationBuilder);
-        addPotion(ModRegistry.MONARCH_BUTTERFLY_FLIGHT_APPARATUS, "Monarch Butterfly Wings", translationBuilder);
-        addPotion(ModRegistry.PARROT_FLIGHT_APPARATUS, "Parrot Wings", translationBuilder);
-        addPotion(ModRegistry.SLIME_FLIGHT_APPARATUS, "Slime Wings", translationBuilder);
-        addPotion(ModRegistry.METALLIC_FLIGHT_APPARATUS, "Metallic Wings", translationBuilder);
+        addWings(ModRegistry.ANGEL_FLIGHT_APPARATUS, "Angel Wings", translationBuilder);
+        addWings(ModRegistry.BAT_FLIGHT_APPARATUS, "Bat Wings", translationBuilder);
+        addWings(ModRegistry.BLUE_BUTTERFLY_FLIGHT_APPARATUS, "Blue Butterfly Wings", translationBuilder);
+        addWings(ModRegistry.DRAGON_FLIGHT_APPARATUS, "Dragon Wings", translationBuilder);
+        addWings(ModRegistry.EVIL_FLIGHT_APPARATUS, "Evil Wings", translationBuilder);
+        addWings(ModRegistry.FAIRY_FLIGHT_APPARATUS, "Fairy Wings", translationBuilder);
+        addWings(ModRegistry.FIRE_FLIGHT_APPARATUS, "Fire Wings", translationBuilder);
+        addWings(ModRegistry.MONARCH_BUTTERFLY_FLIGHT_APPARATUS, "Monarch Butterfly Wings", translationBuilder);
+        addWings(ModRegistry.PARROT_FLIGHT_APPARATUS, "Parrot Wings", translationBuilder);
+        addWings(ModRegistry.SLIME_FLIGHT_APPARATUS, "Slime Wings", translationBuilder);
+        addWings(ModRegistry.METALLIC_FLIGHT_APPARATUS, "Metallic Wings", translationBuilder);
         translationBuilder.add(ModRegistry.ITEM_ARMOR_EQUIP_WINGS.value(), "Wings rustle");
     }
 
-    static void addPotion(ResourceKey<FlightApparatus> resourceKey, String value, TranslationBuilder translationBuilder) {
+    static void addWings(ResourceKey<FlightApparatus> resourceKey, String value, TranslationBuilder translationBuilder) {
         translationBuilder.add(((BottledWingsItem) ModRegistry.BOTTLED_WINGS_ITEM.value()).getWingsComponent(resourceKey),
                 "Bottled " + value);
     }

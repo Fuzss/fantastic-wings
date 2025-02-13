@@ -13,7 +13,6 @@ import fuzs.puzzleslib.api.capability.v3.data.SyncStrategy;
 import fuzs.puzzleslib.api.init.v3.registry.RegistryManager;
 import fuzs.puzzleslib.api.init.v3.tags.TagFactory;
 import net.minecraft.core.Holder;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -40,14 +39,11 @@ public class ModRegistry {
             () -> new ItemStack(BOTTLED_BAT_BLOOD_ITEM),
             (CreativeModeTab.ItemDisplayParameters itemDisplayParameters, CreativeModeTab.Output output) -> {
                 output.accept(BOTTLED_BAT_BLOOD_ITEM.value());
-                HolderLookup.RegistryLookup<FlightApparatus> wingsLookup = itemDisplayParameters.holders()
-                        .lookupOrThrow(FlightApparatus.REGISTRY_KEY);
-                wingsLookup.listElements().forEach((Holder.Reference<FlightApparatus> holder) -> {
-                    ItemStack itemStack = new ItemStack(BOTTLED_WINGS_ITEM);
-                    itemStack.set(DataComponents.CONSUMABLE,
-                            Consumables.defaultDrink().onConsume(new GrantWingsConsumeEffect(holder)).build());
-                    output.accept(itemStack);
-                });
+                itemDisplayParameters.holders()
+                        .lookupOrThrow(FlightApparatus.REGISTRY_KEY)
+                        .listElements()
+                        .map(BottledWingsItem::createItemStack)
+                        .forEach(output::accept);
             },
             false);
     public static final Holder.Reference<ConsumeEffect.Type<GrantWingsConsumeEffect>> GRANT_WINGS_CONSUME_EFFECT_TYPE = REGISTRIES.register(

@@ -1,8 +1,6 @@
 {
-  "asset_id": "fantasticwings:evil",
-  "ingredient": "minecraft:bone",
-  "item_model": "fantasticwings:evil",
-  "model": "avian",
+  "asset_id": "fantasticwings:monarch_butterfly",
+  "model": "insectoid",
   "wing_settings": {
     "exhaustion_from_flying": 1.0E-4,
     "exhaustion_from_slowly_descending": 0.005,
