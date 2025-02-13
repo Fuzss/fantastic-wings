@@ -44,7 +44,6 @@ public class ModRegistry {
                         .lookupOrThrow(FlightApparatus.REGISTRY_KEY);
                 wingsLookup.listElements().forEach((Holder.Reference<FlightApparatus> holder) -> {
                     ItemStack itemStack = new ItemStack(BOTTLED_WINGS_ITEM);
-                    itemStack.set(DataComponents.ITEM_MODEL, holder.key().location());
                     itemStack.set(DataComponents.CONSUMABLE,
                             Consumables.defaultDrink().onConsume(new GrantWingsConsumeEffect(holder)).build());
                     output.accept(itemStack);
@@ -110,7 +109,6 @@ public class ModRegistry {
         return new Item.Properties().stacksTo(1)
                 .craftRemainder(Items.GLASS_BOTTLE)
                 .usingConvertsTo(Items.GLASS_BOTTLE)
-                .useCooldown(5.0F)
                 .component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, Boolean.TRUE);
     }
 }

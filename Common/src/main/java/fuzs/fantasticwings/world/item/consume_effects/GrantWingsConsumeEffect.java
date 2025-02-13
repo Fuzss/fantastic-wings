@@ -1,13 +1,13 @@
 package fuzs.fantasticwings.world.item.consume_effects;
 
 import com.mojang.serialization.MapCodec;
-import fuzs.fantasticwings.flight.FlightCapability;
 import fuzs.fantasticwings.flight.apparatus.FlightApparatus;
 import fuzs.fantasticwings.init.ModRegistry;
 import net.minecraft.core.Holder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.consume_effects.ConsumeEffect;
@@ -31,9 +31,16 @@ public record GrantWingsConsumeEffect(Holder<FlightApparatus> holder) implements
     }
 
     public static boolean giveWings(ServerPlayer serverPlayer, Holder<FlightApparatus> flightApparatus) {
-        FlightCapability flightCapability = ModRegistry.FLIGHT_CAPABILITY.get(serverPlayer);
-        if (!flightCapability.is(flightApparatus)) {
-            flightCapability.setWings(flightApparatus);
+        if (ModRegistry.FLIGHT_CAPABILITY.get(serverPlayer).setWings(flightApparatus)) {
+            serverPlayer.serverLevel()
+                    .playSound(null,
+                            serverPlayer.getX(),
+                            serverPlayer.getY(),
+                            serverPlayer.getZ(),
+                            ModRegistry.ITEM_ARMOR_EQUIP_WINGS.value(),
+                            SoundSource.PLAYERS,
+                            1.0F,
+                            1.0F);
             return true;
         } else {
             return false;

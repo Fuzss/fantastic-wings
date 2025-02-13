@@ -9,6 +9,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.consume_effects.ConsumeEffect;
@@ -38,9 +39,21 @@ public record TakeWingsConsumeEffect(Optional<Holder<FlightApparatus>> holder) i
 
     public static boolean takeWings(ServerPlayer serverPlayer, Optional<Holder<FlightApparatus>> flightApparatus) {
         FlightCapability flightCapability = ModRegistry.FLIGHT_CAPABILITY.get(serverPlayer);
-        if (!flightCapability.isEmpty() && (flightApparatus.isEmpty() || flightCapability.is(flightApparatus.get()))) {
-            flightCapability.setWings(null);
-            return true;
+        if ((flightApparatus.isEmpty() || flightCapability.is(flightApparatus.get()))) {
+            if (flightCapability.setWings(null)) {
+                serverPlayer.serverLevel()
+                        .playSound(null,
+                                serverPlayer.getX(),
+                                serverPlayer.getY(),
+                                serverPlayer.getZ(),
+                                ModRegistry.ITEM_ARMOR_EQUIP_WINGS.value(),
+                                SoundSource.PLAYERS,
+                                1.0F,
+                                0.8F);
+                return true;
+            } else {
+                return false;
+            }
         } else {
             return false;
         }

@@ -3,10 +3,10 @@
   "ingredient": "minecraft:fire_charge",
   "item_model": "fantasticwings:dragon",
   "model": "avian",
-  "wings_settings": {
+  "wing_settings": {
     "exhaustion_from_flying": 1.0E-4,
     "exhaustion_from_slowly_descending": 0.005,
-    "required_food_level_for_flying": 10,
+    "required_food_level_for_flying": 6,
     "required_food_level_for_slowly_descending": 2
   }
 }

@@ -1,6 +1,15 @@
 accessWidener   v2  named
-accessible  field   net/minecraft/client/model/geom/ModelPart   cubes   Ljava/util/List;
-mutable field   net/minecraft/client/model/geom/ModelPart   cubes   Ljava/util/List;
+extendable  class   net/minecraft/client/model/geom/builders/CubeDefinition
+accessible  field   net/minecraft/client/model/geom/builders/CubeDefinition origin  Lorg/joml/Vector3f;
+accessible  field   net/minecraft/client/model/geom/builders/CubeDefinition dimensions  Lorg/joml/Vector3f;
+accessible  field   net/minecraft/client/model/geom/builders/CubeDefinition grow    Lnet/minecraft/client/model/geom/builders/CubeDeformation;
+accessible  field   net/minecraft/client/model/geom/builders/CubeDefinition mirror  Z
+accessible  field   net/minecraft/client/model/geom/builders/CubeDefinition texCoord    Lnet/minecraft/client/model/geom/builders/UVPair;
+accessible  field   net/minecraft/client/model/geom/builders/CubeDefinition texScale    Lnet/minecraft/client/model/geom/builders/UVPair;
+accessible  field   net/minecraft/client/model/geom/builders/CubeDefinition visibleFaces    Ljava/util/Set;
+accessible  field   net/minecraft/client/model/geom/builders/CubeDeformation    growX   F
+accessible  field   net/minecraft/client/model/geom/builders/CubeDeformation    growY   F
+accessible  field   net/minecraft/client/model/geom/builders/CubeDeformation    growZ   F
 accessible  field   net/minecraft/client/model/geom/ModelPart$Cube  polygons    [Lnet/minecraft/client/model/geom/ModelPart$Polygon;
 mutable field   net/minecraft/client/model/geom/ModelPart$Cube  polygons    [Lnet/minecraft/client/model/geom/ModelPart$Polygon;
 accessible  field   net/minecraft/client/renderer/ItemInHandRenderer    mainHandItem    Lnet/minecraft/world/item/ItemStack;
