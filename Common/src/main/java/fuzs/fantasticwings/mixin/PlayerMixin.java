@@ -1,7 +1,6 @@
 package fuzs.fantasticwings.mixin;
 
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import fuzs.fantasticwings.init.ModRegistry;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -17,26 +16,22 @@ abstract class PlayerMixin extends LivingEntity {
         super(entityType, level);
     }
 
-    @WrapOperation(
-            method = "updatePlayerPose",
+    @ModifyExpressionValue(
+            method = "getDesiredPose",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;isFallFlying()Z")
     )
-    protected boolean updatePlayerPose$0(Player player, Operation<Boolean> operation) {
-        return operation.call(player) || ModRegistry.FLIGHT_CAPABILITY.get(Player.class.cast(this)).isFlying();
+    protected boolean getDesiredPose$0(boolean isFallFlying) {
+        return isFallFlying || ModRegistry.FLIGHT_CAPABILITY.get(Player.class.cast(this)).isFlying();
     }
 
-    @WrapOperation(
-            method = "updatePlayerPose",
+    @ModifyExpressionValue(
+            method = "getDesiredPose",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;isShiftKeyDown()Z")
     )
-    protected boolean updatePlayerPose$1(Player player, Operation<Boolean> operation) {
+    protected boolean getDesiredPose$1(boolean isShiftKeyDown) {
         // crouching increases falling speed when not flying but having wings,
         // treat this just like creative mode descending where the pose and therefore eye height is not offset for crouching
-        if (!ModRegistry.FLIGHT_CAPABILITY.get(Player.class.cast(this)).isEmpty() &&
-                this.getDeltaMovement().y() < -0.5) {
-            return false;
-        } else {
-            return operation.call(player);
-        }
+        return isShiftKeyDown && ModRegistry.FLIGHT_CAPABILITY.get(Player.class.cast(this)).isEmpty() ||
+                this.getDeltaMovement().y() >= -0.5;
     }
 }

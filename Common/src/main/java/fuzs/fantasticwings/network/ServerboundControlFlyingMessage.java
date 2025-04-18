@@ -2,24 +2,31 @@ package fuzs.fantasticwings.network;
 
 import fuzs.fantasticwings.flight.FlightCapability;
 import fuzs.fantasticwings.init.ModRegistry;
-import fuzs.puzzleslib.api.network.v3.PlayerSet;
-import fuzs.puzzleslib.api.network.v3.ServerMessageListener;
-import fuzs.puzzleslib.api.network.v3.ServerboundMessage;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
+import fuzs.puzzleslib.api.network.v4.PlayerSet;
+import fuzs.puzzleslib.api.network.v4.message.MessageListener;
+import fuzs.puzzleslib.api.network.v4.message.play.ServerboundPlayMessage;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.network.ServerGamePacketListenerImpl;
 
-public record ServerboundControlFlyingMessage(boolean isFlying) implements ServerboundMessage<ServerboundControlFlyingMessage> {
+public record ServerboundControlFlyingMessage(boolean isFlying) implements ServerboundPlayMessage {
+    public static final StreamCodec<ByteBuf, ServerboundControlFlyingMessage> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.BOOL,
+            ServerboundControlFlyingMessage::isFlying,
+            ServerboundControlFlyingMessage::new);
 
     @Override
-    public ServerMessageListener<ServerboundControlFlyingMessage> getHandler() {
-        return new ServerMessageListener<>() {
+    public MessageListener<Context> getListener() {
+        return new MessageListener<Context>() {
             @Override
-            public void handle(ServerboundControlFlyingMessage message, MinecraftServer server, ServerGamePacketListenerImpl handler, ServerPlayer player, ServerLevel level) {
+            public void accept(Context context) {
+                ServerPlayer player = context.player();
                 FlightCapability flightCapability = ModRegistry.FLIGHT_CAPABILITY.get(player);
-                if (flightCapability.canFly(player) || !message.isFlying) {
-                    flightCapability.setIsFlying(player, message.isFlying, PlayerSet.nearPlayer(player));
+                if (flightCapability.canFly(player) || !ServerboundControlFlyingMessage.this.isFlying) {
+                    flightCapability.setIsFlying(player,
+                            ServerboundControlFlyingMessage.this.isFlying,
+                            PlayerSet.nearPlayer(player));
                 }
             }
         };

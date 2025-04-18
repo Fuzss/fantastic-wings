@@ -2,8 +2,8 @@ package fuzs.fantasticwings.handler;
 
 import fuzs.fantasticwings.flight.FlightCapability;
 import fuzs.fantasticwings.init.ModRegistry;
-import fuzs.puzzleslib.api.core.v1.CommonAbstractions;
 import fuzs.puzzleslib.api.event.v1.core.EventResult;
+import fuzs.puzzleslib.api.item.v2.ItemHelper;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
@@ -37,7 +37,7 @@ public class ServerEventHandler {
             player.awardStat(Stats.ITEM_USED.get(Items.GLASS_BOTTLE));
             ItemStack itemStack = new ItemStack(ModRegistry.BOTTLED_BAT_BLOOD_ITEM);
             if (itemInHand.isEmpty()) {
-                CommonAbstractions.INSTANCE.onPlayerDestroyItem(player, originalItemInHand, interactionHand);
+                ItemHelper.onPlayerDestroyItem(player, originalItemInHand, interactionHand);
                 player.setItemInHand(interactionHand, itemStack);
             } else if (!player.getInventory().add(itemStack)) {
                 player.drop(itemStack, false);

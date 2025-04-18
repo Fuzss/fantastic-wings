@@ -43,7 +43,7 @@ public class ClientEventHandler {
             "pitch"));
 
     public static void setupPlayerAnim(PlayerRenderState renderState, HumanoidModel<PlayerRenderState> model) {
-        float flyingAmount = RenderPropertyKey.getRenderProperty(renderState, FLYING_AMOUNT_RENDER_PROPERTY_KEY);
+        float flyingAmount = RenderPropertyKey.getOrDefault(renderState, FLYING_AMOUNT_RENDER_PROPERTY_KEY, 0.0F);
         if (flyingAmount != 0.0F) {
             model.head.xRot = MathHelper.toRadians(MathHelper.lerp(renderState.xRot,
                     renderState.xRot / 4.0F - 90.0F,
@@ -57,10 +57,10 @@ public class ClientEventHandler {
     }
 
     public static void setupPlayerRotations(PlayerRenderState renderState, PoseStack poseStack) {
-        float flyingAmount = RenderPropertyKey.getRenderProperty(renderState, FLYING_AMOUNT_RENDER_PROPERTY_KEY);
+        float flyingAmount = RenderPropertyKey.getOrDefault(renderState, FLYING_AMOUNT_RENDER_PROPERTY_KEY, 0.0F);
         if (flyingAmount > 0.0F) {
-            float roll = RenderPropertyKey.getRenderProperty(renderState, ROLL_RENDER_PROPERTY_KEY);
-            float pitch = RenderPropertyKey.getRenderProperty(renderState, PITCH_RENDER_PROPERTY_KEY);
+            float roll = RenderPropertyKey.getOrDefault(renderState, ROLL_RENDER_PROPERTY_KEY, 0.0F);
+            float pitch = RenderPropertyKey.getOrDefault(renderState, PITCH_RENDER_PROPERTY_KEY, 0.0F);
             poseStack.mulPose(Axis.ZP.rotationDegrees(MathHelper.lerpDegrees(0.0F, roll, flyingAmount)));
             poseStack.mulPose(Axis.XP.rotationDegrees(MathHelper.lerpDegrees(0.0F, pitch, flyingAmount)));
             poseStack.translate(0.0, -1.2 * MathHelper.easeInOut(flyingAmount), 0.0);
@@ -92,18 +92,18 @@ public class ClientEventHandler {
     public static void onExtractRenderState(Entity entity, EntityRenderState entityRenderState, float partialTick) {
         if (entity instanceof AbstractClientPlayer player &&
                 entityRenderState instanceof PlayerRenderState playerRenderState) {
-            RenderPropertyKey.setRenderProperty(entityRenderState,
+            RenderPropertyKey.set(entityRenderState,
                     FLIGHT_VIEW_RENDER_PROPERTY_KEY,
                     ClientModRegistry.FLIGHT_VIEW_ATTACHMENT_TYPE.get(entity));
-            RenderPropertyKey.setRenderProperty(entityRenderState,
+            RenderPropertyKey.set(entityRenderState,
                     FLYING_AMOUNT_RENDER_PROPERTY_KEY,
                     ModRegistry.FLIGHT_CAPABILITY.get(player).getFlyingAmount(partialTick));
             float roll = MathHelper.lerpDegrees(player.yBodyRotO - player.yRotO,
                     player.yBodyRot - player.getYRot(),
                     partialTick);
-            RenderPropertyKey.setRenderProperty(entityRenderState, ROLL_RENDER_PROPERTY_KEY, roll);
+            RenderPropertyKey.set(entityRenderState, ROLL_RENDER_PROPERTY_KEY, roll);
             float pitch = -MathHelper.lerpDegrees(player.xRotO, player.getXRot(), partialTick) - 90.0F;
-            RenderPropertyKey.setRenderProperty(entityRenderState, PITCH_RENDER_PROPERTY_KEY, pitch);
+            RenderPropertyKey.set(entityRenderState, PITCH_RENDER_PROPERTY_KEY, pitch);
             if (mustPreventCrouchingOffset(player)) {
                 playerRenderState.isCrouching = false;
             }

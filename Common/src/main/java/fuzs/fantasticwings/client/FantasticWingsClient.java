@@ -12,6 +12,7 @@ import fuzs.fantasticwings.client.renderer.item.properties.select.FlightApparatu
 import fuzs.fantasticwings.flight.FlightCapability;
 import fuzs.fantasticwings.init.ModRegistry;
 import fuzs.fantasticwings.network.ServerboundControlFlyingMessage;
+import fuzs.fantasticwings.world.item.WithDescriptionItem;
 import fuzs.puzzleslib.api.client.core.v1.ClientModConstructor;
 import fuzs.puzzleslib.api.client.core.v1.context.ItemModelsContext;
 import fuzs.puzzleslib.api.client.core.v1.context.KeyMappingsContext;
@@ -22,9 +23,11 @@ import fuzs.puzzleslib.api.client.event.v1.entity.ClientEntityLevelEvents;
 import fuzs.puzzleslib.api.client.event.v1.renderer.ComputeCameraAnglesCallback;
 import fuzs.puzzleslib.api.client.event.v1.renderer.ExtractRenderStateCallback;
 import fuzs.puzzleslib.api.client.event.v1.renderer.RenderHandEvents;
+import fuzs.puzzleslib.api.client.gui.v2.tooltip.ItemTooltipRegistry;
 import fuzs.puzzleslib.api.client.key.v1.KeyActivationHandler;
 import fuzs.puzzleslib.api.event.v1.entity.player.PlayerTickEvents;
-import fuzs.puzzleslib.api.network.v3.PlayerSet;
+import fuzs.puzzleslib.api.network.v4.MessageSender;
+import fuzs.puzzleslib.api.network.v4.PlayerSet;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
@@ -53,6 +56,12 @@ public class FantasticWingsClient implements ClientModConstructor {
     }
 
     @Override
+    public void onClientSetup() {
+        ItemTooltipRegistry.registerItemTooltip(WithDescriptionItem.class,
+                WithDescriptionItem::getDescriptionComponent);
+    }
+
+    @Override
     public void onRegisterKeyMappings(KeyMappingsContext context) {
         context.registerKeyMapping(ClientModRegistry.FLY_KEY_MAPPING,
                 KeyActivationHandler.forGame((Minecraft minecraft) -> {
@@ -60,7 +69,7 @@ public class FantasticWingsClient implements ClientModConstructor {
                     FlightCapability flightCapability = ModRegistry.FLIGHT_CAPABILITY.get(player);
                     if (flightCapability.canFly(player)) {
                         flightCapability.toggleIsFlying(player, PlayerSet.ofNone());
-                        FantasticWings.NETWORK.sendMessage(new ServerboundControlFlyingMessage(flightCapability.isFlying()));
+                        MessageSender.broadcast(new ServerboundControlFlyingMessage(flightCapability.isFlying()));
                     }
                 }));
     }
