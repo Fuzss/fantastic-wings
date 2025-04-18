@@ -4,6 +4,7 @@ import fuzs.fantasticwings.FantasticWings;
 import fuzs.fantasticwings.client.init.ClientModRegistry;
 import fuzs.fantasticwings.commands.WingsCommand;
 import fuzs.fantasticwings.flight.apparatus.FlightApparatus;
+import fuzs.fantasticwings.init.FlightApparatuses;
 import fuzs.fantasticwings.init.ModRegistry;
 import fuzs.fantasticwings.world.item.BottledWingsItem;
 import fuzs.fantasticwings.world.item.WithDescriptionItem;
@@ -18,34 +19,34 @@ public class ModLanguageProvider extends AbstractLanguageProvider {
     }
 
     @Override
-    public void addTranslations(TranslationBuilder translationBuilder) {
-        translationBuilder.addCreativeModeTab(FantasticWings.MOD_ID, FantasticWings.MOD_NAME);
-        translationBuilder.addKeyCategory(FantasticWings.MOD_ID, FantasticWings.MOD_NAME);
-        translationBuilder.add(ClientModRegistry.FLY_KEY_MAPPING, "Toggle Flight");
-        translationBuilder.add(WingsCommand.KEY_GIVE_WINGS_SINGLE, "Applied wings to %s");
-        translationBuilder.add(WingsCommand.KEY_GIVE_WINGS_MULTIPLE, "Applied wings to %s targets");
-        translationBuilder.add(WingsCommand.KEY_TAKE_WINGS_SINGLE, "Removed wings from %s");
-        translationBuilder.add(WingsCommand.KEY_TAKE_WINGS_MULTIPLE, "Removed wings from %s targets");
-        translationBuilder.add(WingsCommand.COMPONENT_GIVE_WINGS_FAILED, "Unable to apply wings to target");
-        translationBuilder.add(WingsCommand.COMPONENT_TAKE_WINGS_FAILED, "Target doesn't have wings to remove");
-        translationBuilder.add(ModRegistry.BOTTLED_BAT_BLOOD_ITEM.value(), "Bottled Bat Blood");
-        translationBuilder.add(((WithDescriptionItem) ModRegistry.BOTTLED_BAT_BLOOD_ITEM.value()).getDescriptionComponent(),
+    public void addTranslations(TranslationBuilder builder) {
+        builder.add(ModRegistry.CREATIVE_MODE_TAB.value(), FantasticWings.MOD_NAME);
+        builder.addKeyCategory(FantasticWings.MOD_ID, FantasticWings.MOD_NAME);
+        builder.add(ClientModRegistry.FLY_KEY_MAPPING, "Toggle Flight");
+        builder.add(WingsCommand.KEY_GIVE_WINGS_SINGLE, "Applied wings to %s");
+        builder.add(WingsCommand.KEY_GIVE_WINGS_MULTIPLE, "Applied wings to %s targets");
+        builder.add(WingsCommand.KEY_TAKE_WINGS_SINGLE, "Removed wings from %s");
+        builder.add(WingsCommand.KEY_TAKE_WINGS_MULTIPLE, "Removed wings from %s targets");
+        builder.add(WingsCommand.COMPONENT_GIVE_WINGS_FAILED, "Unable to apply wings to target");
+        builder.add(WingsCommand.COMPONENT_TAKE_WINGS_FAILED, "Target doesn't have wings to remove");
+        builder.add(ModRegistry.BOTTLED_BAT_BLOOD_ITEM.value(), "Bottled Bat Blood");
+        builder.add(((WithDescriptionItem) ModRegistry.BOTTLED_BAT_BLOOD_ITEM.value()).getDescriptionComponent(),
                 "Consume to shed your wings.");
-        translationBuilder.add(ModRegistry.BOTTLED_WINGS_ITEM.value(), "Bottled Wings");
-        translationBuilder.add(((WithDescriptionItem) ModRegistry.BOTTLED_WINGS_ITEM.value()).getDescriptionComponent(),
+        builder.add(ModRegistry.BOTTLED_WINGS_ITEM.value(), "Bottled Wings");
+        builder.add(((WithDescriptionItem) ModRegistry.BOTTLED_WINGS_ITEM.value()).getDescriptionComponent(),
                 "Consume to grow a set of wings.");
-        addWings(ModRegistry.ANGEL_FLIGHT_APPARATUS, "Angel Wings", translationBuilder);
-        addWings(ModRegistry.BAT_FLIGHT_APPARATUS, "Bat Wings", translationBuilder);
-        addWings(ModRegistry.BLUE_BUTTERFLY_FLIGHT_APPARATUS, "Blue Butterfly Wings", translationBuilder);
-        addWings(ModRegistry.DRAGON_FLIGHT_APPARATUS, "Dragon Wings", translationBuilder);
-        addWings(ModRegistry.EVIL_FLIGHT_APPARATUS, "Evil Wings", translationBuilder);
-        addWings(ModRegistry.FAIRY_FLIGHT_APPARATUS, "Fairy Wings", translationBuilder);
-        addWings(ModRegistry.FIRE_FLIGHT_APPARATUS, "Fire Wings", translationBuilder);
-        addWings(ModRegistry.MONARCH_BUTTERFLY_FLIGHT_APPARATUS, "Monarch Butterfly Wings", translationBuilder);
-        addWings(ModRegistry.PARROT_FLIGHT_APPARATUS, "Parrot Wings", translationBuilder);
-        addWings(ModRegistry.SLIME_FLIGHT_APPARATUS, "Slime Wings", translationBuilder);
-        addWings(ModRegistry.METALLIC_FLIGHT_APPARATUS, "Metallic Wings", translationBuilder);
-        translationBuilder.add(ModRegistry.ITEM_ARMOR_EQUIP_WINGS.value(), "Wings rustle");
+        addWings(FlightApparatuses.ANGEL_FLIGHT_APPARATUS, "Angel Wings", builder);
+        addWings(FlightApparatuses.BAT_FLIGHT_APPARATUS, "Bat Wings", builder);
+        addWings(FlightApparatuses.BLUE_BUTTERFLY_FLIGHT_APPARATUS, "Blue Butterfly Wings", builder);
+        addWings(FlightApparatuses.DRAGON_FLIGHT_APPARATUS, "Dragon Wings", builder);
+        addWings(FlightApparatuses.EVIL_FLIGHT_APPARATUS, "Evil Wings", builder);
+        addWings(FlightApparatuses.FAIRY_FLIGHT_APPARATUS, "Fairy Wings", builder);
+        addWings(FlightApparatuses.FIRE_FLIGHT_APPARATUS, "Fire Wings", builder);
+        addWings(FlightApparatuses.MONARCH_BUTTERFLY_FLIGHT_APPARATUS, "Monarch Butterfly Wings", builder);
+        addWings(FlightApparatuses.PARROT_FLIGHT_APPARATUS, "Parrot Wings", builder);
+        addWings(FlightApparatuses.SLIME_FLIGHT_APPARATUS, "Slime Wings", builder);
+        addWings(FlightApparatuses.METALLIC_FLIGHT_APPARATUS, "Metallic Wings", builder);
+        builder.add(ModRegistry.ITEM_ARMOR_EQUIP_WINGS.value(), "Wings rustle");
     }
 
     static void addWings(ResourceKey<FlightApparatus> resourceKey, String value, TranslationBuilder translationBuilder) {

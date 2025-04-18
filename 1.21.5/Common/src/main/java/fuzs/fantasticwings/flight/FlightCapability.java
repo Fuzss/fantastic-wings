@@ -7,12 +7,12 @@ import fuzs.fantasticwings.network.ServerboundControlFlyingMessage;
 import fuzs.fantasticwings.util.CubicBezier;
 import fuzs.fantasticwings.util.MathHelper;
 import fuzs.puzzleslib.api.capability.v3.data.CapabilityComponent;
-import fuzs.puzzleslib.api.network.v3.PlayerSet;
+import fuzs.puzzleslib.api.network.v4.MessageSender;
+import fuzs.puzzleslib.api.network.v4.PlayerSet;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
@@ -113,7 +113,7 @@ public final class FlightCapability extends CapabilityComponent<Player> {
     public boolean canSlowlyDescend(Player player) {
         return this.canUseWings(player) && this.holder.filter((Holder<FlightApparatus> holder) -> holder.value()
                 .isUsableForSlowlyDescending(player)).isPresent() &&
-                (this.isFlying() || !this.getHolder().isDescending() && !this.getHolder().getAbilities().mayfly);
+                (this.isFlying() || !player.isDescending() && !player.getAbilities().mayfly);
     }
 
     private void onWornUpdate(Player player) {
@@ -164,7 +164,7 @@ public final class FlightCapability extends CapabilityComponent<Player> {
                 this.setTimeFlying(this.timeFlying + 1);
             } else if (player.isLocalPlayer() && player.onGround()) {
                 this.setIsFlying(player, false, PlayerSet.ofNone());
-                FantasticWings.NETWORK.sendMessage(new ServerboundControlFlyingMessage(false));
+                MessageSender.broadcast(new ServerboundControlFlyingMessage(false));
             }
         } else if (this.timeFlying > INITIAL_TIME_FLYING) {
             this.setTimeFlying(this.timeFlying - 1);
@@ -185,21 +185,18 @@ public final class FlightCapability extends CapabilityComponent<Player> {
     public void write(CompoundTag compoundTag, HolderLookup.Provider registries) {
         compoundTag.putBoolean(KEY_IS_FLYING, this.isFlying);
         compoundTag.putInt(KEY_TIME_FLYING, this.timeFlying);
-        this.holder.ifPresent((Holder<FlightApparatus> holder) -> {
-            FlightApparatus.CODEC.encodeStart(registries.createSerializationContext(NbtOps.INSTANCE), holder)
-                    .ifSuccess((Tag tag) -> compoundTag.put(KEY_WING_TYPE, tag));
-        });
+        compoundTag.storeNullable(KEY_WING_TYPE,
+                FlightApparatus.CODEC,
+                registries.createSerializationContext(NbtOps.INSTANCE),
+                this.holder.orElse(null));
     }
 
     @Override
     public void read(CompoundTag compoundTag, HolderLookup.Provider registries) {
-        this.isFlying = compoundTag.getBoolean(KEY_IS_FLYING);
-        this.timeFlying = compoundTag.getInt(KEY_TIME_FLYING);
-        if (compoundTag.contains(KEY_WING_TYPE)) {
-            this.holder = FlightApparatus.CODEC.parse(registries.createSerializationContext(NbtOps.INSTANCE),
-                    compoundTag.get(KEY_WING_TYPE)).resultOrPartial();
-        } else {
-            this.holder = Optional.empty();
-        }
+        this.isFlying = compoundTag.getBooleanOr(KEY_IS_FLYING, false);
+        this.timeFlying = compoundTag.getIntOr(KEY_TIME_FLYING, 0);
+        this.holder = compoundTag.read(KEY_WING_TYPE,
+                FlightApparatus.CODEC,
+                registries.createSerializationContext(NbtOps.INSTANCE));
     }
 }

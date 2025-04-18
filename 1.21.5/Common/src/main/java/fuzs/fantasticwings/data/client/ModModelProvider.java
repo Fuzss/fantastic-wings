@@ -2,6 +2,7 @@ package fuzs.fantasticwings.data.client;
 
 import fuzs.fantasticwings.client.renderer.item.properties.select.FlightApparatusProperty;
 import fuzs.fantasticwings.flight.apparatus.FlightApparatus;
+import fuzs.fantasticwings.init.FlightApparatuses;
 import fuzs.fantasticwings.init.ModRegistry;
 import fuzs.puzzleslib.api.client.data.v2.AbstractModelProvider;
 import fuzs.puzzleslib.api.data.v2.core.DataProviderContext;
@@ -31,17 +32,17 @@ public class ModModelProvider extends AbstractModelProvider {
     }
 
     public final void generateBottledWings(Item item, ItemModelGenerators itemModelGenerators) {
-        List<SelectItemModel.SwitchCase<ResourceKey<FlightApparatus>>> switchCases = Stream.of(ModRegistry.ANGEL_FLIGHT_APPARATUS,
-                ModRegistry.PARROT_FLIGHT_APPARATUS,
-                ModRegistry.SLIME_FLIGHT_APPARATUS,
-                ModRegistry.BLUE_BUTTERFLY_FLIGHT_APPARATUS,
-                ModRegistry.MONARCH_BUTTERFLY_FLIGHT_APPARATUS,
-                ModRegistry.FIRE_FLIGHT_APPARATUS,
-                ModRegistry.BAT_FLIGHT_APPARATUS,
-                ModRegistry.EVIL_FLIGHT_APPARATUS,
-                ModRegistry.FAIRY_FLIGHT_APPARATUS,
-                ModRegistry.DRAGON_FLIGHT_APPARATUS,
-                ModRegistry.METALLIC_FLIGHT_APPARATUS).map((ResourceKey<FlightApparatus> resourceKey) -> {
+        List<SelectItemModel.SwitchCase<ResourceKey<FlightApparatus>>> switchCases = Stream.of(FlightApparatuses.ANGEL_FLIGHT_APPARATUS,
+                FlightApparatuses.PARROT_FLIGHT_APPARATUS,
+                FlightApparatuses.SLIME_FLIGHT_APPARATUS,
+                FlightApparatuses.BLUE_BUTTERFLY_FLIGHT_APPARATUS,
+                FlightApparatuses.MONARCH_BUTTERFLY_FLIGHT_APPARATUS,
+                FlightApparatuses.FIRE_FLIGHT_APPARATUS,
+                FlightApparatuses.BAT_FLIGHT_APPARATUS,
+                FlightApparatuses.EVIL_FLIGHT_APPARATUS,
+                FlightApparatuses.FAIRY_FLIGHT_APPARATUS,
+                FlightApparatuses.DRAGON_FLIGHT_APPARATUS,
+                FlightApparatuses.METALLIC_FLIGHT_APPARATUS).map((ResourceKey<FlightApparatus> resourceKey) -> {
             return ItemModelUtils.when(resourceKey,
                     ItemModelUtils.plainModel(this.createWings(item, resourceKey, itemModelGenerators)));
         }).toList();

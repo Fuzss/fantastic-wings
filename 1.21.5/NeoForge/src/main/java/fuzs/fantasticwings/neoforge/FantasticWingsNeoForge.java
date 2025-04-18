@@ -1,9 +1,9 @@
 package fuzs.fantasticwings.neoforge;
 
 import fuzs.fantasticwings.FantasticWings;
-import fuzs.fantasticwings.data.ModDatapackRegistriesProvider;
 import fuzs.fantasticwings.data.ModItemTagProvider;
 import fuzs.fantasticwings.data.ModRecipeProvider;
+import fuzs.fantasticwings.init.ModRegistry;
 import fuzs.puzzleslib.api.core.v1.ModConstructor;
 import fuzs.puzzleslib.neoforge.api.data.v2.core.DataProviderHelper;
 import net.neoforged.fml.common.Mod;
@@ -14,7 +14,7 @@ public class FantasticWingsNeoForge {
     public FantasticWingsNeoForge() {
         ModConstructor.construct(FantasticWings.MOD_ID, FantasticWings::new);
         DataProviderHelper.registerDataProviders(FantasticWings.MOD_ID,
-                ModDatapackRegistriesProvider::new,
+                ModRegistry.REGISTRY_SET_BUILDER,
                 ModItemTagProvider::new,
                 ModRecipeProvider::new);
     }

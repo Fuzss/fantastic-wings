@@ -13,9 +13,9 @@ import fuzs.puzzleslib.api.capability.v3.data.SyncStrategy;
 import fuzs.puzzleslib.api.init.v3.registry.RegistryManager;
 import fuzs.puzzleslib.api.init.v3.tags.TagFactory;
 import net.minecraft.core.Holder;
+import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Player;
@@ -27,6 +27,9 @@ import net.minecraft.world.item.component.Consumables;
 import net.minecraft.world.item.consume_effects.ConsumeEffect;
 
 public class ModRegistry {
+    public static final RegistrySetBuilder REGISTRY_SET_BUILDER = new RegistrySetBuilder().add(FlightApparatus.REGISTRY_KEY,
+            FlightApparatuses::bootstrap);
+
     static final RegistryManager REGISTRIES = RegistryManager.from(FantasticWings.MOD_ID);
     public static final Holder.Reference<Item> BOTTLED_WINGS_ITEM = REGISTRIES.registerItem("bottled_wings",
             BottledWingsItem::new,
@@ -58,34 +61,6 @@ public class ModRegistry {
             "item.armor.equip_wings");
     public static final Holder.Reference<SoundEvent> ITEM_WINGS_FLYING = REGISTRIES.registerSoundEvent(
             "item.wings.flying");
-
-    public static final ResourceKey<FlightApparatus> ANGEL_FLIGHT_APPARATUS = REGISTRIES.makeResourceKey(FlightApparatus.REGISTRY_KEY,
-            "angel");
-    public static final ResourceKey<FlightApparatus> PARROT_FLIGHT_APPARATUS = REGISTRIES.makeResourceKey(
-            FlightApparatus.REGISTRY_KEY,
-            "parrot");
-    public static final ResourceKey<FlightApparatus> SLIME_FLIGHT_APPARATUS = REGISTRIES.makeResourceKey(FlightApparatus.REGISTRY_KEY,
-            "slime");
-    public static final ResourceKey<FlightApparatus> BLUE_BUTTERFLY_FLIGHT_APPARATUS = REGISTRIES.makeResourceKey(
-            FlightApparatus.REGISTRY_KEY,
-            "blue_butterfly");
-    public static final ResourceKey<FlightApparatus> MONARCH_BUTTERFLY_FLIGHT_APPARATUS = REGISTRIES.makeResourceKey(
-            FlightApparatus.REGISTRY_KEY,
-            "monarch_butterfly");
-    public static final ResourceKey<FlightApparatus> FIRE_FLIGHT_APPARATUS = REGISTRIES.makeResourceKey(FlightApparatus.REGISTRY_KEY,
-            "fire");
-    public static final ResourceKey<FlightApparatus> BAT_FLIGHT_APPARATUS = REGISTRIES.makeResourceKey(FlightApparatus.REGISTRY_KEY,
-            "bat");
-    public static final ResourceKey<FlightApparatus> FAIRY_FLIGHT_APPARATUS = REGISTRIES.makeResourceKey(FlightApparatus.REGISTRY_KEY,
-            "fairy");
-    public static final ResourceKey<FlightApparatus> EVIL_FLIGHT_APPARATUS = REGISTRIES.makeResourceKey(FlightApparatus.REGISTRY_KEY,
-            "evil");
-    public static final ResourceKey<FlightApparatus> DRAGON_FLIGHT_APPARATUS = REGISTRIES.makeResourceKey(
-            FlightApparatus.REGISTRY_KEY,
-            "dragon");
-    public static final ResourceKey<FlightApparatus> METALLIC_FLIGHT_APPARATUS = REGISTRIES.makeResourceKey(
-            FlightApparatus.REGISTRY_KEY,
-            "metallic");
 
     static final TagFactory TAGS = TagFactory.make(FantasticWings.MOD_ID);
     public static final TagKey<Item> WING_OBSTRUCTIONS = TAGS.registerItemTag("wing_obstructions");

@@ -7,12 +7,12 @@ import fuzs.fantasticwings.init.ModRegistry;
 import fuzs.fantasticwings.network.ServerboundControlFlyingMessage;
 import fuzs.puzzleslib.api.core.v1.ModConstructor;
 import fuzs.puzzleslib.api.core.v1.context.DataPackRegistriesContext;
+import fuzs.puzzleslib.api.core.v1.context.PayloadTypesContext;
 import fuzs.puzzleslib.api.core.v1.utility.ResourceLocationHelper;
 import fuzs.puzzleslib.api.event.v1.entity.EntityRidingEvents;
 import fuzs.puzzleslib.api.event.v1.entity.player.PlayerInteractEvents;
 import fuzs.puzzleslib.api.event.v1.entity.player.PlayerTickEvents;
 import fuzs.puzzleslib.api.event.v1.server.RegisterCommandsCallback;
-import fuzs.puzzleslib.api.network.v3.NetworkHandler;
 import net.minecraft.resources.ResourceLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,9 +21,6 @@ public class FantasticWings implements ModConstructor {
     public static final String MOD_ID = "fantasticwings";
     public static final String MOD_NAME = "Fantastic Wings";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_NAME);
-
-    public static final NetworkHandler NETWORK = NetworkHandler.builder(MOD_ID)
-            .registerServerbound(ServerboundControlFlyingMessage.class);
 
     @Override
     public void onConstructMod() {
@@ -39,7 +36,12 @@ public class FantasticWings implements ModConstructor {
     }
 
     @Override
-    public void onDataPackRegistriesContext(DataPackRegistriesContext context) {
+    public void onRegisterPayloadTypes(PayloadTypesContext context) {
+        context.playToServer(ServerboundControlFlyingMessage.class, ServerboundControlFlyingMessage.STREAM_CODEC);
+    }
+
+    @Override
+    public void onRegisterDataPackRegistriesContext(DataPackRegistriesContext context) {
         context.registerSyncedRegistry(FlightApparatus.REGISTRY_KEY, FlightApparatus.DIRECT_CODEC);
     }
 

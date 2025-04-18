@@ -1,5 +1,6 @@
 package fuzs.fantasticwings.client.renderer.item.properties.select;
 
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import fuzs.fantasticwings.flight.apparatus.FlightApparatus;
 import fuzs.fantasticwings.world.item.BottledWingsItem;
@@ -20,6 +21,11 @@ public record FlightApparatusProperty() implements SelectItemModelProperty<Resou
     @Override
     public @Nullable ResourceKey<FlightApparatus> get(ItemStack itemStack, @Nullable ClientLevel level, @Nullable LivingEntity entity, int seed, ItemDisplayContext displayContext) {
         return BottledWingsItem.getFlightApparatus(itemStack).flatMap(Holder::unwrapKey).orElse(null);
+    }
+
+    @Override
+    public Codec<ResourceKey<FlightApparatus>> valueCodec() {
+        return ResourceKey.codec(FlightApparatus.REGISTRY_KEY);
     }
 
     @Override
