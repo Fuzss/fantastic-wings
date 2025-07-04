@@ -31,9 +31,7 @@ public class ServerEventHandler {
                     1.0F,
                     1.0F);
             ItemStack originalItemInHand = itemInHand.copy();
-            if (!player.getAbilities().instabuild) {
-                itemInHand.shrink(1);
-            }
+            itemInHand.consume(1, player);
             player.awardStat(Stats.ITEM_USED.get(Items.GLASS_BOTTLE));
             ItemStack itemStack = new ItemStack(ModRegistry.BOTTLED_BAT_BLOOD_ITEM);
             if (itemInHand.isEmpty()) {
@@ -46,13 +44,15 @@ public class ServerEventHandler {
         return EventResult.PASS;
     }
 
-    public static EventResult onStartRiding(Level level, Entity rider, Entity vehicle) {
-        return ModRegistry.FLIGHT_CAPABILITY.getIfProvided(rider).filter(FlightCapability::isFlying).isPresent() ?
+    public static EventResult onStartRiding(Level level, Entity passengerEntity, Entity vehicleEntity) {
+        return ModRegistry.FLIGHT_CAPABILITY.getOrDefault(passengerEntity, FlightCapability.VOID).isFlying() ?
                 EventResult.INTERRUPT : EventResult.PASS;
     }
 
     public static void onEndPlayerTick(Player player) {
-        ModRegistry.FLIGHT_CAPABILITY.get(player).tick(player);
+        FlightCapability flightCapability = ModRegistry.FLIGHT_CAPABILITY.get(player);
+        flightCapability = FlightCapability.tick(flightCapability, player);
+        ModRegistry.FLIGHT_CAPABILITY.set(player, flightCapability);
     }
 
     public static boolean onUpdateBodyRotation(LivingEntity living, float movementYaw) {

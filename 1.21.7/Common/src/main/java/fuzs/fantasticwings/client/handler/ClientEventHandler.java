@@ -27,7 +27,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -68,16 +67,16 @@ public class ClientEventHandler {
     }
 
     public static void onComputeCameraAngles(GameRenderer renderer, Camera camera, float partialTick, MutableFloat pitch, MutableFloat yaw, MutableFloat roll) {
-        LivingEntity cameraEntity = (LivingEntity) camera.getEntity();
-        ModRegistry.FLIGHT_CAPABILITY.getIfProvided(cameraEntity).ifPresent(flightViewCapability -> {
-            float flyingAmount = flightViewCapability.getFlyingAmount(partialTick);
-            if (flyingAmount > 0.0F) {
-                float newRoll = MathHelper.lerpDegrees(cameraEntity.yBodyRotO - cameraEntity.yRotO,
-                        cameraEntity.yBodyRot - cameraEntity.getYRot(),
-                        partialTick);
-                roll.accept(MathHelper.lerpDegrees(0.0F, -newRoll * 0.25F, flyingAmount));
-            }
-        });
+        FlightCapability flightCapability = ModRegistry.FLIGHT_CAPABILITY.getOrDefault(camera.getEntity(),
+                FlightCapability.VOID);
+        float flyingAmount = flightCapability.getFlyingAmount(partialTick);
+        if (flyingAmount > 0.0F) {
+            Player player = (Player) camera.getEntity();
+            float newRoll = MathHelper.lerpDegrees(player.yBodyRotO - player.yRotO,
+                    player.yBodyRot - player.getYRot(),
+                    partialTick);
+            roll.accept(MathHelper.lerpDegrees(0.0F, -newRoll * 0.25F, flyingAmount));
+        }
     }
 
     public static EventResult onEntityLoad(Entity entity, ClientLevel level) {
@@ -90,8 +89,8 @@ public class ClientEventHandler {
     }
 
     public static void onExtractRenderState(Entity entity, EntityRenderState entityRenderState, float partialTick) {
-        if (entity instanceof AbstractClientPlayer player &&
-                entityRenderState instanceof PlayerRenderState playerRenderState) {
+        if (entity instanceof AbstractClientPlayer player
+                && entityRenderState instanceof PlayerRenderState playerRenderState) {
             RenderPropertyKey.set(entityRenderState,
                     FLIGHT_VIEW_RENDER_PROPERTY_KEY,
                     ClientModRegistry.FLIGHT_VIEW_ATTACHMENT_TYPE.get(entity));
@@ -123,8 +122,8 @@ public class ClientEventHandler {
 
     public static EventResult onRenderOffHand(ItemInHandRenderer itemInHandRenderer, InteractionHand interactionHand, AbstractClientPlayer player, HumanoidArm humanoidArm, ItemStack itemStack, PoseStack poseStack, MultiBufferSource bufferSource, int combinedLight, float partialTick, float interpolatedPitch, float swingProgress, float equipProgress) {
         if (itemStack.isEmpty() && !player.isScoping() && !player.isInvisible()) {
-            if (!itemInHandRenderer.mainHandItem.is(Items.FILLED_MAP) &&
-                    ModRegistry.FLIGHT_CAPABILITY.get(player).isFlying()) {
+            if (!itemInHandRenderer.mainHandItem.is(Items.FILLED_MAP) && ModRegistry.FLIGHT_CAPABILITY.get(player)
+                    .isFlying()) {
                 itemInHandRenderer.renderPlayerArm(poseStack,
                         bufferSource,
                         combinedLight,

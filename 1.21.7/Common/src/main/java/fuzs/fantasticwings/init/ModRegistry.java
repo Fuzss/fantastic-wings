@@ -7,18 +7,19 @@ import fuzs.fantasticwings.world.item.BottledWingsItem;
 import fuzs.fantasticwings.world.item.WithDescriptionItem;
 import fuzs.fantasticwings.world.item.consume_effects.GrantWingsConsumeEffect;
 import fuzs.fantasticwings.world.item.consume_effects.TakeWingsConsumeEffect;
-import fuzs.puzzleslib.api.capability.v3.CapabilityController;
-import fuzs.puzzleslib.api.capability.v3.data.EntityCapabilityKey;
-import fuzs.puzzleslib.api.capability.v3.data.SyncStrategy;
+import fuzs.puzzleslib.api.attachment.v4.DataAttachmentRegistry;
+import fuzs.puzzleslib.api.attachment.v4.DataAttachmentType;
 import fuzs.puzzleslib.api.init.v3.registry.RegistryManager;
 import fuzs.puzzleslib.api.init.v3.tags.TagFactory;
+import fuzs.puzzleslib.api.network.v4.PlayerSet;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -65,12 +66,11 @@ public class ModRegistry {
     static final TagFactory TAGS = TagFactory.make(FantasticWings.MOD_ID);
     public static final TagKey<Item> WING_OBSTRUCTIONS = TAGS.registerItemTag("wing_obstructions");
 
-    static final CapabilityController CAPABILITIES = CapabilityController.from(FantasticWings.MOD_ID);
-    public static final EntityCapabilityKey<Player, FlightCapability> FLIGHT_CAPABILITY = CAPABILITIES.registerEntityCapability(
-            "flight",
-            FlightCapability.class,
-            FlightCapability::new,
-            Player.class).setSyncStrategy(SyncStrategy.TRACKING);
+    public static final DataAttachmentType<Entity, FlightCapability> FLIGHT_CAPABILITY = DataAttachmentRegistry.<FlightCapability>entityBuilder()
+            .defaultValue(EntityType.PLAYER, FlightCapability.VOID)
+            .persistent(FlightCapability.CODEC)
+            .networkSynchronized(FlightCapability.STREAM_CODEC, PlayerSet::nearEntity)
+            .build(FantasticWings.id("flight"));
 
     public static void bootstrap() {
         // NO-OP

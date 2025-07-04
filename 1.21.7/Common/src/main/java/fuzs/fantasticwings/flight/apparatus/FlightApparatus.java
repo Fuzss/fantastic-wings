@@ -9,7 +9,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.RegistryFileCodec;
+import net.minecraft.resources.RegistryFixedCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ByIdMap;
@@ -36,10 +36,9 @@ public record FlightApparatus(ResourceLocation textureLocation, Model model, Win
             WingSettings.STREAM_CODEC,
             FlightApparatus::wingSettings,
             FlightApparatus::new);
-    public static final Codec<Holder<FlightApparatus>> CODEC = RegistryFileCodec.create(REGISTRY_KEY, DIRECT_CODEC);
-    public static final StreamCodec<RegistryFriendlyByteBuf, Holder<FlightApparatus>> STREAM_CODEC = ByteBufCodecs.holder(
-            REGISTRY_KEY,
-            DIRECT_STREAM_CODEC);
+    public static final Codec<Holder<FlightApparatus>> CODEC = RegistryFixedCodec.create(REGISTRY_KEY);
+    public static final StreamCodec<RegistryFriendlyByteBuf, Holder<FlightApparatus>> STREAM_CODEC = ByteBufCodecs.holderRegistry(
+            REGISTRY_KEY);
 
     public static ResourceLocation transformTextureLocation(ResourceLocation resourceLocation) {
         return resourceLocation.withPath((String string) -> "textures/" + string + ".png");
@@ -61,13 +60,13 @@ public record FlightApparatus(ResourceLocation textureLocation, Model model, Win
     }
 
     public boolean isUsableForFlying(Player player) {
-        return player.getAbilities().invulnerable ||
-                player.getFoodData().getFoodLevel() >= this.wingSettings().requiredFoodLevelForFlying();
+        return player.getAbilities().invulnerable || player.getFoodData().getFoodLevel() >= this.wingSettings()
+                .requiredFoodLevelForFlying();
     }
 
     public boolean isUsableForSlowlyDescending(Player player) {
-        return player.getAbilities().invulnerable ||
-                player.getFoodData().getFoodLevel() >= this.wingSettings().requiredFoodLevelForSlowlyDescending();
+        return player.getAbilities().invulnerable || player.getFoodData().getFoodLevel() >= this.wingSettings()
+                .requiredFoodLevelForSlowlyDescending();
     }
 
     public enum Model implements StringRepresentable {

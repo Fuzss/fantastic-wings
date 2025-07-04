@@ -23,7 +23,7 @@ abstract class LivingEntityMixin extends Entity {
     @Inject(method = "isVisuallySwimming", at = @At("HEAD"), cancellable = true)
     public void isVisuallySwimming(CallbackInfoReturnable<Boolean> callback) {
         if (!super.isVisuallySwimming()) {
-            if (ModRegistry.FLIGHT_CAPABILITY.getIfProvided(this).filter(FlightCapability::isFlying).isPresent()) {
+            if (ModRegistry.FLIGHT_CAPABILITY.getOrDefault(this, FlightCapability.VOID).isFlying()) {
                 callback.setReturnValue(false);
             }
         }
