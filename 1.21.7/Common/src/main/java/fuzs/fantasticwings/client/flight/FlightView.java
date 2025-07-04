@@ -29,7 +29,7 @@ public record FlightView(WingState animator) {
 
     private FlightView tick(Player player) {
         WingState animator = this.getFlight(player)
-                .getWings()
+                .wings()
                 .flatMap(WingForm::get)
                 .map(this.animator::next)
                 .orElseGet(this.animator::nextAbsent);

@@ -27,7 +27,6 @@ import fuzs.puzzleslib.api.client.gui.v2.tooltip.ItemTooltipRegistry;
 import fuzs.puzzleslib.api.client.key.v1.KeyActivationHandler;
 import fuzs.puzzleslib.api.event.v1.entity.player.PlayerTickEvents;
 import fuzs.puzzleslib.api.network.v4.MessageSender;
-import fuzs.puzzleslib.api.network.v4.PlayerSet;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
@@ -57,7 +56,7 @@ public class FantasticWingsClient implements ClientModConstructor {
 
     @Override
     public void onClientSetup() {
-        ItemTooltipRegistry.registerItemTooltip(WithDescriptionItem.class,
+        ItemTooltipRegistry.ITEM.registerItemTooltip(WithDescriptionItem.class,
                 WithDescriptionItem::getDescriptionComponent);
     }
 
@@ -68,7 +67,8 @@ public class FantasticWingsClient implements ClientModConstructor {
                     Player player = minecraft.player;
                     FlightCapability flightCapability = ModRegistry.FLIGHT_CAPABILITY.get(player);
                     if (flightCapability.canFly(player)) {
-                        flightCapability.toggleIsFlying(player, PlayerSet.ofNone());
+                        flightCapability = flightCapability.toggleIsFlying(player);
+                        ModRegistry.FLIGHT_CAPABILITY.set(player, flightCapability);
                         MessageSender.broadcast(new ServerboundControlFlyingMessage(flightCapability.isFlying()));
                     }
                 }));

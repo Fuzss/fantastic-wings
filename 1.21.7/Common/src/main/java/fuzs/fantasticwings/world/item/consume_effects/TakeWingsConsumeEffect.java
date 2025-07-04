@@ -40,8 +40,10 @@ public record TakeWingsConsumeEffect(Optional<Holder<FlightApparatus>> holder) i
     public static boolean takeWings(ServerPlayer serverPlayer, Optional<Holder<FlightApparatus>> flightApparatus) {
         FlightCapability flightCapability = ModRegistry.FLIGHT_CAPABILITY.get(serverPlayer);
         if ((flightApparatus.isEmpty() || flightCapability.is(flightApparatus.get()))) {
-            if (flightCapability.setWings(null)) {
-                serverPlayer.serverLevel()
+            FlightCapability newFlightCapability = flightCapability.setWings(null);
+            if (flightCapability != newFlightCapability) {
+                ModRegistry.FLIGHT_CAPABILITY.set(serverPlayer, newFlightCapability);
+                serverPlayer.level()
                         .playSound(null,
                                 serverPlayer.getX(),
                                 serverPlayer.getY(),

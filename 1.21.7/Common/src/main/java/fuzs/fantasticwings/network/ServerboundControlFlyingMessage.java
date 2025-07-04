@@ -2,7 +2,6 @@ package fuzs.fantasticwings.network;
 
 import fuzs.fantasticwings.flight.FlightCapability;
 import fuzs.fantasticwings.init.ModRegistry;
-import fuzs.puzzleslib.api.network.v4.PlayerSet;
 import fuzs.puzzleslib.api.network.v4.message.MessageListener;
 import fuzs.puzzleslib.api.network.v4.message.play.ServerboundPlayMessage;
 import io.netty.buffer.ByteBuf;
@@ -24,9 +23,9 @@ public record ServerboundControlFlyingMessage(boolean isFlying) implements Serve
                 ServerPlayer player = context.player();
                 FlightCapability flightCapability = ModRegistry.FLIGHT_CAPABILITY.get(player);
                 if (flightCapability.canFly(player) || !ServerboundControlFlyingMessage.this.isFlying) {
-                    flightCapability.setIsFlying(player,
-                            ServerboundControlFlyingMessage.this.isFlying,
-                            PlayerSet.nearPlayer(player));
+                    flightCapability = flightCapability.setIsFlying(player,
+                            ServerboundControlFlyingMessage.this.isFlying);
+                    ModRegistry.FLIGHT_CAPABILITY.set(player, flightCapability);
                 }
             }
         };
