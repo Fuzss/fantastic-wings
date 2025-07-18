@@ -41,7 +41,7 @@ public class FantasticWings implements ModConstructor {
     }
 
     @Override
-    public void onRegisterDataPackRegistriesContext(DataPackRegistriesContext context) {
+    public void onRegisterDataPackRegistries(DataPackRegistriesContext context) {
         context.registerSyncedRegistry(FlightApparatus.REGISTRY_KEY, FlightApparatus.DIRECT_CODEC);
     }
 

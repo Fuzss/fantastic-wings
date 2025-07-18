@@ -30,7 +30,6 @@ import net.minecraft.world.item.consume_effects.ConsumeEffect;
 public class ModRegistry {
     public static final RegistrySetBuilder REGISTRY_SET_BUILDER = new RegistrySetBuilder().add(FlightApparatus.REGISTRY_KEY,
             FlightApparatuses::bootstrap);
-
     static final RegistryManager REGISTRIES = RegistryManager.from(FantasticWings.MOD_ID);
     public static final Holder.Reference<Item> BOTTLED_WINGS_ITEM = REGISTRIES.registerItem("bottled_wings",
             BottledWingsItem::new,

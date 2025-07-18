@@ -10,15 +10,24 @@ import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
+import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.client.renderer.entity.state.PlayerRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.world.entity.EntityType;
 
 public class ModWingsLayer extends RenderLayer<PlayerRenderState, PlayerModel> {
 
     public ModWingsLayer(RenderLayerParent<PlayerRenderState, PlayerModel> renderLayerParent, EntityRendererProvider.Context context) {
         super(renderLayerParent);
+    }
+
+    public static void addLivingEntityRenderLayers(EntityType<?> entityType, LivingEntityRenderer<?, ?, ?> entityRenderer, EntityRendererProvider.Context context) {
+        if (entityRenderer instanceof PlayerRenderer playerRenderer) {
+            playerRenderer.addLayer(new ModWingsLayer(playerRenderer, context));
+        }
     }
 
     @Override

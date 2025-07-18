@@ -17,9 +17,9 @@ import fuzs.puzzleslib.api.client.core.v1.ClientModConstructor;
 import fuzs.puzzleslib.api.client.core.v1.context.ItemModelsContext;
 import fuzs.puzzleslib.api.client.core.v1.context.KeyMappingsContext;
 import fuzs.puzzleslib.api.client.core.v1.context.LayerDefinitionsContext;
-import fuzs.puzzleslib.api.client.core.v1.context.LivingEntityRenderLayersContext;
 import fuzs.puzzleslib.api.client.event.v1.AddResourcePackReloadListenersCallback;
 import fuzs.puzzleslib.api.client.event.v1.entity.ClientEntityLevelEvents;
+import fuzs.puzzleslib.api.client.event.v1.renderer.AddLivingEntityRenderLayersCallback;
 import fuzs.puzzleslib.api.client.event.v1.renderer.ComputeCameraAnglesCallback;
 import fuzs.puzzleslib.api.client.event.v1.renderer.ExtractRenderStateCallback;
 import fuzs.puzzleslib.api.client.event.v1.renderer.RenderHandEvents;
@@ -30,7 +30,6 @@ import fuzs.puzzleslib.api.network.v4.MessageSender;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.function.BiConsumer;
@@ -52,6 +51,7 @@ public class FantasticWingsClient implements ClientModConstructor {
         AddResourcePackReloadListenersCallback.EVENT.register((BiConsumer<ResourceLocation, PreparableReloadListener> consumer) -> {
             consumer.accept(FantasticWings.id("wing_models"), WingFormRegistry.INSTANCE);
         });
+        AddLivingEntityRenderLayersCallback.EVENT.register(ModWingsLayer::addLivingEntityRenderLayers);
     }
 
     @Override
@@ -84,10 +84,5 @@ public class FantasticWingsClient implements ClientModConstructor {
         context.registerLayerDefinition(WingFormRegistry.INSECTOID_WINGS_MODEL_LAYER,
                 InsectoidWingsModel::createWingsLayer);
         context.registerLayerDefinition(WingFormRegistry.AVIAN_WINGS_MODEL_LAYER, AvianWingsModel::createWingsLayer);
-    }
-
-    @Override
-    public void onRegisterLivingEntityRenderLayers(LivingEntityRenderLayersContext context) {
-        context.registerRenderLayer(EntityType.PLAYER, ModWingsLayer::new);
     }
 }
