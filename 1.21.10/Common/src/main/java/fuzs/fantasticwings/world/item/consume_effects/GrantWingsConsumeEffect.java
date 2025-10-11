@@ -14,6 +14,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.consume_effects.ConsumeEffect;
 import net.minecraft.world.level.Level;
 
+import java.util.Objects;
+
 public record GrantWingsConsumeEffect(Holder<FlightApparatus> holder) implements ConsumeEffect {
     public static final MapCodec<GrantWingsConsumeEffect> CODEC = FlightApparatus.CODEC.fieldOf("wings")
             .xmap(GrantWingsConsumeEffect::new, GrantWingsConsumeEffect::holder);
@@ -32,9 +34,9 @@ public record GrantWingsConsumeEffect(Holder<FlightApparatus> holder) implements
     }
 
     public static boolean giveWings(ServerPlayer serverPlayer, Holder<FlightApparatus> flightApparatus) {
-        Flight flight = ModRegistry.FLIGHT_ATTACHMENT_TYPE.get(serverPlayer);
-        Flight newFlight = flight.setWings(flightApparatus);
-        if (flight != newFlight) {
+        Flight oldFlight = ModRegistry.FLIGHT_ATTACHMENT_TYPE.get(serverPlayer);
+        Flight newFlight = oldFlight.setWings(flightApparatus);
+        if (!Objects.equals(oldFlight, newFlight)) {
             ModRegistry.FLIGHT_ATTACHMENT_TYPE.set(serverPlayer, newFlight);
             serverPlayer.level()
                     .playSound(null,
