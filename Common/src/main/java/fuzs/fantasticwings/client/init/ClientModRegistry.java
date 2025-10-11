@@ -1,6 +1,5 @@
 package fuzs.fantasticwings.client.init;
 
-import com.mojang.blaze3d.platform.InputConstants;
 import fuzs.fantasticwings.FantasticWings;
 import fuzs.fantasticwings.client.flight.FlightView;
 import fuzs.puzzleslib.api.attachment.v4.DataAttachmentRegistry;
@@ -11,8 +10,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 
 public class ClientModRegistry {
-    public static final KeyMapping FLY_KEY_MAPPING = KeyMappingHelper.registerKeyMapping(FantasticWings.id(
-            "toggle_flight"), InputConstants.KEY_R);
+    public static final KeyMapping FLY_KEY_MAPPING = KeyMappingHelper.registerUnboundKeyMapping(FantasticWings.id(
+            "toggle_flight"));
 
     public static final DataAttachmentType<Entity, FlightView> FLIGHT_VIEW_ATTACHMENT_TYPE = DataAttachmentRegistry.<FlightView>entityBuilder()
             .defaultValue(EntityType.PLAYER, FlightView.VOID)

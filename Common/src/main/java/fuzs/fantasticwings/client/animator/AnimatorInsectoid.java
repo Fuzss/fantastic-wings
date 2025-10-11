@@ -1,9 +1,10 @@
 package fuzs.fantasticwings.client.animator;
 
+import fuzs.fantasticwings.client.renderer.entity.state.InsectoidRenderState;
 import fuzs.fantasticwings.util.MathHelper;
 import net.minecraft.world.phys.Vec3;
 
-public final class AnimatorInsectoid implements Animator {
+public final class AnimatorInsectoid implements Animator<InsectoidRenderState> {
     private static final float IDLE_FLAP_RATE = 0.05F;
     private static final float LIFT_FLAP_RATE = 1.2F;
     private float targetFlapRate = IDLE_FLAP_RATE;
@@ -38,7 +39,9 @@ public final class AnimatorInsectoid implements Animator {
     }
 
     public Vec3 getRotation(float delta) {
-        return new Vec3(0.0D, Math.sin(MathHelper.lerp(this.prevFlapCycle, this.flapCycle, delta)) * 35.0D - 42.0D, 0.0D);
+        return new Vec3(0.0D,
+                Math.sin(MathHelper.lerp(this.prevFlapCycle, this.flapCycle, delta)) * 35.0D - 42.0D,
+                0.0D);
     }
 
     @Override
@@ -46,5 +49,10 @@ public final class AnimatorInsectoid implements Animator {
         this.prevFlapCycle = this.flapCycle;
         this.flapCycle += this.flapRate;
         this.flapRate += (this.targetFlapRate - this.flapRate) * 0.4F;
+    }
+
+    @Override
+    public void extractRenderState(InsectoidRenderState renderState, float partialTick) {
+        renderState.angles = this.getRotation(partialTick);
     }
 }

@@ -21,7 +21,7 @@
   "item.fantasticwings.bottled_wings.wings.fantasticwings.parrot": "Bottled Parrot Wings",
   "item.fantasticwings.bottled_wings.wings.fantasticwings.slime": "Bottled Slime Wings",
   "itemGroup.fantasticwings.main": "Fantastic Wings",
-  "key.categories.fantasticwings": "Fantastic Wings",
+  "key.category.fantasticwings.main": "Fantastic Wings",
   "key.fantasticwings.toggle_flight": "Toggle Flight",
   "subtitles.item.armor.equip_wings": "Wings rustle"
 }

@@ -1,7 +1,7 @@
 package fuzs.fantasticwings.world.item.consume_effects;
 
 import com.mojang.serialization.MapCodec;
-import fuzs.fantasticwings.flight.FlightCapability;
+import fuzs.fantasticwings.flight.Flight;
 import fuzs.fantasticwings.flight.apparatus.FlightApparatus;
 import fuzs.fantasticwings.init.ModRegistry;
 import net.minecraft.core.Holder;
@@ -32,10 +32,10 @@ public record GrantWingsConsumeEffect(Holder<FlightApparatus> holder) implements
     }
 
     public static boolean giveWings(ServerPlayer serverPlayer, Holder<FlightApparatus> flightApparatus) {
-        FlightCapability flightCapability = ModRegistry.FLIGHT_CAPABILITY.get(serverPlayer);
-        FlightCapability newFlightCapability = flightCapability.setWings(flightApparatus);
-        if (flightCapability != newFlightCapability) {
-            ModRegistry.FLIGHT_CAPABILITY.set(serverPlayer, newFlightCapability);
+        Flight flight = ModRegistry.FLIGHT_ATTACHMENT_TYPE.get(serverPlayer);
+        Flight newFlight = flight.setWings(flightApparatus);
+        if (flight != newFlight) {
+            ModRegistry.FLIGHT_ATTACHMENT_TYPE.set(serverPlayer, newFlight);
             serverPlayer.level()
                     .playSound(null,
                             serverPlayer.getX(),

@@ -1,6 +1,6 @@
 package fuzs.fantasticwings.mixin;
 
-import fuzs.fantasticwings.flight.FlightCapability;
+import fuzs.fantasticwings.flight.Flight;
 import fuzs.fantasticwings.handler.ServerEventHandler;
 import fuzs.fantasticwings.init.ModRegistry;
 import net.minecraft.world.entity.Entity;
@@ -23,7 +23,7 @@ abstract class LivingEntityMixin extends Entity {
     @Inject(method = "isVisuallySwimming", at = @At("HEAD"), cancellable = true)
     public void isVisuallySwimming(CallbackInfoReturnable<Boolean> callback) {
         if (!super.isVisuallySwimming()) {
-            if (ModRegistry.FLIGHT_CAPABILITY.getOrDefault(this, FlightCapability.VOID).isFlying()) {
+            if (ModRegistry.FLIGHT_ATTACHMENT_TYPE.getOrDefault(this, Flight.VOID).isFlying()) {
                 callback.setReturnValue(false);
             }
         }

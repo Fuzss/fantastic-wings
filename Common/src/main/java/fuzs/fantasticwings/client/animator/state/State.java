@@ -1,7 +1,7 @@
 package fuzs.fantasticwings.client.animator.state;
 
 import fuzs.fantasticwings.client.animator.Animator;
-import fuzs.fantasticwings.flight.FlightCapability;
+import fuzs.fantasticwings.flight.Flight;
 import fuzs.fantasticwings.util.MathHelper;
 import net.minecraft.world.entity.player.Player;
 
@@ -23,14 +23,14 @@ public abstract class State {
         this.animation = animation;
     }
 
-    public final State update(FlightCapability flight, double x, double y, double z, Player player) {
+    public final State update(Flight flight, double x, double y, double z, Player player) {
         if (this.time++ > this.stateDelay) {
             return this.getNext(flight, x, y, z, player);
         }
         return this;
     }
 
-    private State getNext(FlightCapability flight, double x, double y, double z, Player player) {
+    private State getNext(Flight flight, double x, double y, double z, Player player) {
         if (flight.isFlying()) {
             if (y < 0 && player.getXRot() >= this.getPitch(x, y, z)) {
                 return this.createGlide();
@@ -75,7 +75,7 @@ public abstract class State {
         return this.createIdle();
     }
 
-    protected State getDescent(FlightCapability flight, Player player) {
+    protected State getDescent(Flight flight, Player player) {
         return flight.canSlowlyDescend(player) ? this.createLand() : this.createFall();
     }
 }

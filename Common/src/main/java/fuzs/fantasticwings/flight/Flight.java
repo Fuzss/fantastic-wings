@@ -21,24 +21,20 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.Optional;
 
-public record FlightCapability(Optional<Holder<FlightApparatus>> wings,
-                               boolean isFlying,
-                               int timeFlying,
-                               int prevTimeFlying) {
-    public static final Codec<FlightCapability> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                    FlightApparatus.CODEC.optionalFieldOf("wing_type").forGetter(FlightCapability::wings),
-                    Codec.BOOL.optionalFieldOf("is_flying", false).forGetter(FlightCapability::isFlying),
-                    Codec.INT.optionalFieldOf("time_flying", 0).forGetter(FlightCapability::timeFlying))
-            .apply(instance, FlightCapability::new));
-    public static final StreamCodec<RegistryFriendlyByteBuf, FlightCapability> STREAM_CODEC = StreamCodec.composite(
+public record Flight(Optional<Holder<FlightApparatus>> wings, boolean isFlying, int timeFlying, int prevTimeFlying) {
+    public static final Codec<Flight> CODEC = RecordCodecBuilder.create(instance -> instance.group(FlightApparatus.CODEC.optionalFieldOf(
+                    "wing_type").forGetter(Flight::wings),
+            Codec.BOOL.optionalFieldOf("is_flying", false).forGetter(Flight::isFlying),
+            Codec.INT.optionalFieldOf("time_flying", 0).forGetter(Flight::timeFlying)).apply(instance, Flight::new));
+    public static final StreamCodec<RegistryFriendlyByteBuf, Flight> STREAM_CODEC = StreamCodec.composite(
             FlightApparatus.STREAM_CODEC.apply(ByteBufCodecs::optional),
-            FlightCapability::wings,
+            Flight::wings,
             ByteBufCodecs.BOOL,
-            FlightCapability::isFlying,
+            Flight::isFlying,
             ByteBufCodecs.INT,
-            FlightCapability::timeFlying,
-            FlightCapability::new);
-    public static final FlightCapability VOID = new FlightCapability(Optional.empty(), false, 0);
+            Flight::timeFlying,
+            Flight::new);
+    public static final Flight VOID = new Flight(Optional.empty(), false, 0);
     private static final CubicBezier FLY_AMOUNT_CURVE = new CubicBezier(0.37F, 0.13F, 0.3F, 1.12F);
     private static final int MAX_TIME_FLYING = 20;
     private static final float MIN_SPEED = 0.03F;
@@ -48,48 +44,45 @@ public record FlightCapability(Optional<Holder<FlightApparatus>> wings,
     private static final float FALL_REDUCTION = 0.9F;
     private static final float PITCH_OFFSET = 30.0F;
 
-    public FlightCapability(Optional<Holder<FlightApparatus>> wings, boolean isFlying, int timeFlying) {
+    public Flight(Optional<Holder<FlightApparatus>> wings, boolean isFlying, int timeFlying) {
         this(wings, isFlying, timeFlying, timeFlying);
     }
 
-    public FlightCapability setIsFlying(Player player, boolean isFlying) {
+    public Flight setIsFlying(Player player, boolean isFlying) {
         if (this.isFlying != isFlying) {
             if (isFlying) {
                 player.unRide();
             }
 
-            return new FlightCapability(this.wings, isFlying, this.timeFlying, this.prevTimeFlying);
+            return new Flight(this.wings, isFlying, this.timeFlying, this.prevTimeFlying);
         } else {
             return this;
         }
     }
 
-    public FlightCapability toggleIsFlying(Player player) {
+    public Flight toggleIsFlying(Player player) {
         return this.setIsFlying(player, !this.isFlying);
     }
 
-    public FlightCapability setTimeFlying(int timeFlying) {
+    public Flight setTimeFlying(int timeFlying) {
         if (this.timeFlying != timeFlying) {
-            return new FlightCapability(this.wings, this.isFlying, timeFlying, this.prevTimeFlying);
+            return new Flight(this.wings, this.isFlying, timeFlying, this.prevTimeFlying);
         } else {
             return this;
         }
     }
 
-    public FlightCapability setPrevTimeFlying(int prevTimeFlying) {
+    public Flight setPrevTimeFlying(int prevTimeFlying) {
         if (this.prevTimeFlying != prevTimeFlying) {
-            return new FlightCapability(this.wings, this.isFlying, this.timeFlying, prevTimeFlying);
+            return new Flight(this.wings, this.isFlying, this.timeFlying, prevTimeFlying);
         } else {
             return this;
         }
     }
 
-    public FlightCapability setWings(@Nullable Holder<FlightApparatus> wings) {
+    public Flight setWings(@Nullable Holder<FlightApparatus> wings) {
         if (wings == null && this.wings.isPresent() || wings != null && !this.is(wings)) {
-            return new FlightCapability(Optional.ofNullable(wings),
-                    this.isFlying,
-                    this.timeFlying,
-                    this.prevTimeFlying);
+            return new Flight(Optional.ofNullable(wings), this.isFlying, this.timeFlying, this.prevTimeFlying);
         } else {
             return this;
         }
@@ -124,33 +117,35 @@ public record FlightCapability(Optional<Holder<FlightApparatus>> wings,
                 .isUsableForSlowlyDescending(player)).isPresent() && (this.isFlying() || !player.isDescending());
     }
 
-    public static FlightCapability tick(FlightCapability flightCapability, Player player) {
-        if (flightCapability.wings.isPresent() || !player.isEffectiveAi()) {
-            flightCapability = onWornUpdate(flightCapability, player);
-        } else if (!player.level().isClientSide && flightCapability.isFlying()) {
-            flightCapability = flightCapability.setIsFlying(player, false);
+    public static Flight tick(Flight flight, Player player) {
+        if (flight.wings.isPresent() || !player.isEffectiveAi()) {
+            flight = onWornUpdate(flight, player);
+        } else if (!player.level().isClientSide() && flight.isFlying()) {
+            flight = flight.setIsFlying(player, false);
         }
-        flightCapability = flightCapability.setPrevTimeFlying(flightCapability.timeFlying);
-        if (flightCapability.isFlying()) {
-            if (flightCapability.timeFlying < MAX_TIME_FLYING) {
-                flightCapability = flightCapability.setTimeFlying(flightCapability.timeFlying + 1);
+
+        flight = flight.setPrevTimeFlying(flight.timeFlying);
+        if (flight.isFlying()) {
+            if (flight.timeFlying < MAX_TIME_FLYING) {
+                flight = flight.setTimeFlying(flight.timeFlying + 1);
             } else if (player.isLocalPlayer() && player.onGround()) {
-                flightCapability = flightCapability.setIsFlying(player, false);
+                flight = flight.setIsFlying(player, false);
                 MessageSender.broadcast(new ServerboundControlFlyingMessage(false));
             }
-        } else if (flightCapability.timeFlying > 0) {
-            flightCapability = flightCapability.setTimeFlying(flightCapability.timeFlying - 1);
+        } else if (flight.timeFlying > 0) {
+            flight = flight.setTimeFlying(flight.timeFlying - 1);
         }
 
-        return flightCapability;
+        return flight;
     }
 
-    private static FlightCapability onWornUpdate(FlightCapability flightCapability, Player player) {
-        if (!player.level().isClientSide && flightCapability.isFlying() && !flightCapability.canFly(player)) {
-            flightCapability = flightCapability.setIsFlying(player, false);
+    private static Flight onWornUpdate(Flight flight, Player player) {
+        if (!player.level().isClientSide() && flight.isFlying() && !flight.canFly(player)) {
+            flight = flight.setIsFlying(player, false);
         }
+
         if (player.isEffectiveAi()) {
-            if (flightCapability.isFlying()) {
+            if (flight.isFlying()) {
                 float speed = Mth.clampedLerp(MIN_SPEED, MAX_SPEED, player.zza);
                 float elevationBoost = MathHelper.transform(Math.abs(player.getXRot()), 45.0F, 90.0F, 1.0F, 0.0F);
                 float pitch = -MathHelper.toRadians(player.getXRot() - PITCH_OFFSET * elevationBoost);
@@ -171,7 +166,7 @@ public record FlightCapability(Optional<Holder<FlightApparatus>> wings,
                     player.setDeltaMovement(player.getDeltaMovement().add(0.0, -MANUAL_Y_BOOST, 0.0));
                 }
             }
-            if (flightCapability.canSlowlyDescend(player)) {
+            if (flight.canSlowlyDescend(player)) {
                 Vec3 deltaMovement = player.getDeltaMovement();
                 if (deltaMovement.y() < 0.0D) {
                     player.setDeltaMovement(deltaMovement.multiply(1.0D, FALL_REDUCTION, 1.0D));
@@ -180,7 +175,7 @@ public record FlightCapability(Optional<Holder<FlightApparatus>> wings,
             }
         }
 
-        return flightCapability;
+        return flight;
     }
 
     public void onFlown(Player player, Vec3 direction) {

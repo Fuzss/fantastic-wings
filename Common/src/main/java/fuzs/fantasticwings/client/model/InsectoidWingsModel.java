@@ -1,6 +1,6 @@
 package fuzs.fantasticwings.client.model;
 
-import fuzs.fantasticwings.client.animator.AnimatorInsectoid;
+import fuzs.fantasticwings.client.renderer.entity.state.InsectoidRenderState;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeListBuilder;
@@ -8,7 +8,7 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 
-public final class InsectoidWingsModel extends WingsModel<AnimatorInsectoid> {
+public final class InsectoidWingsModel extends WingsModel<InsectoidRenderState> {
     private final ModelPart wingLeft;
     private final ModelPart wingRight;
 
@@ -31,8 +31,8 @@ public final class InsectoidWingsModel extends WingsModel<AnimatorInsectoid> {
     }
 
     @Override
-    public void setupAnim(AnimatorInsectoid animator, float partialTick) {
-        super.setupAnim(animator, partialTick);
-        setAngles(this.wingLeft, this.wingRight, animator.getRotation(partialTick));
+    public void setupAnim(InsectoidRenderState renderState) {
+        super.setupAnim(renderState);
+        setAngles(this.wingLeft, this.wingRight, renderState.angles);
     }
 }

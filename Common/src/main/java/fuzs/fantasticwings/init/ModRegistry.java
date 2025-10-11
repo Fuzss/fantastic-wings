@@ -1,7 +1,7 @@
 package fuzs.fantasticwings.init;
 
 import fuzs.fantasticwings.FantasticWings;
-import fuzs.fantasticwings.flight.FlightCapability;
+import fuzs.fantasticwings.flight.Flight;
 import fuzs.fantasticwings.flight.apparatus.FlightApparatus;
 import fuzs.fantasticwings.world.item.BottledWingsItem;
 import fuzs.fantasticwings.world.item.WithDescriptionItem;
@@ -65,10 +65,10 @@ public class ModRegistry {
     static final TagFactory TAGS = TagFactory.make(FantasticWings.MOD_ID);
     public static final TagKey<Item> WING_OBSTRUCTIONS = TAGS.registerItemTag("wing_obstructions");
 
-    public static final DataAttachmentType<Entity, FlightCapability> FLIGHT_CAPABILITY = DataAttachmentRegistry.<FlightCapability>entityBuilder()
-            .defaultValue(EntityType.PLAYER, FlightCapability.VOID)
-            .persistent(FlightCapability.CODEC)
-            .networkSynchronized(FlightCapability.STREAM_CODEC, PlayerSet::nearEntity)
+    public static final DataAttachmentType<Entity, Flight> FLIGHT_ATTACHMENT_TYPE = DataAttachmentRegistry.<Flight>entityBuilder()
+            .defaultValue(EntityType.PLAYER, Flight.VOID)
+            .persistent(Flight.CODEC)
+            .networkSynchronized(Flight.STREAM_CODEC, PlayerSet::nearEntity)
             .build(FantasticWings.id("flight"));
 
     public static void bootstrap() {
