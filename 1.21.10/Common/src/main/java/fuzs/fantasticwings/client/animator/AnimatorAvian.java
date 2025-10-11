@@ -1,12 +1,14 @@
 package fuzs.fantasticwings.client.animator;
 
 import com.google.common.collect.ImmutableMap;
+import fuzs.fantasticwings.client.model.AvianWingsModel;
+import fuzs.fantasticwings.client.renderer.entity.state.AvianRenderState;
 import fuzs.fantasticwings.util.MathHelper;
 import net.minecraft.world.level.levelgen.LegacyRandomSource;
 import net.minecraft.world.level.levelgen.synth.SimplexNoise;
 import net.minecraft.world.phys.Vec3;
 
-public final class AnimatorAvian implements Animator {
+public final class AnimatorAvian implements Animator<AvianRenderState> {
     private static final int LAND_TRANSITION_DURATION = 2;
     private static final int GLIDE_TRANSITION_DURATION = 60;
     private static final int IDLE_TRANSITION_DURATION = 18;
@@ -78,6 +80,19 @@ public final class AnimatorAvian implements Animator {
         return Math.min(Math.abs(index - 1), 2) / 2.0F;
     }
 
+    @Override
+    public void extractRenderState(AvianRenderState renderState, float partialTick) {
+        renderState.wingAngles.clear();
+        for (int i = 0; i < AvianWingsModel.BONES; i++) {
+            renderState.wingAngles.put(i, this.getWingRotation(i, partialTick));
+        }
+
+        renderState.featherAngles.clear();
+        for (int i = 0; i < AvianWingsModel.FEATHERS; i++) {
+            renderState.featherAngles.put(i, this.getFeatherRotation(i, partialTick));
+        }
+    }
+
     private interface Movement {
 
         Vec3 getWingRotation(int index, float delta);
@@ -126,9 +141,8 @@ public final class AnimatorAvian implements Animator {
             float time = AnimatorAvian.this.getFlapTime(delta);
             float cycle = time - pos * 1.2F;
             double x = (Math.sin(cycle + MathHelper.PI / 2.0D) - 1.0D) / 2.0D * 20.0D + (1.0D - pos) * 50.0D;
-            double y = (Math.sin(cycle) * 20.0D + (1.0D - pos) * 14.0D) * (1.0D - pos * (Math.min(Math.sin(cycle + MathHelper.PI),
-                    0.0D
-            ) / 2.0D + 1.0D) * Math.sin(time));
+            double y = (Math.sin(cycle) * 20.0D + (1.0D - pos) * 14.0D) * (1.0D - pos * (
+                    Math.min(Math.sin(cycle + MathHelper.PI), 0.0D) / 2.0D + 1.0D) * Math.sin(time));
             return AnimatorAvian.this.restPosition.getWingRotation(index, delta).add(x, y, 4.0D);
         }
 
@@ -215,9 +229,8 @@ public final class AnimatorAvian implements Animator {
             float time = AnimatorAvian.this.getFlapTime(delta);
             float cycle = time - pos * 1.2F;
             double x = (Math.sin(cycle + MathHelper.PI / 2.0D) - 1.0D) / 2.0D * 16.0D + 8.0D;
-            double y = (Math.sin(cycle) * 26.0D + 12.0D) * (1.0D - pos * (Math.min(Math.sin(cycle + MathHelper.PI),
-                    0.0D
-            ) / 2.0D + 1.0D) * Math.sin(time));
+            double y = (Math.sin(cycle) * 26.0D + 12.0D) * (1.0D - pos * (
+                    Math.min(Math.sin(cycle + MathHelper.PI), 0.0D) / 2.0D + 1.0D) * Math.sin(time));
             return AnimatorAvian.this.restPosition.getWingRotation(index, delta).add(x, y, 0.0D);
         }
 
@@ -296,8 +309,7 @@ public final class AnimatorAvian implements Animator {
             float t = MathHelper.easeInOut(MathHelper.lerp(this.lastTime, this.time, delta) / this.duration);
             return new Vec3(MathHelper.lerpDegrees(startRot.x, endRot.x, t),
                     MathHelper.lerpDegrees(startRot.y, endRot.y, t),
-                    MathHelper.lerpDegrees(startRot.z, endRot.z, t)
-            );
+                    MathHelper.lerpDegrees(startRot.z, endRot.z, t));
         }
 
         @Override
@@ -311,6 +323,7 @@ public final class AnimatorAvian implements Animator {
             } else if (this.isActive) {
                 AnimatorAvian.this.setMovement(this.end);
             }
+
             return flap;
         }
 

@@ -1,26 +1,30 @@
 package fuzs.fantasticwings.client.flight.apparatus;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import fuzs.fantasticwings.client.animator.Animator;
 import fuzs.fantasticwings.client.model.WingsModel;
 import fuzs.fantasticwings.flight.apparatus.FlightApparatus;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
-public final class WingForm<A extends Animator> {
+public final class WingForm<A extends Animator<S>, S> {
     private final ResourceKey<FlightApparatus> resourceKey;
     private final Supplier<A> animator;
-    private final Supplier<WingsModel<A>> model;
+    private final Supplier<S> state;
+    private final Supplier<WingsModel<S>> model;
     private final ResourceLocation textureLocation;
 
-    public WingForm(ResourceKey<FlightApparatus> resourceKey, Supplier<A> animator, Supplier<WingsModel<A>> model) {
+    public WingForm(ResourceKey<FlightApparatus> resourceKey, Supplier<A> animator, Supplier<S> state, Supplier<WingsModel<S>> model) {
         this.resourceKey = resourceKey;
         this.animator = animator;
+        this.state = state;
         this.model = model;
         this.textureLocation = FlightApparatus.transformTextureLocation(FlightApparatus.getTextureLocation(resourceKey));
     }
@@ -29,7 +33,11 @@ public final class WingForm<A extends Animator> {
         return this.animator.get();
     }
 
-    public WingsModel<A> getModel() {
+    public S createRenderState() {
+        return this.state.get();
+    }
+
+    public WingsModel<S> getModel() {
         return this.model.get();
     }
 
@@ -39,17 +47,35 @@ public final class WingForm<A extends Animator> {
 
     @Override
     public boolean equals(Object obj) {
-        return obj == this || obj instanceof WingForm<?> wingForm && wingForm.resourceKey == this.resourceKey;
+        return obj == this || obj instanceof WingForm<?, ?> wingForm && wingForm.resourceKey == this.resourceKey;
     }
 
-    public static Optional<WingForm<?>> get(Holder<FlightApparatus> holder) {
+    public static Optional<WingForm<?, ?>> get(Holder<FlightApparatus> holder) {
         return Optional.of(WingFormRegistry.INSTANCE.createWings(holder));
     }
 
-    public interface FormRenderer {
+    public interface FormRenderer<S> {
 
         ResourceLocation getTextureLocation();
 
-        void render(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int color, float partialTick);
+        S createRenderState(float partialTick);
+
+        default FormRendererState<S> pack(float partialTick) {
+            return new FormRendererState<>(this, this.createRenderState(partialTick));
+        }
+
+        void submitModel(S renderState, PoseStack poseStack, SubmitNodeCollector nodeCollector, RenderType renderType, int packedLight, int outlineColor);
+    }
+
+    public record FormRendererState<S>(FormRenderer<S> form, S state) {
+
+        public void submitModel(PoseStack poseStack, SubmitNodeCollector nodeCollector, Function<ResourceLocation, RenderType> renderTypeGetter, int packedLight, int outlineColor) {
+            this.form.submitModel(this.state,
+                    poseStack,
+                    nodeCollector,
+                    renderTypeGetter.apply(this.form.getTextureLocation()),
+                    packedLight,
+                    outlineColor);
+        }
     }
 }

@@ -25,6 +25,6 @@ abstract class ServerGamePacketListenerImplMixin extends ServerCommonPacketListe
     )
     public boolean handleMovePlayer(ServerPlayer serverPlayer, Operation<Boolean> operation) {
         // disables server-side movement checks when flying just like for elytra gliding
-        return operation.call(serverPlayer) || ModRegistry.FLIGHT_CAPABILITY.get(serverPlayer).isFlying();
+        return operation.call(serverPlayer) || ModRegistry.FLIGHT_ATTACHMENT_TYPE.get(serverPlayer).isFlying();
     }
 }

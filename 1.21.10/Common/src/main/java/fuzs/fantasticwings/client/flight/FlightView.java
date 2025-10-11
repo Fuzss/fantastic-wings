@@ -1,24 +1,26 @@
 package fuzs.fantasticwings.client.flight;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import fuzs.fantasticwings.client.animator.Animator;
 import fuzs.fantasticwings.client.animator.state.State;
 import fuzs.fantasticwings.client.animator.state.StateIdle;
 import fuzs.fantasticwings.client.flight.apparatus.WingForm;
 import fuzs.fantasticwings.client.init.ClientModRegistry;
-import fuzs.fantasticwings.flight.FlightCapability;
+import fuzs.fantasticwings.flight.Flight;
 import fuzs.fantasticwings.init.ModRegistry;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.function.Consumer;
 
-public record FlightView(WingState animator) {
+public record FlightView(WingState state) {
     public static final FlightView VOID = new FlightView(PresentWingState.VOID);
 
-    public void ifFormPresent(Consumer<WingForm.FormRenderer> consumer) {
-        this.animator.ifFormPresent(consumer);
+    public void ifFormPresent(Consumer<WingForm.FormRenderer<?>> consumer) {
+        this.state.ifFormPresent(consumer);
     }
 
     public static void onEndPlayerTick(Player player) {
@@ -31,35 +33,35 @@ public record FlightView(WingState animator) {
         WingState animator = this.getFlight(player)
                 .wings()
                 .flatMap(WingForm::get)
-                .map(this.animator::next)
-                .orElseGet(this.animator::nextAbsent);
+                .map(this.state::next)
+                .orElseGet(this.state::nextAbsent);
         animator.update(this.getFlight(player), player);
         return new FlightView(animator);
     }
 
-    public FlightCapability getFlight(Player player) {
-        return ModRegistry.FLIGHT_CAPABILITY.get(player);
+    public Flight getFlight(Player player) {
+        return ModRegistry.FLIGHT_ATTACHMENT_TYPE.get(player);
     }
 
     private interface Strategy {
 
-        void update(FlightCapability flight, Player player);
+        void update(Flight flight, Player player);
 
-        void ifFormPresent(Consumer<WingForm.FormRenderer> consumer);
+        void ifFormPresent(Consumer<WingForm.FormRenderer<?>> consumer);
     }
 
     interface WingState {
 
         WingState nextAbsent();
 
-        WingState next(WingForm<?> form);
+        WingState next(WingForm<?, ?> form);
 
-        void update(FlightCapability flight, Player player);
+        void update(Flight flight, Player player);
 
-        void ifFormPresent(Consumer<WingForm.FormRenderer> consumer);
+        void ifFormPresent(Consumer<WingForm.FormRenderer<?>> consumer);
     }
 
-    private record PresentWingState(WingForm<?> wing, Strategy behavior) implements WingState {
+    private record PresentWingState(WingForm<?, ?> wing, Strategy behavior) implements WingState {
         static final WingState VOID = new WingState() {
             @Override
             public WingState nextAbsent() {
@@ -67,17 +69,17 @@ public record FlightView(WingState animator) {
             }
 
             @Override
-            public WingState next(WingForm<?> form) {
+            public WingState next(WingForm<?, ?> form) {
                 return PresentWingState.newState(form);
             }
 
             @Override
-            public void update(FlightCapability flight, Player player) {
+            public void update(Flight flight, Player player) {
                 // NO-OP
             }
 
             @Override
-            public void ifFormPresent(Consumer<WingForm.FormRenderer> consumer) {
+            public void ifFormPresent(Consumer<WingForm.FormRenderer<?>> consumer) {
                 // NO-OP
             }
         };
@@ -88,7 +90,7 @@ public record FlightView(WingState animator) {
         }
 
         @Override
-        public WingState next(WingForm<?> form) {
+        public WingState next(WingForm<?, ?> form) {
             if (this.wing.equals(form)) {
                 return this;
             } else {
@@ -97,32 +99,32 @@ public record FlightView(WingState animator) {
         }
 
         @Override
-        public void update(FlightCapability flight, Player player) {
+        public void update(Flight flight, Player player) {
             this.behavior.update(flight, player);
         }
 
         @Override
-        public void ifFormPresent(Consumer<WingForm.FormRenderer> consumer) {
+        public void ifFormPresent(Consumer<WingForm.FormRenderer<?>> consumer) {
             this.behavior.ifFormPresent(consumer);
         }
 
-        public static <T extends Animator> WingState newState(WingForm<T> shape) {
+        public static <T extends Animator<S>, S> WingState newState(WingForm<T, S> shape) {
             return new PresentWingState(shape, new WingStrategy<>(shape));
         }
 
-        private static class WingStrategy<T extends Animator> implements Strategy {
-            private final WingForm<T> shape;
+        private static class WingStrategy<T extends Animator<S>, S> implements Strategy {
+            private final WingForm<T, S> shape;
             private final T animator;
             private State state;
 
-            public WingStrategy(WingForm<T> shape) {
+            public WingStrategy(WingForm<T, S> shape) {
                 this.shape = shape;
                 this.animator = shape.createAnimator();
                 this.state = new StateIdle();
             }
 
             @Override
-            public void update(FlightCapability flight, Player player) {
+            public void update(Flight flight, Player player) {
                 this.animator.update();
                 State state = this.state.update(flight,
                         player.getX() - player.xo,
@@ -132,22 +134,35 @@ public record FlightView(WingState animator) {
                 if (!this.state.equals(state)) {
                     state.beginAnimation(this.animator);
                 }
+
                 this.state = state;
             }
 
             @Override
-            public void ifFormPresent(Consumer<WingForm.FormRenderer> consumer) {
-                consumer.accept(new WingForm.FormRenderer() {
+            public void ifFormPresent(Consumer<WingForm.FormRenderer<?>> consumer) {
+                consumer.accept(new WingForm.FormRenderer<S>() {
                     @Override
                     public ResourceLocation getTextureLocation() {
                         return WingStrategy.this.shape.getTextureLocation();
                     }
 
                     @Override
-                    public void render(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int color, float partialTick) {
-                        WingStrategy.this.shape.getModel().setupAnim(WingStrategy.this.animator, partialTick);
-                        WingStrategy.this.shape.getModel()
-                                .renderToBuffer(poseStack, buffer, packedLight, packedOverlay, color);
+                    public S createRenderState(float partialTick) {
+                        S renderState = WingStrategy.this.shape.createRenderState();
+                        WingStrategy.this.animator.extractRenderState(renderState, partialTick);
+                        return renderState;
+                    }
+
+                    @Override
+                    public void submitModel(S renderState, PoseStack poseStack, SubmitNodeCollector nodeCollector, RenderType renderType, int packedLight, int outlineColor) {
+                        nodeCollector.submitModel(WingStrategy.this.shape.getModel(),
+                                renderState,
+                                poseStack,
+                                renderType,
+                                packedLight,
+                                OverlayTexture.NO_OVERLAY,
+                                outlineColor,
+                                null);
                     }
                 });
             }

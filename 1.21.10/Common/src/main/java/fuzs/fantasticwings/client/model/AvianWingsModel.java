@@ -1,16 +1,21 @@
 package fuzs.fantasticwings.client.model;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import fuzs.fantasticwings.client.animator.AnimatorAvian;
 import fuzs.fantasticwings.client.model.geom.builders.FlatCubeListBuilder;
+import fuzs.fantasticwings.client.renderer.entity.state.AvianRenderState;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
+import net.minecraft.world.phys.Vec3;
 
-public final class AvianWingsModel extends WingsModel<AnimatorAvian> {
+public final class AvianWingsModel extends WingsModel<AvianRenderState> {
+    public static final int BONES = 4;
+    public static final int FEATHERS = 4;
+
     private final ImmutableList<ModelPart> bonesLeft, bonesRight;
     private final ImmutableList<ModelPart> feathersLeft, feathersRight;
 
@@ -42,6 +47,8 @@ public final class AvianWingsModel extends WingsModel<AnimatorAvian> {
                 rightTertiaryFeathers,
                 rightSecondaryFeathers,
                 rightPrimaryFeathers);
+        Preconditions.checkState(this.bonesLeft.size() == BONES && this.bonesRight.size() == BONES);
+        Preconditions.checkState(this.feathersLeft.size() == FEATHERS && this.feathersRight.size() == FEATHERS);
     }
 
     public static LayerDefinition createWingsLayer() {
@@ -99,17 +106,18 @@ public final class AvianWingsModel extends WingsModel<AnimatorAvian> {
     }
 
     @Override
-    public void setupAnim(AnimatorAvian animator, float partialTick) {
-        super.setupAnim(animator, partialTick);
-        for (int i = 0; i < this.bonesLeft.size(); i++) {
+    public void setupAnim(AvianRenderState renderState) {
+        super.setupAnim(renderState);
+        for (int i = 0; i < BONES; i++) {
             ModelPart left = this.bonesLeft.get(i);
             ModelPart right = this.bonesRight.get(i);
-            setAngles(left, right, animator.getWingRotation(i, partialTick));
+            setAngles(left, right, renderState.wingAngles.getOrDefault(i, Vec3.ZERO));
         }
-        for (int i = 0; i < this.feathersLeft.size(); i++) {
+
+        for (int i = 0; i < FEATHERS; i++) {
             ModelPart left = this.feathersLeft.get(i);
             ModelPart right = this.feathersRight.get(i);
-            setAngles(left, right, animator.getFeatherRotation(i, partialTick));
+            setAngles(left, right, renderState.featherAngles.getOrDefault(i, Vec3.ZERO));
         }
     }
 }

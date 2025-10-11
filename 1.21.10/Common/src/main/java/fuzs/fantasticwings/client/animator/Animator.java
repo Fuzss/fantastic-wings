@@ -1,6 +1,6 @@
 package fuzs.fantasticwings.client.animator;
 
-public interface Animator {
+public interface Animator<S> {
 
     void beginLand();
 
@@ -13,4 +13,6 @@ public interface Animator {
     void beginFall();
 
     void update();
+
+    void extractRenderState(S renderState, float partialTick);
 }

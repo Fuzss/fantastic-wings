@@ -1,6 +1,6 @@
 package fuzs.fantasticwings.handler;
 
-import fuzs.fantasticwings.flight.FlightCapability;
+import fuzs.fantasticwings.flight.Flight;
 import fuzs.fantasticwings.init.ModRegistry;
 import fuzs.puzzleslib.api.event.v1.core.EventResult;
 import fuzs.puzzleslib.api.item.v2.ItemHelper;
@@ -45,18 +45,18 @@ public class ServerEventHandler {
     }
 
     public static EventResult onStartRiding(Level level, Entity passengerEntity, Entity vehicleEntity) {
-        return ModRegistry.FLIGHT_CAPABILITY.getOrDefault(passengerEntity, FlightCapability.VOID).isFlying() ?
+        return ModRegistry.FLIGHT_ATTACHMENT_TYPE.getOrDefault(passengerEntity, Flight.VOID).isFlying() ?
                 EventResult.INTERRUPT : EventResult.PASS;
     }
 
     public static void onEndPlayerTick(Player player) {
-        FlightCapability flightCapability = ModRegistry.FLIGHT_CAPABILITY.get(player);
-        flightCapability = FlightCapability.tick(flightCapability, player);
-        ModRegistry.FLIGHT_CAPABILITY.set(player, flightCapability);
+        Flight flight = ModRegistry.FLIGHT_ATTACHMENT_TYPE.get(player);
+        flight = Flight.tick(flight, player);
+        ModRegistry.FLIGHT_ATTACHMENT_TYPE.set(player, flight);
     }
 
     public static boolean onUpdateBodyRotation(LivingEntity living, float movementYaw) {
-        if (living instanceof Player player && ModRegistry.FLIGHT_CAPABILITY.get(player).isFlying()) {
+        if (living instanceof Player player && ModRegistry.FLIGHT_ATTACHMENT_TYPE.get(player).isFlying()) {
             living.yBodyRot += Mth.wrapDegrees(movementYaw - living.yBodyRot) * 0.3F;
             float theta = Mth.clamp(Mth.wrapDegrees(living.getYRot() - living.yBodyRot), -50.0F, 50.0F);
             living.yBodyRot = living.getYRot() - theta;

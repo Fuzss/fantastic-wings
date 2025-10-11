@@ -1,30 +1,26 @@
 package fuzs.fantasticwings.client.flight.apparatus;
 
-import fuzs.fantasticwings.FantasticWings;
 import fuzs.fantasticwings.client.animator.AnimatorAvian;
 import fuzs.fantasticwings.client.animator.AnimatorInsectoid;
 import fuzs.fantasticwings.client.model.AvianWingsModel;
 import fuzs.fantasticwings.client.model.InsectoidWingsModel;
 import fuzs.fantasticwings.client.model.WingsModel;
+import fuzs.fantasticwings.client.model.geom.ModModelLayers;
+import fuzs.fantasticwings.client.renderer.entity.state.AvianRenderState;
+import fuzs.fantasticwings.client.renderer.entity.state.InsectoidRenderState;
 import fuzs.fantasticwings.flight.apparatus.FlightApparatus;
-import fuzs.puzzleslib.api.client.init.v1.ModelLayerFactory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
-import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 
 public final class WingFormRegistry implements ResourceManagerReloadListener {
-    static final ModelLayerFactory MODEL_LAYERS = ModelLayerFactory.from(FantasticWings.MOD_ID);
-    public static final ModelLayerLocation AVIAN_WINGS_MODEL_LAYER = MODEL_LAYERS.registerModelLayer("avian_wings");
-    public static final ModelLayerLocation INSECTOID_WINGS_MODEL_LAYER = MODEL_LAYERS.registerModelLayer(
-            "insectoid_wings");
     public static final WingFormRegistry INSTANCE = new WingFormRegistry();
 
-    private WingsModel<AnimatorAvian> avianWings;
-    private WingsModel<AnimatorInsectoid> insectoidWings;
+    private WingsModel<AvianRenderState> avianWings;
+    private WingsModel<InsectoidRenderState> insectoidWings;
 
     private WingFormRegistry() {
         // NO-OP
@@ -33,15 +29,18 @@ public final class WingFormRegistry implements ResourceManagerReloadListener {
     @Override
     public void onResourceManagerReload(ResourceManager resourceManager) {
         EntityModelSet entityModels = Minecraft.getInstance().getEntityModels();
-        this.avianWings = new AvianWingsModel(entityModels.bakeLayer(AVIAN_WINGS_MODEL_LAYER));
-        this.insectoidWings = new InsectoidWingsModel(entityModels.bakeLayer(INSECTOID_WINGS_MODEL_LAYER));
+        this.avianWings = new AvianWingsModel(entityModels.bakeLayer(ModModelLayers.AVIAN_WINGS_MODEL_LAYER));
+        this.insectoidWings = new InsectoidWingsModel(entityModels.bakeLayer(ModModelLayers.INSECTOID_WINGS_MODEL_LAYER));
     }
 
-    public WingForm<?> createWings(Holder<FlightApparatus> holder) {
+    public WingForm<?, ?> createWings(Holder<FlightApparatus> holder) {
         ResourceKey<FlightApparatus> resourceKey = holder.unwrapKey().orElseThrow();
         return switch (holder.value().model()) {
-            case AVIAN -> new WingForm<>(resourceKey, AnimatorAvian::new, () -> this.avianWings);
-            case INSECTOID -> new WingForm<>(resourceKey, AnimatorInsectoid::new, () -> this.insectoidWings);
+            case AVIAN -> new WingForm<>(resourceKey, AnimatorAvian::new, AvianRenderState::new, () -> this.avianWings);
+            case INSECTOID -> new WingForm<>(resourceKey,
+                    AnimatorInsectoid::new,
+                    InsectoidRenderState::new,
+                    () -> this.insectoidWings);
         };
     }
 }
