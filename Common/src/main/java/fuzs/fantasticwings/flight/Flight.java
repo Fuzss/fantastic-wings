@@ -54,7 +54,9 @@ public record Flight(Optional<Holder<FlightApparatus>> wings, boolean isFlying, 
                 player.unRide();
             }
 
-            return new Flight(this.wings, isFlying, this.timeFlying, this.prevTimeFlying);
+            Mutable mutable = this.mutable();
+            mutable.isFlying = isFlying;
+            return mutable.immutable();
         } else {
             return this;
         }
@@ -64,25 +66,11 @@ public record Flight(Optional<Holder<FlightApparatus>> wings, boolean isFlying, 
         return this.setIsFlying(player, !this.isFlying);
     }
 
-    public Flight setTimeFlying(int timeFlying) {
-        if (this.timeFlying != timeFlying) {
-            return new Flight(this.wings, this.isFlying, timeFlying, this.prevTimeFlying);
-        } else {
-            return this;
-        }
-    }
-
-    public Flight setPrevTimeFlying(int prevTimeFlying) {
-        if (this.prevTimeFlying != prevTimeFlying) {
-            return new Flight(this.wings, this.isFlying, this.timeFlying, prevTimeFlying);
-        } else {
-            return this;
-        }
-    }
-
     public Flight setWings(@Nullable Holder<FlightApparatus> wings) {
         if (wings == null && this.wings.isPresent() || wings != null && !this.is(wings)) {
-            return new Flight(Optional.ofNullable(wings), this.isFlying, this.timeFlying, this.prevTimeFlying);
+            Mutable mutable = this.mutable();
+            mutable.wings = Optional.ofNullable(wings);
+            return mutable.immutable();
         } else {
             return this;
         }
@@ -118,64 +106,65 @@ public record Flight(Optional<Holder<FlightApparatus>> wings, boolean isFlying, 
     }
 
     public static Flight tick(Flight flight, Player player) {
-        if (flight.wings.isPresent() || !player.isEffectiveAi()) {
-            flight = onWornUpdate(flight, player);
-        } else if (!player.level().isClientSide() && flight.isFlying()) {
-            flight = flight.setIsFlying(player, false);
-        }
-
-        flight = flight.setPrevTimeFlying(flight.timeFlying);
-        if (flight.isFlying()) {
-            if (flight.timeFlying < MAX_TIME_FLYING) {
-                flight = flight.setTimeFlying(flight.timeFlying + 1);
-            } else if (player.isLocalPlayer() && player.onGround()) {
-                flight = flight.setIsFlying(player, false);
-                MessageSender.broadcast(new ServerboundControlFlyingMessage(false));
-            }
-        } else if (flight.timeFlying > 0) {
-            flight = flight.setTimeFlying(flight.timeFlying - 1);
+        Mutable mutable = flight.mutable();
+        flight.tick(mutable, player);
+        flight = mutable.immutable();
+        if (player.isEffectiveAi()) {
+            flight.onWornUpdate(player);
         }
 
         return flight;
     }
 
-    private static Flight onWornUpdate(Flight flight, Player player) {
-        if (!player.level().isClientSide() && flight.isFlying() && !flight.canFly(player)) {
-            flight = flight.setIsFlying(player, false);
+    private void tick(Mutable flight, Player player) {
+        if (flight.isFlying && player.isEffectiveAi() && !this.canFly(player)) {
+            flight.isFlying = false;
         }
 
-        if (player.isEffectiveAi()) {
-            if (flight.isFlying()) {
-                float speed = Mth.clampedLerp(MIN_SPEED, MAX_SPEED, player.zza);
-                float elevationBoost = MathHelper.transform(Math.abs(player.getXRot()), 45.0F, 90.0F, 1.0F, 0.0F);
-                float pitch = -MathHelper.toRadians(player.getXRot() - PITCH_OFFSET * elevationBoost);
-                float yaw = -MathHelper.toRadians(player.getYRot()) - MathHelper.PI;
-                float vxz = -Mth.cos(pitch);
-                float vy = Mth.sin(pitch);
-                float vz = Mth.cos(yaw);
-                float vx = Mth.sin(yaw);
-                player.setDeltaMovement(player.getDeltaMovement()
-                        .add(vx * vxz * speed,
-                                vy * speed + Y_BOOST * (player.getXRot() > 0.0F ? elevationBoost : 1.0D),
-                                vz * vxz * speed));
-                // similar to swimming where jumping and sneaking help with ascending / descending
-                if (player.jumping) {
-                    // with the elevation boost this can get quite crazy, so don't add as much as when descending
-                    player.setDeltaMovement(player.getDeltaMovement().add(0.0, MANUAL_Y_BOOST / 2.0F, 0.0));
-                } else if (player.isDescending()) {
-                    player.setDeltaMovement(player.getDeltaMovement().add(0.0, -MANUAL_Y_BOOST, 0.0));
-                }
+        flight.prevTimeFlying = flight.timeFlying;
+        if (flight.isFlying) {
+            if (flight.timeFlying < MAX_TIME_FLYING) {
+                flight.timeFlying++;
+            } else if (player.isLocalPlayer() && player.onGround()) {
+                flight.isFlying = false;
+                MessageSender.broadcast(new ServerboundControlFlyingMessage(false));
             }
-            if (flight.canSlowlyDescend(player)) {
-                Vec3 deltaMovement = player.getDeltaMovement();
-                if (deltaMovement.y() < 0.0D) {
-                    player.setDeltaMovement(deltaMovement.multiply(1.0D, FALL_REDUCTION, 1.0D));
-                }
-                player.fallDistance = 0.0F;
+        } else if (flight.timeFlying > 0) {
+            flight.timeFlying--;
+        }
+    }
+
+    private void onWornUpdate(Player player) {
+        if (this.isFlying()) {
+            float speed = Mth.clampedLerp(MIN_SPEED, MAX_SPEED, player.zza);
+            float elevationBoost = MathHelper.transform(Math.abs(player.getXRot()), 45.0F, 90.0F, 1.0F, 0.0F);
+            float pitch = -MathHelper.toRadians(player.getXRot() - PITCH_OFFSET * elevationBoost);
+            float yaw = -MathHelper.toRadians(player.getYRot()) - MathHelper.PI;
+            float vxz = -Mth.cos(pitch);
+            float vy = Mth.sin(pitch);
+            float vz = Mth.cos(yaw);
+            float vx = Mth.sin(yaw);
+            player.setDeltaMovement(player.getDeltaMovement()
+                    .add(vx * vxz * speed,
+                            vy * speed + Y_BOOST * (player.getXRot() > 0.0F ? elevationBoost : 1.0D),
+                            vz * vxz * speed));
+            // similar to swimming where jumping and sneaking help with ascending / descending
+            if (player.jumping) {
+                // with the elevation boost this can get quite crazy, so don't add as much as when descending
+                player.setDeltaMovement(player.getDeltaMovement().add(0.0, MANUAL_Y_BOOST / 2.0F, 0.0));
+            } else if (player.isDescending()) {
+                player.setDeltaMovement(player.getDeltaMovement().add(0.0, -MANUAL_Y_BOOST, 0.0));
             }
         }
 
-        return flight;
+        if (this.canSlowlyDescend(player)) {
+            Vec3 deltaMovement = player.getDeltaMovement();
+            if (deltaMovement.y() < 0.0D) {
+                player.setDeltaMovement(deltaMovement.multiply(1.0D, FALL_REDUCTION, 1.0D));
+            }
+
+            player.fallDistance = 0.0F;
+        }
     }
 
     public void onFlown(Player player, Vec3 direction) {
@@ -186,5 +175,27 @@ public record Flight(Optional<Holder<FlightApparatus>> wings, boolean isFlying, 
                 holder.value().onSlowlyDescending(player, direction);
             }
         });
+    }
+
+    private Mutable mutable() {
+        return new Mutable(this);
+    }
+
+    private static class Mutable {
+        public Optional<Holder<FlightApparatus>> wings;
+        public boolean isFlying;
+        public int timeFlying;
+        public int prevTimeFlying;
+
+        public Mutable(Flight flight) {
+            this.wings = flight.wings();
+            this.isFlying = flight.isFlying();
+            this.timeFlying = flight.timeFlying();
+            this.prevTimeFlying = flight.prevTimeFlying();
+        }
+
+        public Flight immutable() {
+            return new Flight(this.wings, this.isFlying, this.timeFlying, this.prevTimeFlying);
+        }
     }
 }
