@@ -1,5 +1,8 @@
 package fuzs.fantasticwings.client.model.geom;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import fuzs.fantasticwings.services.ClientAbstractions;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
@@ -133,6 +136,17 @@ public class FlatModelPartCube extends ModelPart.Cube {
                         Direction.DOWN), u2, v, u1, v, texScaleU, texScaleV, false, Direction.DOWN);
             }
         }
+    }
+
+    @Override
+    public void compile(PoseStack.Pose pose, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
+        // Sodium breaks the extruded polygons, this is a valid workaround.
+        // The idea is adapted from lv-wings (https://github.com/ahasasjeb/lv-wings).
+        super.compile(pose,
+                ClientAbstractions.INSTANCE.createVertexConsumer(vertexConsumer),
+                packedLight,
+                packedOverlay,
+                color);
     }
 
     private static int calculatePolygonCount(Set<Direction> visibleFaces, int dimensionX, int dimensionY) {

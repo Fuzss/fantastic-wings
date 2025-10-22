@@ -1,5 +1,8 @@
 package fuzs.fantasticwings.client.model;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import fuzs.fantasticwings.client.model.pipeline.ForwardingVertexConsumer;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.core.Direction;
 
@@ -23,8 +26,7 @@ public final class Model3DTexture extends ModelPart.Cube {
                 false,
                 textureWidth,
                 textureHeight,
-                EnumSet.allOf(Direction.class)
-        );
+                EnumSet.allOf(Direction.class));
         int faceCount = 2 + 2 * width + 2 * height;
         ModelPart.Polygon[] polygons = new ModelPart.Polygon[faceCount];
         float x0 = this.minX;
@@ -61,6 +63,18 @@ public final class Model3DTexture extends ModelPart.Cube {
         this.polygons = polygons;
     }
 
+    @Override
+    public void compile(PoseStack.Pose pose, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+        super.compile(pose,
+                new ForwardingVertexConsumer(vertexConsumer),
+                packedLight,
+                packedOverlay,
+                red,
+                green,
+                blue,
+                alpha);
+    }
+
     private static FaceAdder getFaceAdder(ModelPart.Polygon[] polygons) {
         AtomicInteger polygonIndex = new AtomicInteger();
         return (float x0, float y0, float z0, float x1, float y1, float z1, float u1, float v1, float u2, float v2, Direction normal) -> {
@@ -78,8 +92,7 @@ public final class Model3DTexture extends ModelPart.Cube {
                     64,
                     64,
                     false,
-                    normal
-            );
+                    normal);
         };
     }
 
@@ -100,7 +113,6 @@ public final class Model3DTexture extends ModelPart.Cube {
                 (float) (u + width),
                 (float) (v + height),
                 textureWidth,
-                textureHeight
-        );
+                textureHeight);
     }
 }

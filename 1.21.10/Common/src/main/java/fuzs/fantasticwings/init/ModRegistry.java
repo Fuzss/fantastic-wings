@@ -75,10 +75,7 @@ public class ModRegistry {
         // NO-OP
     }
 
-    static Item.Properties bottledItemProperties() {
-        return new Item.Properties().stacksTo(1)
-                .craftRemainder(Items.GLASS_BOTTLE)
-                .usingConvertsTo(Items.GLASS_BOTTLE)
-                .component(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, Boolean.TRUE);
+    private static Item.Properties bottledItemProperties() {
+        return new Item.Properties().stacksTo(1).craftRemainder(Items.GLASS_BOTTLE).usingConvertsTo(Items.GLASS_BOTTLE);
     }
 }
