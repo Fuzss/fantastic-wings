@@ -22,7 +22,6 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.HumanoidArm;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -60,13 +59,13 @@ public class ClientEventHandler {
     }
 
     public static void onComputeCameraAngles(GameRenderer renderer, Camera camera, float partialTick, MutableFloat pitch, MutableFloat yaw, MutableFloat roll) {
-        LivingEntity cameraEntity = (LivingEntity) camera.getEntity();
-        ModRegistry.FLIGHT_CAPABILITY.getIfProvided(cameraEntity).ifPresent(flightViewCapability -> {
+        ModRegistry.FLIGHT_CAPABILITY.getIfProvided(camera.getEntity()).ifPresent(flightViewCapability -> {
             float flyingAmount = flightViewCapability.getFlyingAmount(partialTick);
             if (flyingAmount > 0.0F) {
+                Player player = (Player) camera.getEntity();
                 float newRoll = MathHelper.lerpDegrees(
-                        cameraEntity.yBodyRotO - cameraEntity.yRotO,
-                        cameraEntity.yBodyRot - cameraEntity.getYRot(),
+                        player.yBodyRotO - player.yRotO,
+                        player.yBodyRot - player.getYRot(),
                         partialTick
                 );
                 roll.accept(MathHelper.lerpDegrees(0.0F, -newRoll * 0.25F, flyingAmount));
