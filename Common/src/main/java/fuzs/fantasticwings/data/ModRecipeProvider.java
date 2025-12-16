@@ -13,8 +13,8 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.RecipeBuilder;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Recipe;
@@ -45,8 +45,8 @@ public class ModRecipeProvider extends AbstractRecipeProvider {
         Holder.Reference<FlightApparatus> holder = this.registries()
                 .lookupOrThrow(FlightApparatus.REGISTRY_KEY)
                 .getOrThrow(resourceKey);
-        ResourceLocation resourceLocation = RecipeBuilder.getDefaultRecipeId(ModRegistry.BOTTLED_WINGS_ITEM.value())
-                .withSuffix("_" + resourceKey.location().getPath());
+        Identifier identifier = RecipeBuilder.getDefaultRecipeId(ModRegistry.BOTTLED_WINGS_ITEM.value())
+                .withSuffix("_" + resourceKey.identifier().getPath());
         this.shaped(RecipeCategory.TRANSPORTATION, ModRegistry.BOTTLED_WINGS_ITEM.value())
                 .define('X', item)
                 .define('$', Items.DRAGON_BREATH)
@@ -57,10 +57,10 @@ public class ModRecipeProvider extends AbstractRecipeProvider {
                 .pattern("#@#")
                 .unlockedBy(getHasName(item), this.has(item))
                 .group(resourceKey.registry().getPath())
-                .save(new TransformingRecipeOutput(this.output, (Recipe<?> recipe) -> {
+                .save(TransformingRecipeOutput.transformed(this.output, (Recipe<?> recipe) -> {
                     ((ShapedRecipe) recipe).result.set(DataComponents.CONSUMABLE,
                             BottledWingsItem.createComponent(holder));
                     return recipe;
-                }), ResourceKey.create(Registries.RECIPE, resourceLocation));
+                }), ResourceKey.create(Registries.RECIPE, identifier));
     }
 }

@@ -37,7 +37,7 @@ public class WingsCommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext context, Commands.CommandSelection environment) {
         dispatcher.register(Commands.literal("wings")
-                .requires(commandSourceStack -> commandSourceStack.hasPermission(2))
+                .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
                 .then(Commands.literal("give")
                         .then(Commands.argument("targets", EntityArgument.players())
                                 .then(Commands.argument("wings",
@@ -109,9 +109,11 @@ public class WingsCommand {
                 count++;
             }
         }
+
         if (count == 0) {
             throw ERROR_TAKE_FAILED.create();
         }
+
         if (targets.size() == 1) {
             context.getSource()
                     .sendSuccess(() -> Component.translatable(KEY_TAKE_WINGS_SINGLE,
@@ -120,6 +122,7 @@ public class WingsCommand {
             context.getSource()
                     .sendSuccess(() -> Component.translatable(KEY_TAKE_WINGS_MULTIPLE, targets.size()), true);
         }
+
         return count;
     }
 }

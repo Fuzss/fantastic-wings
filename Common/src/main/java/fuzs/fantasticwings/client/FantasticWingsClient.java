@@ -18,7 +18,7 @@ import fuzs.puzzleslib.api.client.core.v1.ClientModConstructor;
 import fuzs.puzzleslib.api.client.core.v1.context.ItemModelsContext;
 import fuzs.puzzleslib.api.client.core.v1.context.KeyMappingsContext;
 import fuzs.puzzleslib.api.client.core.v1.context.LayerDefinitionsContext;
-import fuzs.puzzleslib.api.client.event.v1.AddResourcePackReloadListenersCallback;
+import fuzs.puzzleslib.api.client.core.v1.context.ResourcePackReloadListenersContext;
 import fuzs.puzzleslib.api.client.event.v1.entity.ClientEntityLevelEvents;
 import fuzs.puzzleslib.api.client.event.v1.renderer.AddLivingEntityRenderLayersCallback;
 import fuzs.puzzleslib.api.client.event.v1.renderer.ComputeCameraAnglesCallback;
@@ -29,11 +29,7 @@ import fuzs.puzzleslib.api.client.key.v1.KeyActivationHandler;
 import fuzs.puzzleslib.api.event.v1.entity.player.PlayerTickEvents;
 import fuzs.puzzleslib.api.network.v4.MessageSender;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.world.entity.player.Player;
-
-import java.util.function.BiConsumer;
 
 public class FantasticWingsClient implements ClientModConstructor {
 
@@ -49,9 +45,6 @@ public class FantasticWingsClient implements ClientModConstructor {
         PlayerTickEvents.END.register(FlightView::onEndPlayerTick);
         ExtractRenderStateCallback.EVENT.register(ClientEventHandler::onExtractRenderState);
         RenderHandEvents.OFF_HAND.register(ClientEventHandler::onRenderOffHand);
-        AddResourcePackReloadListenersCallback.EVENT.register((BiConsumer<ResourceLocation, PreparableReloadListener> consumer) -> {
-            consumer.accept(FantasticWings.id("wing_models"), WingFormRegistry.INSTANCE);
-        });
         AddLivingEntityRenderLayersCallback.EVENT.register(ModWingsLayer::addLivingEntityRenderLayers);
     }
 
@@ -85,5 +78,10 @@ public class FantasticWingsClient implements ClientModConstructor {
         context.registerLayerDefinition(ModModelLayers.INSECTOID_WINGS_MODEL_LAYER,
                 InsectoidWingsModel::createWingsLayer);
         context.registerLayerDefinition(ModModelLayers.AVIAN_WINGS_MODEL_LAYER, AvianWingsModel::createWingsLayer);
+    }
+
+    @Override
+    public void onAddResourcePackReloadListeners(ResourcePackReloadListenersContext context) {
+        context.registerReloadListener(FantasticWings.id("wing_models"), WingFormRegistry.INSTANCE);
     }
 }

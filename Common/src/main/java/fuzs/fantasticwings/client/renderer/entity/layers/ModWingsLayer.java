@@ -5,8 +5,7 @@ import fuzs.fantasticwings.client.flight.apparatus.WingForm;
 import fuzs.fantasticwings.client.handler.ClientEventHandler;
 import fuzs.fantasticwings.init.ModRegistry;
 import fuzs.puzzleslib.api.client.renderer.v1.RenderStateExtraData;
-import net.minecraft.client.model.PlayerModel;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.model.player.PlayerModel;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
@@ -14,6 +13,7 @@ import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.entity.player.AvatarRenderer;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.world.entity.EntityType;
 
 import java.util.Optional;
@@ -44,7 +44,7 @@ public class ModWingsLayer extends RenderLayer<AvatarRenderState, PlayerModel> {
                         this.getParentModel().body.translateAndRotate(poseStack);
                         form.submitModel(poseStack,
                                 nodeCollector,
-                                RenderType::entityCutout,
+                                RenderTypes::entityCutout,
                                 packedLight,
                                 renderState.outlineColor);
                         poseStack.popPose();

@@ -9,9 +9,9 @@ import net.minecraft.core.Registry;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.RegistryFixedCodec;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ByIdMap;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.entity.player.Player;
@@ -20,16 +20,16 @@ import net.minecraft.world.phys.Vec3;
 import java.util.Locale;
 import java.util.function.IntFunction;
 
-public record FlightApparatus(ResourceLocation textureLocation, Model model, WingSettings wingSettings) {
+public record FlightApparatus(Identifier textureLocation, Model model, WingSettings wingSettings) {
     public static final ResourceKey<Registry<FlightApparatus>> REGISTRY_KEY = ResourceKey.createRegistryKey(
             FantasticWings.id("wings"));
     public static final Codec<FlightApparatus> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                    ResourceLocation.CODEC.fieldOf("asset_id").forGetter(FlightApparatus::textureLocation),
+                    Identifier.CODEC.fieldOf("asset_id").forGetter(FlightApparatus::textureLocation),
                     Model.CODEC.fieldOf("model").forGetter(FlightApparatus::model),
                     WingSettings.CODEC.fieldOf("wing_settings").forGetter(FlightApparatus::wingSettings))
             .apply(instance, FlightApparatus::new));
     public static final StreamCodec<RegistryFriendlyByteBuf, FlightApparatus> DIRECT_STREAM_CODEC = StreamCodec.composite(
-            ResourceLocation.STREAM_CODEC,
+            Identifier.STREAM_CODEC,
             FlightApparatus::textureLocation,
             Model.STREAM_CODEC,
             FlightApparatus::model,
@@ -40,12 +40,12 @@ public record FlightApparatus(ResourceLocation textureLocation, Model model, Win
     public static final StreamCodec<RegistryFriendlyByteBuf, Holder<FlightApparatus>> STREAM_CODEC = ByteBufCodecs.holderRegistry(
             REGISTRY_KEY);
 
-    public static ResourceLocation transformTextureLocation(ResourceLocation resourceLocation) {
-        return resourceLocation.withPath((String string) -> "textures/" + string + ".png");
+    public static Identifier transformTextureLocation(Identifier identifier) {
+        return identifier.withPath((String string) -> "textures/" + string + ".png");
     }
 
-    public static ResourceLocation getTextureLocation(ResourceKey<FlightApparatus> resourceKey) {
-        return resourceKey.location().withPath((String string) -> "entity/equipment/wings/" + string);
+    public static Identifier getTextureLocation(ResourceKey<FlightApparatus> resourceKey) {
+        return resourceKey.identifier().withPath((String string) -> "entity/equipment/wings/" + string);
     }
 
     public void onFlying(Player player, Vec3 direction) {

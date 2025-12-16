@@ -67,10 +67,10 @@ public class ClientEventHandler {
     }
 
     public static void onComputeCameraAngles(GameRenderer renderer, Camera camera, float partialTick, MutableFloat pitch, MutableFloat yaw, MutableFloat roll) {
-        Flight flight = ModRegistry.FLIGHT_ATTACHMENT_TYPE.getOrDefault(camera.getEntity(), Flight.VOID);
+        Flight flight = ModRegistry.FLIGHT_ATTACHMENT_TYPE.getOrDefault(camera.entity(), Flight.VOID);
         float flyingAmount = flight.getFlyingAmount(partialTick);
         if (flyingAmount > 0.0F) {
-            Player player = (Player) camera.getEntity();
+            Player player = (Player) camera.entity();
             float newRoll = MathHelper.lerpDegrees(player.yBodyRotO - player.yRotO,
                     player.yBodyRot - player.getYRot(),
                     partialTick);
