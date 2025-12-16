@@ -1,0 +1,10 @@
+{
+  "asset_id": "fantasticwings:bat",
+  "model": "avian",
+  "wing_settings": {
+    "exhaustion_from_flying": 1.0E-4,
+    "exhaustion_from_slowly_descending": 0.005,
+    "required_food_level_for_flying": 6,
+    "required_food_level_for_slowly_descending": 2
+  }
+}
