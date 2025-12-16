@@ -11,7 +11,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public record FlightApparatusProperty() implements SelectItemModelProperty<ResourceKey<FlightApparatus>> {
     public static final SelectItemModelProperty.Type<FlightApparatusProperty, ResourceKey<FlightApparatus>> TYPE = SelectItemModelProperty.Type.create(

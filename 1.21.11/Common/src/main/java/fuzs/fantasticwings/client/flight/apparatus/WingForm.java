@@ -4,11 +4,11 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import fuzs.fantasticwings.client.animator.Animator;
 import fuzs.fantasticwings.client.model.WingsModel;
 import fuzs.fantasticwings.flight.apparatus.FlightApparatus;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.Optional;
 import java.util.function.Function;
@@ -19,7 +19,7 @@ public final class WingForm<A extends Animator<S>, S> {
     private final Supplier<A> animator;
     private final Supplier<S> state;
     private final Supplier<WingsModel<S>> model;
-    private final ResourceLocation textureLocation;
+    private final Identifier textureLocation;
 
     public WingForm(ResourceKey<FlightApparatus> resourceKey, Supplier<A> animator, Supplier<S> state, Supplier<WingsModel<S>> model) {
         this.resourceKey = resourceKey;
@@ -41,7 +41,7 @@ public final class WingForm<A extends Animator<S>, S> {
         return this.model.get();
     }
 
-    public ResourceLocation getTextureLocation() {
+    public Identifier getTextureLocation() {
         return this.textureLocation;
     }
 
@@ -56,7 +56,7 @@ public final class WingForm<A extends Animator<S>, S> {
 
     public interface FormRenderer<S> {
 
-        ResourceLocation getTextureLocation();
+        Identifier getTextureLocation();
 
         S createRenderState(float partialTick);
 
@@ -69,7 +69,7 @@ public final class WingForm<A extends Animator<S>, S> {
 
     public record FormRendererState<S>(FormRenderer<S> form, S state) {
 
-        public void submitModel(PoseStack poseStack, SubmitNodeCollector nodeCollector, Function<ResourceLocation, RenderType> renderTypeGetter, int packedLight, int outlineColor) {
+        public void submitModel(PoseStack poseStack, SubmitNodeCollector nodeCollector, Function<Identifier, RenderType> renderTypeGetter, int packedLight, int outlineColor) {
             this.form.submitModel(this.state,
                     poseStack,
                     nodeCollector,

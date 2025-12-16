@@ -25,7 +25,7 @@ abstract class ServerPlayerMixin extends Player {
             slice = @Slice(
                     from = @At(
                             value = "FIELD",
-                            target = "Lnet/minecraft/stats/Stats;AVIATE_ONE_CM:Lnet/minecraft/resources/ResourceLocation;"
+                            target = "Lnet/minecraft/stats/Stats;AVIATE_ONE_CM:Lnet/minecraft/resources/Identifier;"
                     )
             )
     )

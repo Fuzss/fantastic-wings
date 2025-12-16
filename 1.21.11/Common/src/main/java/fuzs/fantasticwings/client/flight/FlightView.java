@@ -8,10 +8,10 @@ import fuzs.fantasticwings.client.flight.apparatus.WingForm;
 import fuzs.fantasticwings.client.init.ClientModRegistry;
 import fuzs.fantasticwings.flight.Flight;
 import fuzs.fantasticwings.init.ModRegistry;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.function.Consumer;
@@ -24,7 +24,7 @@ public record FlightView(WingState state) {
     }
 
     public static void onEndPlayerTick(Player player) {
-        ClientModRegistry.FLIGHT_VIEW_ATTACHMENT_TYPE.update(player, (FlightView flightView) -> {
+        ClientModRegistry.FLIGHT_VIEW_ATTACHMENT_TYPE.apply(player, (FlightView flightView) -> {
             return flightView.tick(player);
         });
     }
@@ -142,7 +142,7 @@ public record FlightView(WingState state) {
             public void ifFormPresent(Consumer<WingForm.FormRenderer<?>> consumer) {
                 consumer.accept(new WingForm.FormRenderer<S>() {
                     @Override
-                    public ResourceLocation getTextureLocation() {
+                    public Identifier getTextureLocation() {
                         return WingStrategy.this.shape.getTextureLocation();
                     }
 

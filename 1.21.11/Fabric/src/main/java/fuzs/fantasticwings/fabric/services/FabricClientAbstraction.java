@@ -21,6 +21,12 @@ public final class FabricClientAbstraction implements ClientAbstractions {
             }
 
             @Override
+            public VertexConsumer setColor(int color) {
+                vertexConsumer.setColor(color);
+                return this;
+            }
+
+            @Override
             public VertexConsumer setUv(float u, float v) {
                 vertexConsumer.setUv(u, v);
                 return this;
@@ -41,6 +47,12 @@ public final class FabricClientAbstraction implements ClientAbstractions {
             @Override
             public VertexConsumer setNormal(float x, float y, float z) {
                 vertexConsumer.setNormal(x, y, z);
+                return this;
+            }
+
+            @Override
+            public VertexConsumer setLineWidth(float lineWidth) {
+                vertexConsumer.setLineWidth(lineWidth);
                 return this;
             }
         };

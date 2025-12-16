@@ -2,8 +2,8 @@ package fuzs.fantasticwings.mixin.client;
 
 import fuzs.fantasticwings.client.handler.ClientEventHandler;
 import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.player.PlayerModel;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -17,7 +17,7 @@ abstract class PlayerModelMixin extends HumanoidModel<AvatarRenderState> {
         super(root);
     }
 
-    @Inject(method = "setupAnim", at = @At("TAIL"))
+    @Inject(method = "setupAnim(Lnet/minecraft/client/renderer/entity/state/AvatarRenderState;)V", at = @At("TAIL"))
     public void setupAnim(AvatarRenderState renderState, CallbackInfo callback) {
         ClientEventHandler.setupPlayerAnim(renderState, this);
     }

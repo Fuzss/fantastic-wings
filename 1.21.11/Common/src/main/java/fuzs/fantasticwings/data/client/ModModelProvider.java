@@ -11,8 +11,8 @@ import net.minecraft.client.data.models.model.ItemModelUtils;
 import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.client.renderer.item.ItemModel;
 import net.minecraft.client.renderer.item.SelectItemModel;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 
@@ -53,9 +53,9 @@ public class ModModelProvider extends AbstractModelProvider {
                 ItemModelUtils.select(new FlightApparatusProperty(), itemModel, switchCases));
     }
 
-    public final ResourceLocation createWings(Item item, ResourceKey<FlightApparatus> resourceKey, ItemModelGenerators itemModelGenerators) {
+    public final Identifier createWings(Item item, ResourceKey<FlightApparatus> resourceKey, ItemModelGenerators itemModelGenerators) {
         return itemModelGenerators.createFlatItemModel(item,
-                "_" + resourceKey.location().getPath(),
+                "_" + resourceKey.identifier().getPath(),
                 ModelTemplates.FLAT_ITEM);
     }
 }

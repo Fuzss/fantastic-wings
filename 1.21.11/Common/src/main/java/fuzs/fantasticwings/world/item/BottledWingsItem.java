@@ -38,7 +38,7 @@ public class BottledWingsItem extends WithDescriptionItem {
     }
 
     public Component getWingsComponent(ResourceKey<FlightApparatus> resourceKey) {
-        return Component.translatable(this.getDescriptionId() + ".wings." + resourceKey.location().toLanguageKey());
+        return Component.translatable(this.getDescriptionId() + ".wings." + resourceKey.identifier().toLanguageKey());
     }
 
     public static Optional<Holder<FlightApparatus>> getFlightApparatus(ItemStack itemStack) {
@@ -52,6 +52,7 @@ public class BottledWingsItem extends WithDescriptionItem {
                 }
             }
         }
+
         return Optional.empty();
     }
 }
