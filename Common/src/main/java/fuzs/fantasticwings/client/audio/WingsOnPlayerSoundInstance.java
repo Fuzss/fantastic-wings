@@ -8,18 +8,19 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 
-public class WingsSound extends AbstractTickableSoundInstance {
+/**
+ * @see net.minecraft.client.resources.sounds.ElytraOnPlayerSoundInstance
+ */
+public class WingsOnPlayerSoundInstance extends AbstractTickableSoundInstance {
     private final Player player;
-    private final Flight flight;
 
-    public WingsSound(Player player, Flight flight) {
-        this(player, flight, true, 0, Math.nextAfter(0.0F, 1.0D));
+    public WingsOnPlayerSoundInstance(Player player) {
+        this(player, true, 0, Math.nextAfter(0.0F, 1.0D));
     }
 
-    private WingsSound(Player player, Flight flight, boolean repeat, int repeatDelay, float volume) {
+    private WingsOnPlayerSoundInstance(Player player, boolean repeat, int repeatDelay, float volume) {
         super(ModRegistry.ITEM_WINGS_FLYING.value(), SoundSource.PLAYERS, SoundInstance.createUnseededRandom());
         this.player = player;
-        this.flight = flight;
         this.looping = repeat;
         this.delay = repeatDelay;
         this.volume = volume;
@@ -27,9 +28,10 @@ public class WingsSound extends AbstractTickableSoundInstance {
 
     @Override
     public void tick() {
-        if (!this.player.isAlive()) {
+        if (this.player.isRemoved()) {
             this.stop();
-        } else if (this.flight.getFlyingAmount(1.0F) > 0.0F) {
+        } else if (ModRegistry.FLIGHT_ATTACHMENT_TYPE.getOrDefault(this.player, Flight.VOID).getFlyingAmount(1.0F)
+                > 0.0F) {
             this.x = (float) this.player.getX();
             this.y = (float) this.player.getY();
             this.z = (float) this.player.getZ();

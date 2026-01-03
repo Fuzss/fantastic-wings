@@ -3,7 +3,7 @@ package fuzs.fantasticwings.client.handler;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import fuzs.fantasticwings.FantasticWings;
-import fuzs.fantasticwings.client.audio.WingsSound;
+import fuzs.fantasticwings.client.audio.WingsOnPlayerSoundInstance;
 import fuzs.fantasticwings.client.flight.FlightView;
 import fuzs.fantasticwings.client.flight.apparatus.WingForm;
 import fuzs.fantasticwings.client.init.ClientModRegistry;
@@ -79,9 +79,8 @@ public class ClientEventHandler {
     }
 
     public static EventResult onEntityLoad(Entity entity, ClientLevel level) {
-        if (entity instanceof LocalPlayer localPlayer) {
-            Flight flight = ModRegistry.FLIGHT_ATTACHMENT_TYPE.get(localPlayer);
-            Minecraft.getInstance().getSoundManager().play(new WingsSound(localPlayer, flight));
+        if (entity instanceof LocalPlayer player) {
+            Minecraft.getInstance().getSoundManager().play(new WingsOnPlayerSoundInstance(player));
         }
 
         return EventResult.PASS;
