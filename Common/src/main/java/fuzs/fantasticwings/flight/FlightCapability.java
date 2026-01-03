@@ -89,10 +89,9 @@ public final class FlightCapability extends CapabilityComponent<Player> {
         return this.holder.flightApparatus().isUsableForFlying(this.getHolder()) && this.canUseWings();
     }
 
-    public boolean canSlowlyDescend() {
-        return this.holder.flightApparatus()
-                .isUsableForSlowlyDescending(this.getHolder()) && this.canUseWings() && (this.isFlying() || !this.getHolder()
-                .isDescending() && !this.getHolder().getAbilities().mayfly);
+    public boolean canSlowlyDescend(Player player) {
+        return this.canUseWings() && this.holder.flightApparatus().isUsableForSlowlyDescending(player) && (
+                this.isFlying() || !player.isDescending());
     }
 
     private void onWornUpdate() {
@@ -113,8 +112,7 @@ public final class FlightCapability extends CapabilityComponent<Player> {
                 player.setDeltaMovement(player.getDeltaMovement()
                         .add(vx * vxz * speed,
                                 vy * speed + Y_BOOST * (player.getXRot() > 0.0F ? elevationBoost : 1.0D),
-                                vz * vxz * speed
-                        ));
+                                vz * vxz * speed));
                 // similar to swimming where jumping and sneaking help with ascending / descending
                 if (player.jumping) {
                     // with the elevation boost this can get quite crazy, so don't add as much as when descending
@@ -123,7 +121,7 @@ public final class FlightCapability extends CapabilityComponent<Player> {
                     player.setDeltaMovement(player.getDeltaMovement().add(0.0, -MANUAL_Y_BOOST, 0.0));
                 }
             }
-            if (this.canSlowlyDescend()) {
+            if (this.canSlowlyDescend(player)) {
                 Vec3 deltaMovement = player.getDeltaMovement();
                 if (deltaMovement.y() < 0.0D) {
                     player.setDeltaMovement(deltaMovement.multiply(1.0D, FALL_REDUCTION, 1.0D));
@@ -157,7 +155,7 @@ public final class FlightCapability extends CapabilityComponent<Player> {
         Player player = this.getHolder();
         if (this.isFlying()) {
             this.holder.flightApparatus().onFlying(player, direction);
-        } else if (this.canSlowlyDescend() && player.getDeltaMovement().y() < -0.5) {
+        } else if (this.canSlowlyDescend(player) && player.getDeltaMovement().y() < -0.5) {
             this.holder.flightApparatus().onSlowlyDescending(player, direction);
         }
     }
