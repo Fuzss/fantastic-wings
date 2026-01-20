@@ -42,8 +42,17 @@ public class ClientEventHandler {
     public static final RenderPropertyKey<Float> PITCH_RENDER_PROPERTY_KEY = new RenderPropertyKey<>(FantasticWings.id(
             "pitch"));
 
+    @Deprecated
+    public static <T> T getOrDefault(EntityRenderState renderState, RenderPropertyKey<T> key, T defaultProperty) {
+        if (RenderPropertyKey.containsRenderProperty(renderState, key)) {
+            return RenderPropertyKey.getRenderProperty(renderState, key);
+        } else {
+            return defaultProperty;
+        }
+    }
+
     public static void setupPlayerAnim(PlayerRenderState renderState, HumanoidModel<PlayerRenderState> model) {
-        float flyingAmount = RenderPropertyKey.getRenderProperty(renderState, FLYING_AMOUNT_RENDER_PROPERTY_KEY);
+        float flyingAmount = getOrDefault(renderState, FLYING_AMOUNT_RENDER_PROPERTY_KEY, 0.0F);
         if (flyingAmount != 0.0F) {
             model.head.xRot = MathHelper.toRadians(MathHelper.lerp(renderState.xRot,
                     renderState.xRot / 4.0F - 90.0F,
@@ -57,10 +66,10 @@ public class ClientEventHandler {
     }
 
     public static void setupPlayerRotations(PlayerRenderState renderState, PoseStack poseStack) {
-        float flyingAmount = RenderPropertyKey.getRenderProperty(renderState, FLYING_AMOUNT_RENDER_PROPERTY_KEY);
+        float flyingAmount = getOrDefault(renderState, FLYING_AMOUNT_RENDER_PROPERTY_KEY, 0.0F);
         if (flyingAmount > 0.0F) {
-            float roll = RenderPropertyKey.getRenderProperty(renderState, ROLL_RENDER_PROPERTY_KEY);
-            float pitch = RenderPropertyKey.getRenderProperty(renderState, PITCH_RENDER_PROPERTY_KEY);
+            float roll = getOrDefault(renderState, ROLL_RENDER_PROPERTY_KEY, 0.0F);
+            float pitch = getOrDefault(renderState, PITCH_RENDER_PROPERTY_KEY, 0.0F);
             poseStack.mulPose(Axis.ZP.rotationDegrees(MathHelper.lerpDegrees(0.0F, roll, flyingAmount)));
             poseStack.mulPose(Axis.XP.rotationDegrees(MathHelper.lerpDegrees(0.0F, pitch, flyingAmount)));
             poseStack.translate(0.0, -1.2 * MathHelper.easeInOut(flyingAmount), 0.0);
@@ -90,8 +99,8 @@ public class ClientEventHandler {
     }
 
     public static void onExtractRenderState(Entity entity, EntityRenderState entityRenderState, float partialTick) {
-        if (entity instanceof AbstractClientPlayer player &&
-                entityRenderState instanceof PlayerRenderState playerRenderState) {
+        if (entity instanceof AbstractClientPlayer player
+                && entityRenderState instanceof PlayerRenderState playerRenderState) {
             RenderPropertyKey.setRenderProperty(entityRenderState,
                     FLIGHT_VIEW_RENDER_PROPERTY_KEY,
                     ClientModRegistry.FLIGHT_VIEW_ATTACHMENT_TYPE.get(entity));
@@ -123,8 +132,8 @@ public class ClientEventHandler {
 
     public static EventResult onRenderOffHand(ItemInHandRenderer itemInHandRenderer, InteractionHand interactionHand, AbstractClientPlayer player, HumanoidArm humanoidArm, ItemStack itemStack, PoseStack poseStack, MultiBufferSource bufferSource, int combinedLight, float partialTick, float interpolatedPitch, float swingProgress, float equipProgress) {
         if (itemStack.isEmpty() && !player.isScoping() && !player.isInvisible()) {
-            if (!itemInHandRenderer.mainHandItem.is(Items.FILLED_MAP) &&
-                    ModRegistry.FLIGHT_CAPABILITY.get(player).isFlying()) {
+            if (!itemInHandRenderer.mainHandItem.is(Items.FILLED_MAP) && ModRegistry.FLIGHT_CAPABILITY.get(player)
+                    .isFlying()) {
                 itemInHandRenderer.renderPlayerArm(poseStack,
                         bufferSource,
                         combinedLight,

@@ -71,8 +71,8 @@ public final class FlightCapability extends CapabilityComponent<Player> {
     }
 
     public boolean setWings(@Nullable Holder<FlightApparatus> flightApparatus) {
-        if (flightApparatus == null && this.holder.isPresent() ||
-                flightApparatus != null && !this.is(flightApparatus)) {
+        if (flightApparatus == null && this.holder.isPresent()
+                || flightApparatus != null && !this.is(flightApparatus)) {
             this.holder = Optional.ofNullable(flightApparatus);
             this.setChanged();
             return true;
@@ -100,20 +100,19 @@ public final class FlightCapability extends CapabilityComponent<Player> {
     }
 
     public boolean canUseWings(Player player) {
-        return !player.getAbilities().flying &&
-                !player.getItemBySlot(EquipmentSlot.CHEST).is(ModRegistry.WING_OBSTRUCTIONS);
+        return !player.getAbilities().flying && !player.getItemBySlot(EquipmentSlot.CHEST)
+                .is(ModRegistry.WING_OBSTRUCTIONS);
     }
 
     public boolean canFly(Player player) {
-        return this.canUseWings(player) &&
-                this.holder.filter((Holder<FlightApparatus> holder) -> holder.value().isUsableForFlying(player))
-                        .isPresent();
+        return this.canUseWings(player) && this.holder.filter((Holder<FlightApparatus> holder) -> holder.value()
+                .isUsableForFlying(player)).isPresent();
     }
 
     public boolean canSlowlyDescend(Player player) {
         return this.canUseWings(player) && this.holder.filter((Holder<FlightApparatus> holder) -> holder.value()
-                .isUsableForSlowlyDescending(player)).isPresent() &&
-                (this.isFlying() || !this.getHolder().isDescending() && !this.getHolder().getAbilities().mayfly);
+                .isUsableForSlowlyDescending(player)).isPresent() && (this.isFlying() || !this.getHolder()
+                .isDescending());
     }
 
     private void onWornUpdate(Player player) {
