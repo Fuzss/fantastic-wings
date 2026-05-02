@@ -1,4 +1,4 @@
-accessWidener   v2  named
+classTweaker    v2  official
 extendable  class   net/minecraft/client/model/geom/builders/CubeDefinition
 accessible  field   net/minecraft/client/model/geom/builders/CubeDefinition origin  Lorg/joml/Vector3fc;
 accessible  field   net/minecraft/client/model/geom/builders/CubeDefinition dimensions  Lorg/joml/Vector3fc;
