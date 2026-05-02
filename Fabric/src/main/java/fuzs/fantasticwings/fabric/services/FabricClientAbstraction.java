@@ -1,7 +1,7 @@
 package fuzs.fantasticwings.fabric.services;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import fuzs.fantasticwings.services.ClientAbstractions;
+import fuzs.fantasticwings.common.services.ClientAbstractions;
 
 public final class FabricClientAbstraction implements ClientAbstractions {
 

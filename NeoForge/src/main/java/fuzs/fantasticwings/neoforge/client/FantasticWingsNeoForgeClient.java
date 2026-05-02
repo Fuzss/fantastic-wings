@@ -1,9 +1,9 @@
 package fuzs.fantasticwings.neoforge.client;
 
-import fuzs.fantasticwings.FantasticWings;
-import fuzs.fantasticwings.client.FantasticWingsClient;
-import fuzs.fantasticwings.data.client.ModLanguageProvider;
-import fuzs.fantasticwings.data.client.ModModelProvider;
+import fuzs.fantasticwings.common.FantasticWings;
+import fuzs.fantasticwings.common.client.FantasticWingsClient;
+import fuzs.fantasticwings.common.data.client.ModLanguageProvider;
+import fuzs.fantasticwings.common.data.client.ModModelProvider;
 import fuzs.fantasticwings.neoforge.data.client.ModSoundProvider;
 import fuzs.puzzleslib.common.api.client.core.v1.ClientModConstructor;
 import fuzs.puzzleslib.neoforge.api.data.v2.core.DataProviderHelper;

@@ -1,7 +1,7 @@
 package fuzs.fantasticwings.fabric.client;
 
-import fuzs.fantasticwings.FantasticWings;
-import fuzs.fantasticwings.client.FantasticWingsClient;
+import fuzs.fantasticwings.common.FantasticWings;
+import fuzs.fantasticwings.common.client.FantasticWingsClient;
 import fuzs.puzzleslib.common.api.client.core.v1.ClientModConstructor;
 import net.fabricmc.api.ClientModInitializer;
 

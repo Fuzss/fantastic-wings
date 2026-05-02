@@ -1,9 +1,9 @@
 package fuzs.fantasticwings.neoforge;
 
-import fuzs.fantasticwings.FantasticWings;
-import fuzs.fantasticwings.data.ModItemTagProvider;
-import fuzs.fantasticwings.data.ModRecipeProvider;
-import fuzs.fantasticwings.init.ModRegistry;
+import fuzs.fantasticwings.common.FantasticWings;
+import fuzs.fantasticwings.common.data.ModItemTagProvider;
+import fuzs.fantasticwings.common.data.ModRecipeProvider;
+import fuzs.fantasticwings.common.init.ModRegistry;
 import fuzs.puzzleslib.common.api.core.v1.ModConstructor;
 import fuzs.puzzleslib.neoforge.api.data.v2.core.DataProviderHelper;
 import net.neoforged.fml.common.Mod;

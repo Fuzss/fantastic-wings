@@ -1,6 +1,6 @@
 package fuzs.fantasticwings.neoforge.data.client;
 
-import fuzs.fantasticwings.init.ModRegistry;
+import fuzs.fantasticwings.common.init.ModRegistry;
 import fuzs.puzzleslib.common.api.data.v2.core.DataProviderContext;
 import fuzs.puzzleslib.neoforge.api.client.data.v2.AbstractSoundProvider;
 import net.neoforged.neoforge.common.data.SoundDefinition;
