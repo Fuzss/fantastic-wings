@@ -1,9 +1,10 @@
 {
+    "minecraft": "26.1.2",
     "mod": {
         "id": "fantasticwings",
         "group": "fuzs.fantasticwings",
         "name": "Fantastic Wings",
-        "version": "21.11.0",
+        "version": "26.1.0",
         "authors": [
             "Pau101",
             "Fuzs"
@@ -37,13 +38,13 @@
     ],
     "links": [
         {
-            "name": "github",
-            "slug": "fantasticwings"
-        },
-        {
             "name": "curseforge",
             "slug": "fantastic-wings",
             "id": "1370532"
+        },
+        {
+            "name": "github",
+            "slug": "fantastic-wings"
         },
         {
             "name": "modrinth",

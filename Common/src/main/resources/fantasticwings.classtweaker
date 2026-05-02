@@ -15,3 +15,6 @@ mutable field   net/minecraft/client/model/geom/ModelPart$Cube  polygons    [Lne
 accessible  field   net/minecraft/client/renderer/ItemInHandRenderer    mainHandItem    Lnet/minecraft/world/item/ItemStack;
 accessible  method  net/minecraft/client/renderer/ItemInHandRenderer    renderPlayerArm (Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;IFFLnet/minecraft/world/entity/HumanoidArm;)V
 accessible  field   net/minecraft/world/entity/LivingEntity jumping Z
+transitive-accessible   field   net/minecraft/world/item/crafting/NormalCraftingRecipe  commonInfo  Lnet/minecraft/world/item/crafting/Recipe$CommonInfo;
+transitive-accessible   field   net/minecraft/world/item/crafting/NormalCraftingRecipe  bookInfo    Lnet/minecraft/world/item/crafting/CraftingRecipe$CraftingBookInfo;
+transitive-accessible   field   net/minecraft/world/item/crafting/ShapedRecipe  pattern Lnet/minecraft/world/item/crafting/ShapedRecipePattern;

@@ -1,7 +1,7 @@
 package fuzs.fantasticwings.client.model.geom;
 
 import fuzs.fantasticwings.FantasticWings;
-import fuzs.puzzleslib.api.client.init.v1.ModelLayerFactory;
+import fuzs.puzzleslib.common.api.client.init.v1.ModelLayerFactory;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 
 public class ModModelLayers {

@@ -4,18 +4,20 @@ import fuzs.fantasticwings.flight.apparatus.FlightApparatus;
 import fuzs.fantasticwings.init.FlightApparatuses;
 import fuzs.fantasticwings.init.ModRegistry;
 import fuzs.fantasticwings.world.item.BottledWingsItem;
-import fuzs.puzzleslib.api.data.v2.AbstractRecipeProvider;
-import fuzs.puzzleslib.api.data.v2.core.DataProviderContext;
-import fuzs.puzzleslib.api.data.v2.recipes.TransformingRecipeOutput;
+import fuzs.puzzleslib.common.api.data.v2.AbstractRecipeProvider;
+import fuzs.puzzleslib.common.api.data.v2.core.DataProviderContext;
+import fuzs.puzzleslib.common.api.data.v2.recipes.TransformingRecipeOutput;
 import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.recipes.RecipeBuilder;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.ShapedRecipe;
@@ -45,7 +47,7 @@ public class ModRecipeProvider extends AbstractRecipeProvider {
         Holder.Reference<FlightApparatus> holder = this.registries()
                 .lookupOrThrow(FlightApparatus.REGISTRY_KEY)
                 .getOrThrow(resourceKey);
-        Identifier identifier = RecipeBuilder.getDefaultRecipeId(ModRegistry.BOTTLED_WINGS_ITEM.value())
+        Identifier identifier = BuiltInRegistries.ITEM.getKey(ModRegistry.BOTTLED_WINGS_ITEM.value())
                 .withSuffix("_" + resourceKey.identifier().getPath());
         this.shaped(RecipeCategory.TRANSPORTATION, ModRegistry.BOTTLED_WINGS_ITEM.value())
                 .define('X', item)
@@ -58,9 +60,16 @@ public class ModRecipeProvider extends AbstractRecipeProvider {
                 .unlockedBy(getHasName(item), this.has(item))
                 .group(resourceKey.registry().getPath())
                 .save(TransformingRecipeOutput.transformed(this.output, (Recipe<?> recipe) -> {
-                    ((ShapedRecipe) recipe).result.set(DataComponents.CONSUMABLE,
-                            BottledWingsItem.createComponent(holder));
-                    return recipe;
+                    ShapedRecipe shapedRecipe = (ShapedRecipe) recipe;
+                    ItemStackTemplate result = shapedRecipe.result;
+                    DataComponentPatch patch = DataComponentPatch.builder()
+                            .set(DataComponents.CONSUMABLE, BottledWingsItem.createComponent(holder))
+                            .build();
+                    ItemStackTemplate template = new ItemStackTemplate(result.typeHolder(), result.count(), patch);
+                    return new ShapedRecipe(shapedRecipe.commonInfo,
+                            shapedRecipe.bookInfo,
+                            shapedRecipe.pattern,
+                            template);
                 }), ResourceKey.create(Registries.RECIPE, identifier));
     }
 }

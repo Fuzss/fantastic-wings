@@ -7,7 +7,7 @@ import fuzs.fantasticwings.init.ModRegistry;
 import fuzs.fantasticwings.network.ServerboundControlFlyingMessage;
 import fuzs.fantasticwings.util.CubicBezier;
 import fuzs.fantasticwings.util.MathHelper;
-import fuzs.puzzleslib.api.network.v4.MessageSender;
+import fuzs.puzzleslib.common.api.network.v4.MessageSender;
 import net.minecraft.core.Holder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;

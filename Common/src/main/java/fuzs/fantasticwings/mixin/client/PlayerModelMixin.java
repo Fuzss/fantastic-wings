@@ -18,7 +18,7 @@ abstract class PlayerModelMixin extends HumanoidModel<AvatarRenderState> {
     }
 
     @Inject(method = "setupAnim(Lnet/minecraft/client/renderer/entity/state/AvatarRenderState;)V", at = @At("TAIL"))
-    public void setupAnim(AvatarRenderState renderState, CallbackInfo callback) {
-        ClientEventHandler.setupPlayerAnim(renderState, this);
+    public void setupAnim(AvatarRenderState state, CallbackInfo callback) {
+        ClientEventHandler.setupPlayerAnim(state, this);
     }
 }

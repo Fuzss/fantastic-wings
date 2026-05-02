@@ -8,8 +8,8 @@ import fuzs.fantasticwings.init.FlightApparatuses;
 import fuzs.fantasticwings.init.ModRegistry;
 import fuzs.fantasticwings.world.item.BottledWingsItem;
 import fuzs.fantasticwings.world.item.WithDescriptionItem;
-import fuzs.puzzleslib.api.client.data.v2.AbstractLanguageProvider;
-import fuzs.puzzleslib.api.data.v2.core.DataProviderContext;
+import fuzs.puzzleslib.common.api.client.data.v2.AbstractLanguageProvider;
+import fuzs.puzzleslib.common.api.data.v2.core.DataProviderContext;
 import net.minecraft.resources.ResourceKey;
 
 public class ModLanguageProvider extends AbstractLanguageProvider {

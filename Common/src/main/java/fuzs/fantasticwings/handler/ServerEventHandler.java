@@ -2,8 +2,8 @@ package fuzs.fantasticwings.handler;
 
 import fuzs.fantasticwings.flight.Flight;
 import fuzs.fantasticwings.init.ModRegistry;
-import fuzs.puzzleslib.api.event.v1.core.EventResult;
-import fuzs.puzzleslib.api.item.v2.ItemHelper;
+import fuzs.puzzleslib.common.api.event.v1.core.EventResult;
+import fuzs.puzzleslib.common.api.item.v2.ItemHelper;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;

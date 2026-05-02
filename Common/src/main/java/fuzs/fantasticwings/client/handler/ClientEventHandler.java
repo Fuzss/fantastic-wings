@@ -10,16 +10,15 @@ import fuzs.fantasticwings.client.init.ClientModRegistry;
 import fuzs.fantasticwings.flight.Flight;
 import fuzs.fantasticwings.init.ModRegistry;
 import fuzs.fantasticwings.util.MathHelper;
-import fuzs.puzzleslib.api.client.renderer.v1.RenderStateExtraData;
-import fuzs.puzzleslib.api.event.v1.core.EventResult;
-import fuzs.puzzleslib.api.event.v1.data.MutableFloat;
+import fuzs.puzzleslib.common.api.client.renderer.v1.RenderStateExtraData;
+import fuzs.puzzleslib.common.api.event.v1.core.EventResult;
+import fuzs.puzzleslib.common.api.event.v1.data.MutableFloat;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
@@ -66,7 +65,7 @@ public class ClientEventHandler {
         }
     }
 
-    public static void onComputeCameraAngles(GameRenderer renderer, Camera camera, float partialTick, MutableFloat pitch, MutableFloat yaw, MutableFloat roll) {
+    public static void onComputeCameraAngles(Camera camera, float partialTick, MutableFloat pitch, MutableFloat yaw, MutableFloat roll) {
         Flight flight = ModRegistry.FLIGHT_ATTACHMENT_TYPE.getOrDefault(camera.entity(), Flight.VOID);
         float flyingAmount = flight.getFlyingAmount(partialTick);
         if (flyingAmount > 0.0F) {
@@ -86,7 +85,7 @@ public class ClientEventHandler {
         return EventResult.PASS;
     }
 
-    public static void onExtractRenderState(Entity entity, EntityRenderState entityRenderState, float partialTick) {
+    public static void onExtractEntityRenderState(Entity entity, EntityRenderState entityRenderState, float partialTick) {
         if (entity instanceof AbstractClientPlayer player
                 && entityRenderState instanceof AvatarRenderState playerRenderState) {
             FlightView flightView = ClientModRegistry.FLIGHT_VIEW_ATTACHMENT_TYPE.getOrDefault(entity, FlightView.VOID);
