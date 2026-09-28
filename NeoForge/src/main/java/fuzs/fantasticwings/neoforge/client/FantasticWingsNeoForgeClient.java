@@ -6,7 +6,7 @@ import fuzs.fantasticwings.common.data.client.ModLanguageProvider;
 import fuzs.fantasticwings.common.data.client.ModModelProvider;
 import fuzs.fantasticwings.neoforge.data.client.ModSoundProvider;
 import fuzs.puzzleslib.common.api.client.core.v1.ClientModConstructor;
-import fuzs.puzzleslib.neoforge.api.data.v2.core.DataProviderHelper;
+import fuzs.puzzleslib.neoforge.api.data.v3.core.DataProviderBuilder;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.common.Mod;
 
@@ -15,8 +15,7 @@ public class FantasticWingsNeoForgeClient {
 
     public FantasticWingsNeoForgeClient() {
         ClientModConstructor.construct(FantasticWings.MOD_ID, FantasticWingsClient::new);
-        DataProviderHelper.registerDataProviders(FantasticWings.MOD_ID, ModLanguageProvider::new, ModModelProvider::new,
-                ModSoundProvider::new
-        );
+        DataProviderBuilder.of(FantasticWings.MOD_ID)
+                .addProvider(ModLanguageProvider::new, ModModelProvider::new, ModSoundProvider::new);
     }
 }

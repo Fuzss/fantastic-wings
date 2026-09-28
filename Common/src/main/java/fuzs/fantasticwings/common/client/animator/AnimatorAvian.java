@@ -172,7 +172,7 @@ public final class AnimatorAvian implements Animator<AvianRenderState> {
 
         @Override
         public Vec3 getFeatherRotation(int index, float delta) {
-            double x = this.noise.getValue((this.time + delta) * 0.17D, index * 0.13D) * 1.25D;
+            double x = this.noise.get((this.time + delta) * 0.17D, index * 0.13D) * 1.25D;
             return AnimatorAvian.this.restPosition.getFeatherRotation(index, delta).add(x, 0.0D, 0.0D);
         }
 
@@ -263,13 +263,13 @@ public final class AnimatorAvian implements Animator<AvianRenderState> {
 
         @Override
         public Vec3 getWingRotation(int index, float delta) {
-            double n = this.noise.getValue((this.time + delta) * 0.18D, index * 0.13D) * 0.92D * (index + 1);
+            double n = this.noise.get((this.time + delta) * 0.18D, index * 0.13D) * 0.92D * (index + 1);
             return this.wing.get(index).add(n, 0.0D, n);
         }
 
         @Override
         public Vec3 getFeatherRotation(int index, float delta) {
-            double n = this.noise.getValue((this.time + delta) * 0.2D, index * 0.13D) * 1.75D;
+            double n = this.noise.get((this.time + delta) * 0.2D, index * 0.13D) * 1.75D;
             return new Vec3(-n, n * 4.0D, 0.0D);
         }
 

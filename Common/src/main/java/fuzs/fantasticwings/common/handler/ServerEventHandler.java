@@ -8,6 +8,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.Mth;
+import net.minecraft.util.Prediction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -37,7 +38,7 @@ public class ServerEventHandler {
                 ItemHelper.onPlayerDestroyItem(player, originalItemInHand, interactionHand);
                 player.setItemInHand(interactionHand, itemStack);
             } else if (!player.getInventory().add(itemStack)) {
-                player.drop(itemStack, false);
+                player.drop(itemStack, false, Prediction.SERVER_ONLY);
             }
         }
 

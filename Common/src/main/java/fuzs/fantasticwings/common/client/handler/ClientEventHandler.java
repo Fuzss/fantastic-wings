@@ -10,7 +10,7 @@ import fuzs.fantasticwings.common.client.init.ClientModRegistry;
 import fuzs.fantasticwings.common.flight.Flight;
 import fuzs.fantasticwings.common.init.ModRegistry;
 import fuzs.fantasticwings.common.util.MathHelper;
-import fuzs.puzzleslib.common.api.client.renderer.v1.RenderStateExtraData;
+import fuzs.puzzleslib.common.api.client.renderer.v2.RenderStateExtraData;
 import fuzs.puzzleslib.common.api.event.v1.core.EventResult;
 import fuzs.puzzleslib.common.api.event.v1.data.MutableFloat;
 import net.minecraft.client.Camera;
@@ -19,15 +19,16 @@ import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.ItemInHandRenderer;
+import net.minecraft.client.renderer.FirstPersonHandsAndItemsRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.state.level.FirstPersonHandsAndItemsRenderState;
+import net.minecraft.client.renderer.state.level.PlayerRenderState;
 import net.minecraft.util.Mth;
 import net.minecraft.util.context.ContextKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -59,8 +60,8 @@ public class ClientEventHandler {
         if (flyingAmount > 0.0F) {
             float roll = RenderStateExtraData.getOrDefault(renderState, ROLL_KEY, 0.0F);
             float pitch = RenderStateExtraData.getOrDefault(renderState, PITCH_KEY, 0.0F);
-            poseStack.mulPose(Axis.ZP.rotationDegrees(MathHelper.lerpDegrees(0.0F, roll, flyingAmount)));
-            poseStack.mulPose(Axis.XP.rotationDegrees(MathHelper.lerpDegrees(0.0F, pitch, flyingAmount)));
+            poseStack.rotate(Axis.ZP.rotationDegrees(MathHelper.lerpDegrees(0.0F, roll, flyingAmount)));
+            poseStack.rotate(Axis.XP.rotationDegrees(MathHelper.lerpDegrees(0.0F, pitch, flyingAmount)));
             poseStack.translate(0.0, -1.2 * MathHelper.easeInOut(flyingAmount), 0.0);
         }
     }
@@ -121,16 +122,22 @@ public class ClientEventHandler {
         return false;
     }
 
-    public static EventResult onRenderOffHand(ItemInHandRenderer itemInHandRenderer, InteractionHand interactionHand, AbstractClientPlayer player, HumanoidArm humanoidArm, ItemStack itemStack, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int combinedLight, float partialTick, float interpolatedPitch, float swingProgress, float equipProgress) {
-        if (itemStack.isEmpty() && !player.isScoping() && !player.isInvisible()) {
-            if (!itemInHandRenderer.mainHandItem.is(Items.FILLED_MAP)
-                    && ModRegistry.FLIGHT_ATTACHMENT_TYPE.getOrDefault(player, Flight.VOID).isFlying()) {
-                itemInHandRenderer.renderPlayerArm(poseStack,
+    public static EventResult onSubmitArmWithItem(FirstPersonHandsAndItemsRenderer handsAndItemsRenderer, PlayerRenderState playerState, FirstPersonHandsAndItemsRenderState state, float partialTicks, float xRot, InteractionHand hand, float attack, ItemStack itemStack, float inverseArmHeight, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords) {
+        if (hand == InteractionHand.OFF_HAND
+                && playerState.avatarRenderState != null
+                && itemStack.isEmpty()
+                && !state.isScoping
+                && !playerState.avatarRenderState.isInvisible
+                && !state.mainHandItem.is(Items.FILLED_MAP)) {
+            Player player = Minecraft.getInstance().player;
+            if (player != null && ModRegistry.FLIGHT_ATTACHMENT_TYPE.getOrDefault(player, Flight.VOID).isFlying()) {
+                handsAndItemsRenderer.renderPlayerArm(poseStack,
                         submitNodeCollector,
-                        combinedLight,
-                        equipProgress,
-                        swingProgress,
-                        player.getMainArm().getOpposite());
+                        lightCoords,
+                        inverseArmHeight,
+                        attack,
+                        playerState.avatarRenderState.mainArm.getOpposite(),
+                        playerState);
                 return EventResult.INTERRUPT;
             }
         }

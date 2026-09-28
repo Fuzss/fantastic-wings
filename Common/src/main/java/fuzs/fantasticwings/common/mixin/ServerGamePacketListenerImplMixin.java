@@ -22,7 +22,7 @@ abstract class ServerGamePacketListenerImplMixin extends ServerCommonPacketListe
         super(server, connection, cookie);
     }
 
-    @ModifyExpressionValue(method = "handleMovePlayer",
+    @ModifyExpressionValue(method = "handlePlayerPositionChange",
                            at = @At(value = "INVOKE",
                                     target = "Lnet/minecraft/server/level/ServerPlayer;isFallFlying()Z"))
     public boolean handleMovePlayer(boolean isFallFlying) {

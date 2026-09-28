@@ -167,8 +167,7 @@ public record FlightView(WingState state) {
                                 renderType,
                                 lightCoords,
                                 OverlayTexture.NO_OVERLAY,
-                                outlineColor,
-                                null);
+                                outlineColor);
                     }
                 });
             }

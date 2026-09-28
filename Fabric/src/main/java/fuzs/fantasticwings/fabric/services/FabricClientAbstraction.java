@@ -45,6 +45,12 @@ public final class FabricClientAbstraction implements ClientAbstractions {
             }
 
             @Override
+            public VertexConsumer setUv3(float u, float v) {
+                vertexConsumer.setUv3(u, v);
+                return this;
+            }
+
+            @Override
             public VertexConsumer setNormal(float x, float y, float z) {
                 vertexConsumer.setNormal(x, y, z);
                 return this;

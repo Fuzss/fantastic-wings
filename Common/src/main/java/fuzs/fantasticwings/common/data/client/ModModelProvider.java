@@ -4,8 +4,8 @@ import fuzs.fantasticwings.common.client.renderer.item.properties.select.FlightA
 import fuzs.fantasticwings.common.flight.apparatus.FlightApparatus;
 import fuzs.fantasticwings.common.init.FlightApparatuses;
 import fuzs.fantasticwings.common.init.ModRegistry;
-import fuzs.puzzleslib.common.api.client.data.v2.AbstractModelProvider;
-import fuzs.puzzleslib.common.api.data.v2.core.DataProviderContext;
+import fuzs.puzzleslib.common.api.client.data.v3.models.AbstractModelProvider;
+import fuzs.puzzleslib.common.api.data.v3.core.DataProviderContext;
 import net.minecraft.client.data.models.ItemModelGenerators;
 import net.minecraft.client.data.models.model.ItemModelUtils;
 import net.minecraft.client.data.models.model.ModelTemplates;

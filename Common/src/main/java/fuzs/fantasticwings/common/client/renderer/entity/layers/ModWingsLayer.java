@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import fuzs.fantasticwings.common.client.flight.apparatus.WingForm;
 import fuzs.fantasticwings.common.client.handler.ClientEventHandler;
 import fuzs.fantasticwings.common.init.ModRegistry;
-import fuzs.puzzleslib.common.api.client.renderer.v1.RenderStateExtraData;
+import fuzs.puzzleslib.common.api.client.renderer.v2.RenderStateExtraData;
 import net.minecraft.client.model.player.PlayerModel;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;

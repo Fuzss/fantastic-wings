@@ -14,14 +14,13 @@ import fuzs.puzzleslib.common.api.init.v3.tags.TagFactory;
 import fuzs.puzzleslib.common.api.network.v4.PlayerSet;
 import fuzs.puzzleslib.common.api.util.v1.CommonHelper;
 import net.minecraft.core.Holder;
-import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.EntityTypeIds;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -29,8 +28,6 @@ import net.minecraft.world.item.component.Consumables;
 import net.minecraft.world.item.consume_effects.ConsumeEffect;
 
 public class ModRegistry {
-    public static final RegistrySetBuilder REGISTRY_SET_BUILDER = new RegistrySetBuilder().add(FlightApparatus.REGISTRY_KEY,
-            FlightApparatuses::bootstrap);
     static final RegistryManager REGISTRIES = RegistryManager.from(FantasticWings.MOD_ID);
     public static final Holder.Reference<Item> BOTTLED_WINGS_ITEM = REGISTRIES.registerItem("bottled_wings",
             BottledWingsItem::new,
@@ -73,7 +70,7 @@ public class ModRegistry {
             "bat_blood_targets");
 
     public static final DataAttachmentType<Entity, Flight> FLIGHT_ATTACHMENT_TYPE = DataAttachmentRegistry.<Flight>entityBuilder()
-            .defaultValue(EntityTypes.PLAYER, Flight.VOID)
+            .defaultValue(EntityTypeIds.PLAYER, Flight.VOID)
             .persistent(Flight.CODEC)
             .networkSynchronized(Flight.STREAM_CODEC, PlayerSet::nearEntity)
             .build(FantasticWings.id("flight"));

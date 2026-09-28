@@ -12,8 +12,7 @@ accessible  field   net/minecraft/client/model/geom/builders/CubeDeformation    
 accessible  field   net/minecraft/client/model/geom/builders/CubeDeformation    growZ   F
 accessible  field   net/minecraft/client/model/geom/ModelPart$Cube  polygons    [Lnet/minecraft/client/model/geom/ModelPart$Polygon;
 mutable field   net/minecraft/client/model/geom/ModelPart$Cube  polygons    [Lnet/minecraft/client/model/geom/ModelPart$Polygon;
-accessible  field   net/minecraft/client/renderer/ItemInHandRenderer    mainHandItem    Lnet/minecraft/world/item/ItemStack;
-accessible  method  net/minecraft/client/renderer/ItemInHandRenderer    renderPlayerArm (Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;IFFLnet/minecraft/world/entity/HumanoidArm;)V
+accessible  method  net/minecraft/client/renderer/FirstPersonHandsAndItemsRenderer    renderPlayerArm (Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;IFFLnet/minecraft/world/entity/HumanoidArm;Lnet/minecraft/client/renderer/state/level/PlayerRenderState;)V
 accessible  field   net/minecraft/world/entity/LivingEntity jumping Z
 transitive-accessible   field   net/minecraft/world/item/crafting/NormalCraftingRecipe  commonInfo  Lnet/minecraft/world/item/crafting/Recipe$CommonInfo;
 transitive-accessible   field   net/minecraft/world/item/crafting/NormalCraftingRecipe  bookInfo    Lnet/minecraft/world/item/crafting/CraftingRecipe$CraftingBookInfo;

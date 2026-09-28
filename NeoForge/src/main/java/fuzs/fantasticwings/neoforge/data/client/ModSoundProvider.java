@@ -1,8 +1,8 @@
 package fuzs.fantasticwings.neoforge.data.client;
 
 import fuzs.fantasticwings.common.init.ModRegistry;
-import fuzs.puzzleslib.common.api.data.v2.core.DataProviderContext;
-import fuzs.puzzleslib.neoforge.api.client.data.v2.AbstractSoundProvider;
+import fuzs.puzzleslib.common.api.data.v3.core.DataProviderContext;
+import fuzs.puzzleslib.neoforge.api.client.data.v3.sounds.AbstractSoundProvider;
 import net.neoforged.neoforge.common.data.SoundDefinition;
 
 public class ModSoundProvider extends AbstractSoundProvider {
@@ -12,7 +12,7 @@ public class ModSoundProvider extends AbstractSoundProvider {
     }
 
     @Override
-    public void addSounds() {
+    public void registerSounds() {
         this.add(ModRegistry.ITEM_ARMOR_EQUIP_WINGS.value(),
                 "item/armor/equip_leather1",
                 "item/armor/equip_leather2",
