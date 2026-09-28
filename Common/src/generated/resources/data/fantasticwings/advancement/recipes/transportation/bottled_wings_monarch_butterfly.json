@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "fantasticwings:bottled_wings_monarch_butterfly"
+        "recipes": "fantasticwings:bottled_wings_monarch_butterfly"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

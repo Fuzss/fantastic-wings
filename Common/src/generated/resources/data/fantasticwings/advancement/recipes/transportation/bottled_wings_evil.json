@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "fantasticwings:bottled_wings_evil"
+        "recipes": "fantasticwings:bottled_wings_evil"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
