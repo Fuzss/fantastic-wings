@@ -6,6 +6,7 @@ import fuzs.puzzleslib.common.api.data.v3.tags.AbstractTagsProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.references.ItemIds;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Item;
 
 public class ModItemTagsProvider extends AbstractTagsProvider<Item> {
@@ -16,6 +17,7 @@ public class ModItemTagsProvider extends AbstractTagsProvider<Item> {
 
     @Override
     public void addTags(HolderLookup.Provider provider) {
+        this.tag(ItemTags.BREWING_POTION_INPUTS).add(ModRegistry.BOTTLED_WINGS_ITEM);
         this.tag(ModRegistry.WING_OBSTRUCTIONS_ITEM_TAG).add(ItemIds.ELYTRA);
     }
 }

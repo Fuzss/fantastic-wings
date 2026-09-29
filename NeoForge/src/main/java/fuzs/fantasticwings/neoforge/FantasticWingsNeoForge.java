@@ -1,7 +1,7 @@
 package fuzs.fantasticwings.neoforge;
 
 import fuzs.fantasticwings.common.FantasticWings;
-import fuzs.fantasticwings.common.data.recipes.ModRecipeProvider;
+import fuzs.fantasticwings.common.data.recipes.ModBrewingProvider;
 import fuzs.fantasticwings.common.data.tags.ModEntityTypeTagsProvider;
 import fuzs.fantasticwings.common.data.tags.ModItemTagsProvider;
 import fuzs.fantasticwings.common.flight.apparatus.FlightApparatus;
@@ -18,6 +18,6 @@ public class FantasticWingsNeoForge {
         DataProviderBuilder.of(FantasticWings.MOD_ID)
                 .addWorldBootstrap(FlightApparatus.REGISTRY_KEY, FlightApparatuses::bootstrap)
                 .addProvider(ModEntityTypeTagsProvider::new, ModItemTagsProvider::new)
-                .addRecipeProvider(ModRecipeProvider::new);
+                .addRecipeProvider(ModBrewingProvider::new);
     }
 }

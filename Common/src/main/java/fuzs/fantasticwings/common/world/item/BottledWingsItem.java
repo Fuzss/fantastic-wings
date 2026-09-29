@@ -20,13 +20,13 @@ public class BottledWingsItem extends WithDescriptionItem {
         super(properties);
     }
 
-    public static ItemStack createItemStack(Holder.Reference<FlightApparatus> holder) {
+    public static ItemStack createItemStack(Holder<FlightApparatus> holder) {
         ItemStack itemStack = new ItemStack(ModRegistry.BOTTLED_WINGS_ITEM);
         itemStack.set(DataComponents.CONSUMABLE, createComponent(holder));
         return itemStack;
     }
 
-    public static Consumable createComponent(Holder.Reference<FlightApparatus> holder) {
+    public static Consumable createComponent(Holder<FlightApparatus> holder) {
         return Consumables.defaultDrink().onConsume(new GrantWingsConsumeEffect(holder)).build();
     }
 
