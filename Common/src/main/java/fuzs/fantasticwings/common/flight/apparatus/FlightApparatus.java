@@ -24,10 +24,10 @@ public record FlightApparatus(Identifier textureLocation, Model model, WingSetti
     public static final ResourceKey<Registry<FlightApparatus>> REGISTRY_KEY = ResourceKey.createRegistryKey(
             FantasticWings.id("wings"));
     public static final Codec<FlightApparatus> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                    Identifier.CODEC.fieldOf("asset_id").forGetter(FlightApparatus::textureLocation),
-                    Model.CODEC.fieldOf("model").forGetter(FlightApparatus::model),
-                    WingSettings.CODEC.fieldOf("wing_settings").forGetter(FlightApparatus::wingSettings))
-            .apply(instance, FlightApparatus::new));
+            Identifier.CODEC.fieldOf("asset_id").forGetter(FlightApparatus::textureLocation),
+            Model.CODEC.fieldOf("model").forGetter(FlightApparatus::model),
+            WingSettings.CODEC.optionalFieldOf("wing_settings", WingSettings.DEFAULT)
+                    .forGetter(FlightApparatus::wingSettings)).apply(instance, FlightApparatus::new));
     public static final StreamCodec<RegistryFriendlyByteBuf, FlightApparatus> DIRECT_STREAM_CODEC = StreamCodec.composite(
             Identifier.STREAM_CODEC,
             FlightApparatus::textureLocation,
@@ -39,6 +39,10 @@ public record FlightApparatus(Identifier textureLocation, Model model, WingSetti
     public static final Codec<Holder<FlightApparatus>> CODEC = RegistryFixedCodec.create(REGISTRY_KEY);
     public static final StreamCodec<RegistryFriendlyByteBuf, Holder<FlightApparatus>> STREAM_CODEC = ByteBufCodecs.holderRegistry(
             REGISTRY_KEY);
+
+    public FlightApparatus(Identifier textureLocation, Model model) {
+        this(textureLocation, model, WingSettings.DEFAULT);
+    }
 
     public static Identifier transformTextureLocation(Identifier identifier) {
         return identifier.withPath((String string) -> "textures/" + string + ".png");

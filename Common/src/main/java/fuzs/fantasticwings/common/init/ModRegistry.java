@@ -49,6 +49,7 @@ public class ModRegistry {
                     .listElements()
                     .map(BottledWingsItem::createItemStack)
                     .forEach(output::accept);
+            generator.accept(parameters, output);
         };
     });
     public static final Holder.Reference<ConsumeEffect.Type<GrantWingsConsumeEffect>> GRANT_WINGS_CONSUME_EFFECT_TYPE = REGISTRIES.register(

@@ -11,17 +11,21 @@ public record WingSettings(int requiredFoodLevelForFlying,
                            float exhaustionFromFlying,
                            int requiredFoodLevelForSlowlyDescending,
                            float exhaustionFromSlowlyDescending) {
+    public static final WingSettings DEFAULT = new WingSettings(6, 0.0001F, 2, 0.005F);
     public static final Codec<WingSettings> CODEC = RecordCodecBuilder.create(instance -> instance.group(ExtraCodecs.intRange(
-                    0,
-                    20).fieldOf("required_food_level_for_flying").forGetter(WingSettings::requiredFoodLevelForFlying),
+                            0,
+                            20)
+                    .optionalFieldOf("required_food_level_for_flying", DEFAULT.requiredFoodLevelForFlying())
+                    .forGetter(WingSettings::requiredFoodLevelForFlying),
             ExtraCodecs.floatRange(0.0F, 10.0F)
-                    .fieldOf("exhaustion_from_flying")
+                    .optionalFieldOf("exhaustion_from_flying", DEFAULT.exhaustionFromFlying())
                     .forGetter(WingSettings::exhaustionFromFlying),
             ExtraCodecs.intRange(0, 20)
-                    .fieldOf("required_food_level_for_slowly_descending")
+                    .optionalFieldOf("required_food_level_for_slowly_descending",
+                            DEFAULT.requiredFoodLevelForSlowlyDescending())
                     .forGetter(WingSettings::requiredFoodLevelForSlowlyDescending),
             ExtraCodecs.floatRange(0.0F, 10.0F)
-                    .fieldOf("exhaustion_from_slowly_descending")
+                    .optionalFieldOf("exhaustion_from_slowly_descending", DEFAULT.exhaustionFromSlowlyDescending())
                     .forGetter(WingSettings::exhaustionFromSlowlyDescending)).apply(instance, WingSettings::new));
     public static final StreamCodec<ByteBuf, WingSettings> STREAM_CODEC = StreamCodec.composite(ByteBufCodecs.VAR_INT,
             WingSettings::requiredFoodLevelForFlying,
