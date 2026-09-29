@@ -1,8 +1,5 @@
 package fuzs.fantasticwings.client.model;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import fuzs.fantasticwings.client.model.pipeline.ForwardingVertexConsumer;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.core.Direction;
 
@@ -61,18 +58,6 @@ public final class Model3DTexture extends ModelPart.Cube {
             faces.add(x1, f7, z0, x0, f7, z1, u2, f8, u1, f8, Direction.DOWN);
         }
         this.polygons = polygons;
-    }
-
-    @Override
-    public void compile(PoseStack.Pose pose, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        super.compile(pose,
-                new ForwardingVertexConsumer(vertexConsumer),
-                packedLight,
-                packedOverlay,
-                red,
-                green,
-                blue,
-                alpha);
     }
 
     private static FaceAdder getFaceAdder(ModelPart.Polygon[] polygons) {

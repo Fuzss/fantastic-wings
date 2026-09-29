@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import fuzs.fantasticwings.client.animator.AnimatorAvian;
+import fuzs.fantasticwings.client.model.pipeline.ForwardingVertexConsumer;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.CubeListBuilder;
@@ -139,7 +140,12 @@ public final class ModelWingsAvian extends ModelWings<AnimatorAvian> {
             ModelPart right = this.feathersRight.get(i);
             setAngles(left, right, animator.getFeatherRotation(i, delta));
         }
-        this.root.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+
+        // Sodium intercepts the whole ModelPart.render and renders from a ModelCuboid[] snapshot taken in the ModelPart constructor (CuboidMixin + ModelPartData).
+        // ModelPart.Cube.compile is never called, the custom polygons are never reached.
+        // When Sodium, however, sees an unknown VertexConsumer, VertexBufferWriter.tryOf returns null.
+        // Sodium returns without cancelling, and vanilla ModelPart.render runs.
+        this.root.render(matrixStack, new ForwardingVertexConsumer(buffer), packedLight, packedOverlay, red, green, blue, alpha);
     }
 
     private static void add3DTexture(ModelPart model, int u, int v, float offX, float offY, float offZ, int width, int height) {
