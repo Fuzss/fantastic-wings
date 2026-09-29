@@ -1,6 +1,6 @@
 package fuzs.fantasticwings.neoforge.data.client;
 
-import fuzs.fantasticwings.common.init.ModRegistry;
+import fuzs.fantasticwings.common.init.ModSoundEvents;
 import fuzs.puzzleslib.common.api.data.v3.core.DataProviderContext;
 import fuzs.puzzleslib.neoforge.api.client.data.v3.sounds.AbstractSoundProvider;
 import net.neoforged.neoforge.common.data.SoundDefinition;
@@ -13,7 +13,7 @@ public class ModSoundProvider extends AbstractSoundProvider {
 
     @Override
     public void registerSounds() {
-        this.add(ModRegistry.ITEM_ARMOR_EQUIP_WINGS.value(),
+        this.add(ModSoundEvents.ITEM_ARMOR_EQUIP_WINGS.value(),
                 "item/armor/equip_leather1",
                 "item/armor/equip_leather2",
                 "item/armor/equip_leather3",
@@ -21,7 +21,7 @@ public class ModSoundProvider extends AbstractSoundProvider {
                 "item/armor/equip_leather5",
                 "item/armor/equip_leather6");
         SoundDefinition soundDefinition = definition().with(sound("item/elytra/elytra_loop").volume(0.6));
-        this.add(ModRegistry.ITEM_WINGS_FLYING.value(), soundDefinition);
+        this.add(ModSoundEvents.ITEM_WINGS_FLYING.value(), soundDefinition);
         soundDefinition.subtitle(null);
     }
 }

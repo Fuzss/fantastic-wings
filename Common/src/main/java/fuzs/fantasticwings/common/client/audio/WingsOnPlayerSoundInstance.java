@@ -2,6 +2,7 @@ package fuzs.fantasticwings.common.client.audio;
 
 import fuzs.fantasticwings.common.flight.Flight;
 import fuzs.fantasticwings.common.init.ModRegistry;
+import fuzs.fantasticwings.common.init.ModSoundEvents;
 import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.sounds.SoundSource;
@@ -19,7 +20,7 @@ public class WingsOnPlayerSoundInstance extends AbstractTickableSoundInstance {
     }
 
     private WingsOnPlayerSoundInstance(Player player, boolean repeat, int repeatDelay, float volume) {
-        super(ModRegistry.ITEM_WINGS_FLYING.value(), SoundSource.PLAYERS, SoundInstance.createUnseededRandom());
+        super(ModSoundEvents.ITEM_WINGS_FLYING.value(), SoundSource.PLAYERS, SoundInstance.createUnseededRandom());
         this.player = player;
         this.looping = repeat;
         this.delay = repeatDelay;

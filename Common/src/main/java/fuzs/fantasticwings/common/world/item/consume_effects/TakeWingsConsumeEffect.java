@@ -3,7 +3,9 @@ package fuzs.fantasticwings.common.world.item.consume_effects;
 import com.mojang.serialization.MapCodec;
 import fuzs.fantasticwings.common.flight.Flight;
 import fuzs.fantasticwings.common.flight.apparatus.FlightApparatus;
+import fuzs.fantasticwings.common.init.ModConsumeEffectTypes;
 import fuzs.fantasticwings.common.init.ModRegistry;
+import fuzs.fantasticwings.common.init.ModSoundEvents;
 import net.minecraft.core.Holder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -29,7 +31,7 @@ public record TakeWingsConsumeEffect(Optional<Holder<FlightApparatus>> holder) i
 
     @Override
     public Type<? extends ConsumeEffect> getType() {
-        return ModRegistry.TAKE_WINGS_CONSUME_EFFECT_TYPE.value();
+        return ModConsumeEffectTypes.TAKE_WINGS_CONSUME_EFFECT_TYPE.value();
     }
 
     @Override
@@ -48,7 +50,7 @@ public record TakeWingsConsumeEffect(Optional<Holder<FlightApparatus>> holder) i
                                 serverPlayer.getX(),
                                 serverPlayer.getY(),
                                 serverPlayer.getZ(),
-                                ModRegistry.ITEM_ARMOR_EQUIP_WINGS.value(),
+                                ModSoundEvents.ITEM_ARMOR_EQUIP_WINGS.value(),
                                 SoundSource.PLAYERS,
                                 1.0F,
                                 0.8F);

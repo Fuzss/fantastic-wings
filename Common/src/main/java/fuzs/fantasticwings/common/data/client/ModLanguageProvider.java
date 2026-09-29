@@ -5,7 +5,9 @@ import fuzs.fantasticwings.common.client.init.ClientModRegistry;
 import fuzs.fantasticwings.common.commands.WingsCommand;
 import fuzs.fantasticwings.common.flight.apparatus.FlightApparatus;
 import fuzs.fantasticwings.common.init.FlightApparatuses;
+import fuzs.fantasticwings.common.init.ModItems;
 import fuzs.fantasticwings.common.init.ModRegistry;
+import fuzs.fantasticwings.common.init.ModSoundEvents;
 import fuzs.fantasticwings.common.world.item.BottledWingsItem;
 import fuzs.fantasticwings.common.world.item.WithDescriptionItem;
 import fuzs.puzzleslib.common.api.client.data.v3.language.AbstractLanguageProvider;
@@ -30,11 +32,11 @@ public class ModLanguageProvider extends AbstractLanguageProvider {
         this.add(WingsCommand.KEY_TAKE_WINGS_MULTIPLE, "Removed wings from %s targets");
         this.add(WingsCommand.COMPONENT_GIVE_WINGS_FAILED, "Unable to apply wings to target");
         this.add(WingsCommand.COMPONENT_TAKE_WINGS_FAILED, "Target doesn't have wings to remove");
-        this.add(ModRegistry.BOTTLED_BAT_BLOOD_ITEM.value(), "Bottled Bat Blood");
-        this.add(((WithDescriptionItem) ModRegistry.BOTTLED_BAT_BLOOD_ITEM.value()).getDescriptionComponent(),
+        this.add(ModItems.BOTTLED_BAT_BLOOD_ITEM.value(), "Bottled Bat Blood");
+        this.add(((WithDescriptionItem) ModItems.BOTTLED_BAT_BLOOD_ITEM.value()).getDescriptionComponent(),
                 "Consume to shed your wings.");
-        this.add(ModRegistry.BOTTLED_WINGS_ITEM.value(), "Bottled Wings");
-        this.add(((WithDescriptionItem) ModRegistry.BOTTLED_WINGS_ITEM.value()).getDescriptionComponent(),
+        this.add(ModItems.BOTTLED_WINGS_ITEM.value(), "Bottled Wings");
+        this.add(((WithDescriptionItem) ModItems.BOTTLED_WINGS_ITEM.value()).getDescriptionComponent(),
                 "Consume to grow a set of wings.");
         addWings(FlightApparatuses.ANGEL_FLIGHT_APPARATUS, "Angel Wings", this);
         addWings(FlightApparatuses.BAT_FLIGHT_APPARATUS, "Bat Wings", this);
@@ -47,11 +49,11 @@ public class ModLanguageProvider extends AbstractLanguageProvider {
         addWings(FlightApparatuses.PARROT_FLIGHT_APPARATUS, "Parrot Wings", this);
         addWings(FlightApparatuses.SLIME_FLIGHT_APPARATUS, "Slime Wings", this);
         addWings(FlightApparatuses.METALLIC_FLIGHT_APPARATUS, "Metallic Wings", this);
-        this.add(ModRegistry.ITEM_ARMOR_EQUIP_WINGS.value(), "Wings rustle");
+        this.add(ModSoundEvents.ITEM_ARMOR_EQUIP_WINGS.value(), "Wings rustle");
     }
 
     static void addWings(ResourceKey<FlightApparatus> resourceKey, String value, TranslationBuilder translationBuilder) {
-        translationBuilder.add(((BottledWingsItem) ModRegistry.BOTTLED_WINGS_ITEM.value()).getWingsComponent(resourceKey),
+        translationBuilder.add(((BottledWingsItem) ModItems.BOTTLED_WINGS_ITEM.value()).getWingsComponent(resourceKey),
                 "Bottled " + value);
     }
 }

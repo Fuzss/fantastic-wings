@@ -1,6 +1,6 @@
 package fuzs.fantasticwings.common.data.tags;
 
-import fuzs.fantasticwings.common.init.ModRegistry;
+import fuzs.fantasticwings.common.init.ModTags;
 import fuzs.puzzleslib.common.api.data.v3.core.DataProviderContext;
 import fuzs.puzzleslib.common.api.data.v3.tags.AbstractTagsProvider;
 import net.minecraft.core.HolderLookup;
@@ -16,6 +16,6 @@ public class ModEntityTypeTagsProvider extends AbstractTagsProvider<EntityType<?
 
     @Override
     public void addTags(HolderLookup.Provider provider) {
-        this.tag(ModRegistry.BAT_BLOOD_TARGETS_ENTITY_TYPE_TAG).add(EntityTypeIds.BAT);
+        this.tag(ModTags.EntityTypes.BAT_BLOOD_TARGETS_ENTITY_TYPE_TAG).add(EntityTypeIds.BAT);
     }
 }

@@ -15,4 +15,4 @@ mutable field   net/minecraft/client/model/geom/ModelPart$Cube  polygons    [Lne
 accessible  method  net/minecraft/client/renderer/FirstPersonHandsAndItemsRenderer    renderPlayerArm (Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;IFFLnet/minecraft/world/entity/HumanoidArm;Lnet/minecraft/client/renderer/state/level/PlayerRenderState;)V
 accessible  field   net/minecraft/world/entity/LivingEntity jumping Z
 accessible  field   net/minecraft/data/recipes/BrewingProvider  containers  Ljava/util/List;
-extendable  method  net/minecraft/data/recipes/BrewingRecipeBuilder <init>  (Lnet/minecraft/world/item/crafting/PotionIngredient;Lnet/minecraft/world/item/crafting/PotionIngredient;Lnet/minecraft/world/item/ItemStackTemplate;)V
+accessible  method  net/minecraft/data/recipes/BrewingRecipeBuilder <init>  (Lnet/minecraft/world/item/crafting/PotionIngredient;Lnet/minecraft/world/item/crafting/PotionIngredient;Lnet/minecraft/world/item/ItemStackTemplate;)V

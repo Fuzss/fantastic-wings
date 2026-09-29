@@ -3,7 +3,9 @@ package fuzs.fantasticwings.common.world.item.consume_effects;
 import com.mojang.serialization.MapCodec;
 import fuzs.fantasticwings.common.flight.Flight;
 import fuzs.fantasticwings.common.flight.apparatus.FlightApparatus;
+import fuzs.fantasticwings.common.init.ModConsumeEffectTypes;
 import fuzs.fantasticwings.common.init.ModRegistry;
+import fuzs.fantasticwings.common.init.ModSoundEvents;
 import net.minecraft.core.Holder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -25,7 +27,7 @@ public record GrantWingsConsumeEffect(Holder<FlightApparatus> holder) implements
 
     @Override
     public Type<? extends ConsumeEffect> getType() {
-        return ModRegistry.GRANT_WINGS_CONSUME_EFFECT_TYPE.value();
+        return ModConsumeEffectTypes.GRANT_WINGS_CONSUME_EFFECT_TYPE.value();
     }
 
     @Override
@@ -43,7 +45,7 @@ public record GrantWingsConsumeEffect(Holder<FlightApparatus> holder) implements
                             serverPlayer.getX(),
                             serverPlayer.getY(),
                             serverPlayer.getZ(),
-                            ModRegistry.ITEM_ARMOR_EQUIP_WINGS.value(),
+                            ModSoundEvents.ITEM_ARMOR_EQUIP_WINGS.value(),
                             SoundSource.PLAYERS,
                             1.0F,
                             1.0F);

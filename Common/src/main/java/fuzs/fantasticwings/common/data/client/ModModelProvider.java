@@ -3,7 +3,7 @@ package fuzs.fantasticwings.common.data.client;
 import fuzs.fantasticwings.common.client.renderer.item.properties.select.FlightApparatusProperty;
 import fuzs.fantasticwings.common.flight.apparatus.FlightApparatus;
 import fuzs.fantasticwings.common.init.FlightApparatuses;
-import fuzs.fantasticwings.common.init.ModRegistry;
+import fuzs.fantasticwings.common.init.ModItems;
 import fuzs.puzzleslib.common.api.client.data.v3.models.AbstractModelProvider;
 import fuzs.puzzleslib.common.api.data.v3.core.DataProviderContext;
 import net.minecraft.client.data.models.ItemModelGenerators;
@@ -27,8 +27,8 @@ public class ModModelProvider extends AbstractModelProvider {
 
     @Override
     public void addItemModels(ItemModelGenerators itemModelGenerators) {
-        itemModelGenerators.generateFlatItem(ModRegistry.BOTTLED_BAT_BLOOD_ITEM.value(), ModelTemplates.FLAT_ITEM);
-        this.generateBottledWings(ModRegistry.BOTTLED_WINGS_ITEM.value(), itemModelGenerators);
+        itemModelGenerators.generateFlatItem(ModItems.BOTTLED_BAT_BLOOD_ITEM.value(), ModelTemplates.FLAT_ITEM);
+        this.generateBottledWings(ModItems.BOTTLED_WINGS_ITEM.value(), itemModelGenerators);
     }
 
     public final void generateBottledWings(Item item, ItemModelGenerators itemModelGenerators) {

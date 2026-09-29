@@ -3,7 +3,7 @@ package fuzs.fantasticwings.common.client.renderer.entity.layers;
 import com.mojang.blaze3d.vertex.PoseStack;
 import fuzs.fantasticwings.common.client.flight.apparatus.WingForm;
 import fuzs.fantasticwings.common.client.handler.ClientEventHandler;
-import fuzs.fantasticwings.common.init.ModRegistry;
+import fuzs.fantasticwings.common.init.ModTags;
 import fuzs.puzzleslib.common.api.client.renderer.v2.RenderStateExtraData;
 import net.minecraft.client.model.player.PlayerModel;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -31,7 +31,7 @@ public class ModWingsLayer extends RenderLayer<AvatarRenderState, PlayerModel> {
 
     @Override
     public void submit(PoseStack poseStack, SubmitNodeCollector nodeCollector, int lightCoords, AvatarRenderState state, float yRot, float xRot) {
-        if (!state.isInvisible && !state.chestEquipment.is(ModRegistry.WING_OBSTRUCTIONS_ITEM_TAG)) {
+        if (!state.isInvisible && !state.chestEquipment.is(ModTags.Items.WING_OBSTRUCTIONS_ITEM_TAG)) {
             RenderStateExtraData.getOrDefault(state, ClientEventHandler.WING_FORM_KEY, Optional.empty())
                     .ifPresent((WingForm.FormRendererState<?> form) -> {
                         poseStack.pushPose();

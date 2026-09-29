@@ -1,7 +1,7 @@
 package fuzs.fantasticwings.common.world.item;
 
 import fuzs.fantasticwings.common.flight.apparatus.FlightApparatus;
-import fuzs.fantasticwings.common.init.ModRegistry;
+import fuzs.fantasticwings.common.init.ModItems;
 import fuzs.fantasticwings.common.world.item.consume_effects.GrantWingsConsumeEffect;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
@@ -21,7 +21,7 @@ public class BottledWingsItem extends WithDescriptionItem {
     }
 
     public static ItemStack createItemStack(Holder<FlightApparatus> holder) {
-        ItemStack itemStack = new ItemStack(ModRegistry.BOTTLED_WINGS_ITEM);
+        ItemStack itemStack = new ItemStack(ModItems.BOTTLED_WINGS_ITEM);
         itemStack.set(DataComponents.CONSUMABLE, createComponent(holder));
         return itemStack;
     }

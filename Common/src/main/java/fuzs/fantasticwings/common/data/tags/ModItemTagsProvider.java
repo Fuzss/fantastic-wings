@@ -1,6 +1,7 @@
 package fuzs.fantasticwings.common.data.tags;
 
-import fuzs.fantasticwings.common.init.ModRegistry;
+import fuzs.fantasticwings.common.init.ModItems;
+import fuzs.fantasticwings.common.init.ModTags;
 import fuzs.puzzleslib.common.api.data.v3.core.DataProviderContext;
 import fuzs.puzzleslib.common.api.data.v3.tags.AbstractTagsProvider;
 import net.minecraft.core.HolderLookup;
@@ -17,7 +18,7 @@ public class ModItemTagsProvider extends AbstractTagsProvider<Item> {
 
     @Override
     public void addTags(HolderLookup.Provider provider) {
-        this.tag(ItemTags.BREWING_POTION_INPUTS).add(ModRegistry.BOTTLED_WINGS_ITEM);
-        this.tag(ModRegistry.WING_OBSTRUCTIONS_ITEM_TAG).add(ItemIds.ELYTRA);
+        this.tag(ItemTags.BREWING_POTION_INPUTS).add(ModItems.BOTTLED_WINGS_ITEM);
+        this.tag(ModTags.Items.WING_OBSTRUCTIONS_ITEM_TAG).add(ItemIds.ELYTRA);
     }
 }

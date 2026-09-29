@@ -1,7 +1,9 @@
 package fuzs.fantasticwings.common.handler;
 
 import fuzs.fantasticwings.common.flight.Flight;
+import fuzs.fantasticwings.common.init.ModItems;
 import fuzs.fantasticwings.common.init.ModRegistry;
+import fuzs.fantasticwings.common.init.ModTags;
 import fuzs.puzzleslib.common.api.event.v1.core.EventResult;
 import fuzs.puzzleslib.common.api.item.v2.ItemHelper;
 import net.minecraft.sounds.SoundEvents;
@@ -21,7 +23,7 @@ public class ServerEventHandler {
 
     public static EventResult onAttackEntity(Player player, Level level, InteractionHand interactionHand, Entity entity) {
         ItemStack itemInHand = player.getItemInHand(interactionHand);
-        if (entity.is(ModRegistry.BAT_BLOOD_TARGETS_ENTITY_TYPE_TAG) && itemInHand.is(Items.GLASS_BOTTLE)) {
+        if (entity.is(ModTags.EntityTypes.BAT_BLOOD_TARGETS_ENTITY_TYPE_TAG) && itemInHand.is(Items.GLASS_BOTTLE)) {
             level.playSound(player,
                     player.getX(),
                     player.getY(),
@@ -33,7 +35,7 @@ public class ServerEventHandler {
             ItemStack originalItemInHand = itemInHand.copy();
             itemInHand.consume(1, player);
             player.awardStat(Stats.ITEM_USED.get(Items.GLASS_BOTTLE));
-            ItemStack itemStack = new ItemStack(ModRegistry.BOTTLED_BAT_BLOOD_ITEM);
+            ItemStack itemStack = new ItemStack(ModItems.BOTTLED_BAT_BLOOD_ITEM);
             if (itemInHand.isEmpty()) {
                 ItemHelper.onPlayerDestroyItem(player, originalItemInHand, interactionHand);
                 player.setItemInHand(interactionHand, itemStack);

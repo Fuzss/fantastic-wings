@@ -2,7 +2,7 @@ package fuzs.fantasticwings.common.data.recipes;
 
 import fuzs.fantasticwings.common.flight.apparatus.FlightApparatus;
 import fuzs.fantasticwings.common.init.FlightApparatuses;
-import fuzs.fantasticwings.common.init.ModRegistry;
+import fuzs.fantasticwings.common.init.ModItems;
 import fuzs.fantasticwings.common.world.item.BottledWingsItem;
 import fuzs.puzzleslib.common.api.data.v3.recipes.AbstractBrewingProvider;
 import net.minecraft.advancements.Advancement;
@@ -91,7 +91,7 @@ public class ModBrewingProvider extends AbstractBrewingProvider {
      * @see net.minecraft.data.recipes.BrewingRecipeBuilder#potionOutput(Item, Holder)
      */
     private static ItemStackTemplate wingsOutput(Holder<FlightApparatus> holder) {
-        return new ItemStackTemplate(ModRegistry.BOTTLED_WINGS_ITEM,
+        return new ItemStackTemplate(ModItems.BOTTLED_WINGS_ITEM,
                 1,
                 DataComponentPatch.builder()
                         .set(DataComponents.CONSUMABLE, BottledWingsItem.createComponent(holder))

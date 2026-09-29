@@ -3,7 +3,7 @@ package fuzs.fantasticwings.common.flight;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import fuzs.fantasticwings.common.flight.apparatus.FlightApparatus;
-import fuzs.fantasticwings.common.init.ModRegistry;
+import fuzs.fantasticwings.common.init.ModTags;
 import fuzs.fantasticwings.common.network.ServerboundControlFlyingMessage;
 import fuzs.fantasticwings.common.util.CubicBezier;
 import fuzs.fantasticwings.common.util.MathHelper;
@@ -92,7 +92,7 @@ public record Flight(Optional<Holder<FlightApparatus>> wings, boolean isFlying, 
 
     public boolean canUseWings(Player player) {
         return !player.getAbilities().flying && !player.getItemBySlot(EquipmentSlot.CHEST)
-                .is(ModRegistry.WING_OBSTRUCTIONS_ITEM_TAG);
+                .is(ModTags.Items.WING_OBSTRUCTIONS_ITEM_TAG);
     }
 
     public boolean canFly(Player player) {
