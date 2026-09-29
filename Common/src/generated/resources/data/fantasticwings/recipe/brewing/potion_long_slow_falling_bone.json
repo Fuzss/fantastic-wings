@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:brewing",
+  "input": {
+    "item": "minecraft:potion",
+    "potion_contents": {
+      "potions": "minecraft:long_slow_falling"
+    }
+  },
+  "output": {
+    "components": {
+      "minecraft:consumable": {
+        "animation": "drink",
+        "has_consume_particles": false,
+        "on_consume_effects": [
+          {
+            "type": "fantasticwings:grant_wings",
+            "wings": "fantasticwings:evil"
+          }
+        ],
+        "sound": "minecraft:entity.generic.drink"
+      }
+    },
+    "id": "fantasticwings:bottled_wings"
+  },
+  "reagent": {
+    "item": "minecraft:bone"
+  }
+}

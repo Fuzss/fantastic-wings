@@ -1,18 +1,12 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "group": "wings",
-  "key": {
-    "#": "minecraft:phantom_membrane",
-    "$": "minecraft:dragon_breath",
-    "@": "minecraft:honeycomb",
-    "X": "minecraft:oxeye_daisy"
+  "type": "minecraft:brewing",
+  "input": {
+    "item": "minecraft:potion",
+    "potion_contents": {
+      "potions": "minecraft:slow_falling"
+    }
   },
-  "pattern": [
-    "X@X",
-    "@$@",
-    "#@#"
-  ],
-  "result": {
+  "output": {
     "components": {
       "minecraft:consumable": {
         "animation": "drink",
@@ -27,5 +21,8 @@
       }
     },
     "id": "fantasticwings:bottled_wings"
+  },
+  "reagent": {
+    "item": "minecraft:oxeye_daisy"
   }
 }
